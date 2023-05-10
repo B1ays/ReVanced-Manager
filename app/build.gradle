@@ -1,0 +1,79 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp' version '1.8.21-1.0.11'
+}
+
+android {
+    namespace 'ru.Blays.ReVanced.Manager'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "ru.Blays.ReVanced.Manager"
+        minSdk 26
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            crunchPngs true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_18
+        targetCompatibility JavaVersion.VERSION_18
+    }
+    kotlinOptions {
+        jvmTarget = '18'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.7'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+
+    // AndroidX
+    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+
+
+    // Compose
+    implementation 'androidx.activity:activity-compose:1.7.1'
+    implementation "androidx.compose.animation:animation:1.5.0-alpha03"
+    implementation "androidx.compose.foundation:foundation:1.5.0-alpha03"
+    implementation "androidx.compose.material3:material3:1.1.0-rc01"
+    implementation "androidx.compose.runtime:runtime:1.5.0-alpha03"
+    implementation "androidx.compose.ui:ui:1.5.0-alpha03"
+
+    // Compose Destinations
+    implementation 'io.github.raamcosta.compose-destinations:core:1.9.42-beta'
+    ksp 'io.github.raamcosta.compose-destinations:ksp:1.9.42-beta'
+
+
+    // Modules
+    implementation project (path: ':Presentation')
+    implementation project (path: ':Domain')
+    implementation project (path: ':Data')
+    implementation project (path: ':Installer')
+
+}

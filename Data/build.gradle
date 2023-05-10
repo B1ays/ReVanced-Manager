@@ -1,0 +1,54 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp' version '1.8.21-1.0.11'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
+}
+
+android {
+    namespace 'ru.blays.revanced.data'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 33
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_18
+        targetCompatibility JavaVersion.VERSION_18
+    }
+    kotlinOptions {
+        jvmTarget = '18'
+    }
+}
+
+dependencies {
+
+    //AndroidX
+    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.0'
+
+    // KotlinX Serialization
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
+
+    // OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+
+    // Room
+    implementation "androidx.room:room-runtime:2.5.1"
+    annotationProcessor "androidx.room:room-compiler:2.5.1"
+    ksp "androidx.room:room-compiler:2.5.1"
+
+    // Modules
+    implementation project(path: ':Domain')
+}
