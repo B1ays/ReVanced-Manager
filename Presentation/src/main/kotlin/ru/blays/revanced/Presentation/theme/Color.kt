@@ -1,4 +1,4 @@
-package ru.Blays.ReVanced.Manager.ui.theme
+package ru.blays.revanced.Presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

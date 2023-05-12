@@ -1,17 +1,19 @@
 package ru.blays.revanced.Presentation.Elements.Screens.SettingsScreen
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -28,25 +30,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import ru.blays.revanced.Presentation.DataClasses.AccentColorItem
 import ru.blays.revanced.Presentation.DataClasses.CardShape
 import ru.blays.revanced.Presentation.DataClasses.DefaultPadding
 import ru.blays.revanced.Presentation.R
+import ru.blays.revanced.Presentation.Repository.SettingsRepository
 
 private val ModifierWithExpandAnimation = Modifier
     .animateContentSize(
         animationSpec = tween(
-            durationMillis = 300,
-            easing = FastOutLinearInEasing
+            durationMillis = 500
         )
     )
 
 @Composable
-fun SettingsExpandableCard(title: String, subtitle: String = "", content: @Composable () -> Unit) {
+fun SettingsExpandableCard(
+    title: String,
+    subtitle: String = "",
+    content: @Composable ColumnScope.() -> Unit
+) {
 
     var isMenuExpanded by remember { mutableStateOf(false) }
 
@@ -119,7 +127,12 @@ fun SettingsExpandableCard(title: String, subtitle: String = "", content: @Compo
 }
 
 @Composable
-private fun SettingsCardWithSwitch(title: String, description: String, state: Boolean, action: (Boolean) -> Unit) {
+fun SettingsCardWithSwitch(
+    title: String,
+    description: String,
+    state: Boolean,
+    action: (Boolean) -> Unit
+) {
     Card(
         modifier = Modifier
             .padding(
@@ -158,7 +171,7 @@ private fun SettingsCardWithSwitch(title: String, description: String, state: Bo
 }
 
 @Composable
-private fun SettingsRadioButtonWithTitle(title: String, state: Int, index: Int, action: () -> Unit) {
+fun SettingsRadioButtonWithTitle(title: String, state: Int, index: Int, action: () -> Unit) {
     Row(
         modifier = Modifier
             .padding(vertical = 2.dp, horizontal = 12.dp)
@@ -175,11 +188,9 @@ private fun SettingsRadioButtonWithTitle(title: String, state: Int, index: Int, 
     }
 }
 
-/*
 @Composable
-private fun ColorPickerItem(
-    settingsViewModel: SettingsScreenVM,
-    mainViewModel: MainViewModel,
+fun ColorPickerItem(
+    repository: SettingsRepository,
     item: AccentColorItem,
     index: Int
 ) {
@@ -190,8 +201,7 @@ private fun ColorPickerItem(
             .clip(CircleShape)
             .background(color = item.accentDark)
             .clickable {
-                settingsViewModel.changeAccentColor(index)
-                mainViewModel.changeAccentColor(index)
+                repository.accentColorItem = index
             }
     )
-}*/
+}

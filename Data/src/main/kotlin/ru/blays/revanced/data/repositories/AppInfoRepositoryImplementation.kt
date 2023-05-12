@@ -42,29 +42,23 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
 
     private inline fun <reified T> String.serializeJsonFromString() : T = Json.decodeFromString(string = this)
 
-    private fun List<VersionsInfoModel>.mapVersionsInfoModelToDomainClass() : List<VersionsInfoModelDto> {
-
-        val mappedList = mutableListOf<VersionsInfoModelDto>()
-
-        this.forEach { item ->
-            mappedList.add(
+    private fun List<VersionsInfoModel>.mapVersionsInfoModelToDomainClass() : List<VersionsInfoModelDto> = mutableListOf<VersionsInfoModelDto>().apply {
+        this@mapVersionsInfoModelToDomainClass.forEach { item ->
+            this.add(
                 VersionsInfoModelDto(
                     item.version,
                     item.patchesVersion,
+                    item.buildDate,
                     item.changelogLink,
-                    item.downloadLink
+                    item.versionsListLink
                 )
             )
         }
-        return mappedList
     }
 
-    private fun List<ApkInfoModel>.mapApkInfoModelToDomainClass() : List<ApkInfoModelDto> {
-
-        val mappedList = mutableListOf<ApkInfoModelDto>()
-
-        this.forEach { item ->
-            mappedList.add(
+    private fun List<ApkInfoModel>.mapApkInfoModelToDomainClass() : List<ApkInfoModelDto> = mutableListOf<ApkInfoModelDto>().apply {
+        this@mapApkInfoModelToDomainClass.forEach { item ->
+            this.add(
                 ApkInfoModelDto(
                     item.type,
                     item.name,
@@ -73,7 +67,6 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
                 )
             )
         }
-        return mappedList
     }
 
     override suspend fun getVersionsInfo(jsonUrl: String): List<VersionsInfoModelDto>? = getHtmlBody(jsonUrl)

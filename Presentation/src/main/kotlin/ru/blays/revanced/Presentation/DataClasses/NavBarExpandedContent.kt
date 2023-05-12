@@ -9,5 +9,24 @@ data class NavBarExpandedContent(
 ) {
     companion object {
         val bottomNavBarExpandedContent = MutableStateFlow(NavBarExpandedContent())
+
+        fun hide() {
+            if (bottomNavBarExpandedContent.value.isExpanded) {
+                bottomNavBarExpandedContent.tryEmit(
+                    NavBarExpandedContent(
+                        isExpanded = false
+                    )
+                )
+            }
+        }
+
+        fun setContent(content: @Composable () -> Unit) {
+            bottomNavBarExpandedContent.tryEmit(
+                NavBarExpandedContent(
+                    isExpanded = true,
+                    content = content
+                )
+            )
+        }
     }
 }

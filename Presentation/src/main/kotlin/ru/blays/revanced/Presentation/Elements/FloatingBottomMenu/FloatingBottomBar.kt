@@ -1,4 +1,4 @@
-package ru.blays.timetable.UI.Compose.ComposeElements.FloatingBottomMenu
+package ru.blays.revanced.Presentation.Elements.FloatingBottomMenu
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -107,7 +107,7 @@ private fun FloatingBottomBarTabs(
     items: List<BottomBarItem>,
     selectedItem: Int,
     expandedWidth: Dp,
-    containerColor: androidx.compose.ui.graphics.Color
+    containerColor: Color
 ) {
     IndicatorBehindScrollableTabRow(
         selectedTabIndex = selectedItem,
@@ -187,6 +187,5 @@ private enum class BottomBarSlots {
 
 fun ColorScheme.surfaceColorAtAlpha(
     alpha: Float,
-): Color {
-    return surfaceTint.copy(alpha = alpha).compositeOver(surface)
-}
+): Color = surfaceTint.copy(alpha = alpha).compositeOver(surface)
+

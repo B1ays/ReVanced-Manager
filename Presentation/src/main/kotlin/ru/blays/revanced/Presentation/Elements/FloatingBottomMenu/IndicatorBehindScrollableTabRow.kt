@@ -1,4 +1,4 @@
-package ru.blays.timetable.UI.Compose.ComposeElements.FloatingBottomMenu
+package ru.blays.revanced.Presentation.Elements.FloatingBottomMenu
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing

@@ -35,19 +35,19 @@ android {
 dependencies {
 
     //AndroidX
-    implementation 'androidx.core:core-ktx:1.10.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.0'
+    implementation libs.androidx.core.core.ktx
+    implementation libs.org.jetbrains.kotlinx.kotlinx.coroutines.core.jvm
 
     // KotlinX Serialization
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
+    implementation libs.org.jetbrains.kotlinx.kotlinx.serialization.json.asProvider()
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+    implementation libs.com.squareup.okhttp3.okhttp.asProvider()
 
     // Room
-    implementation "androidx.room:room-runtime:2.5.1"
-    annotationProcessor "androidx.room:room-compiler:2.5.1"
-    ksp "androidx.room:room-compiler:2.5.1"
+    implementation libs.androidx.room.room.runtime
+    annotationProcessor libs.androidx.room.room.compiler
+    ksp libs.androidx.room.room.compiler
 
     // Modules
     implementation project(path: ':Domain')

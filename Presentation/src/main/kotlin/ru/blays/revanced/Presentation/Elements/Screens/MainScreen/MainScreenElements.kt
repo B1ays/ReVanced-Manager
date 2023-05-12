@@ -14,6 +14,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,6 +33,9 @@ fun AppInfoCard(
     availableVersion: String,
     onClick: () -> Unit
 ) {
+
+    val iconSize = 80.dp
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         onClick = onClick,
@@ -48,28 +52,27 @@ fun AppInfoCard(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = -iconSize / 2)
             ) {
-
-                val iconSize = 80.dp
 
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier
-                        .offset(x = -iconSize/2)
-                        .size(iconSize)
-
+                        .size(iconSize),
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column {
-                    Text(text = title)
+                    Text(text = title, style = MaterialTheme.typography.titleLarge)
                     Spacer(modifier = Modifier.height(6.dp))
-                    Text(text = currentVersion)
+                    Text(text = "Установленная версия: $currentVersion")
                     Spacer(modifier = Modifier.height(6.dp))
-                    Text(text = availableVersion)
+                    Text(text = "Последняя версия: $availableVersion")
                 }
             }
 

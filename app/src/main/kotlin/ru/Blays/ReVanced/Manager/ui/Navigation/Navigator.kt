@@ -14,17 +14,16 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
-import ru.Blays.ReVanced.Manager.di.DependencyContainer
 import ru.blays.revanced.Presentation.DataClasses.NavBarExpandedContent.Companion.bottomNavBarExpandedContent
+import ru.blays.revanced.Presentation.Elements.FloatingBottomMenu.BottomBarItem
+import ru.blays.revanced.Presentation.Elements.FloatingBottomMenu.FloatingBottomBar
 import ru.blays.revanced.Presentation.Screens.NavGraphs
 import ru.blays.revanced.Presentation.Screens.destinations.MainScreenDestination
 import ru.blays.revanced.Presentation.Screens.destinations.SettingsScreenDestination
-import ru.blays.timetable.UI.Compose.ComposeElements.FloatingBottomMenu.BottomBarItem
-import ru.blays.timetable.UI.Compose.ComposeElements.FloatingBottomMenu.FloatingBottomBar
 
 
 @Composable
-fun Navigator(dependencyContainer: DependencyContainer) {
+fun Navigator() {
 
     val navigationController = rememberNavController()
 
@@ -36,14 +35,20 @@ fun Navigator(dependencyContainer: DependencyContainer) {
             description = null,
             id = MainScreenDestination.route
         ) {
-            navigationController.navigate(MainScreenDestination)
+            navigationController.navigate(MainScreenDestination) {
+                launchSingleTop = true
+                restoreState = true
+            }
         },
         BottomBarItem.Icon(
             icon = Icons.Rounded.Settings,
             description = null,
             id = SettingsScreenDestination.route
         ) {
-            navigationController.navigate(SettingsScreenDestination)
+            navigationController.navigate(SettingsScreenDestination) {
+                launchSingleTop = true
+                restoreState = true
+            }
         }
     )
 
@@ -67,8 +72,6 @@ fun Navigator(dependencyContainer: DependencyContainer) {
             navGraph = NavGraphs.root,
             navController = navigationController,
             dependenciesContainerBuilder = {
-                dependency(dependencyContainer.mainScreenViewModel)
-                dependency(dependencyContainer.versionsListScreenViewModel)
                 dependency(navigationController)
             }
         )
