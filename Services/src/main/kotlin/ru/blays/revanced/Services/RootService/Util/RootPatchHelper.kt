@@ -1,4 +1,4 @@
-package ru.blays.revanced.RootService.Util
+package ru.blays.revanced.Services.RootService.Util
 
 import com.vanced.manager.installer.util.Patcher
 import com.vanced.manager.repository.manager.PackageManagerResult

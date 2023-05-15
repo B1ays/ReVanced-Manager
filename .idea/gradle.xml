@@ -4,8 +4,6 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="testRunner" value="GRADLE" />
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleJvm" value="18" />
         <option name="modules">
@@ -13,8 +11,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Data" />
             <option value="$PROJECT_DIR$/Domain" />
-            <option value="$PROJECT_DIR$/Installer" />
             <option value="$PROJECT_DIR$/Presentation" />
+            <option value="$PROJECT_DIR$/Services" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

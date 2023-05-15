@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
@@ -48,6 +50,21 @@ private val ModifierWithExpandAnimation = Modifier
             durationMillis = 500
         )
     )
+
+
+@Composable
+fun SettingsGroup(title: String, content: @Composable () -> Unit) {
+    Column {
+        Text(
+            modifier = Modifier
+                .padding(12.dp),
+            text = title,
+            style = MaterialTheme.typography.titleLarge
+        )
+        content()
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
 
 @Composable
 fun SettingsExpandableCard(
@@ -96,7 +113,7 @@ fun SettingsExpandableCard(
         {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.6F)
+                    .fillMaxWidth(0.7F)
             ) {
                 Text(
                     text = title,
@@ -129,8 +146,9 @@ fun SettingsExpandableCard(
 @Composable
 fun SettingsCardWithSwitch(
     title: String,
-    description: String,
+    subtitle: String,
     state: Boolean,
+    isSwitchEnabled: Boolean = true,
     action: (Boolean) -> Unit
 ) {
     Card(
@@ -150,39 +168,47 @@ fun SettingsCardWithSwitch(
         {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.6F)
+                    .fillMaxWidth(0.7F)
             ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = description,
+                    text = subtitle,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
             Switch(
                 checked = state,
-                onCheckedChange = action
+                onCheckedChange = action,
+                enabled = isSwitchEnabled
             )
         }
     }
 }
 
 @Composable
-fun SettingsRadioButtonWithTitle(title: String, state: Int, index: Int, action: () -> Unit) {
+fun SettingsRadioButtonWithTitle(
+    title: String,
+    checkedIndex: Int,
+    enabled: Boolean = true,
+    index: Int,
+    action: () -> Unit
+) {
     Row(
         modifier = Modifier
             .padding(vertical = 2.dp, horizontal = 12.dp)
             .fillMaxWidth()
-            .clickable(onClick = action),
+            .clickable(enabled = enabled, onClick = action),
         verticalAlignment = Alignment.CenterVertically
     )
     {
         RadioButton(
-            selected = state == index,
-            onClick = action
+            selected = checkedIndex == index,
+            onClick = action,
+            enabled = enabled
         )
         Text(modifier = Modifier.padding(start = 8.dp), text = title)
     }

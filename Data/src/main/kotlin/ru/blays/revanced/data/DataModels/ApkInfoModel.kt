@@ -1,11 +1,12 @@
-package ru.blays.revanced.data.DataClasses
+package ru.blays.revanced.data.DataModels
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ApkInfoModel(
-    val type: String,
-    val name: String,
-    val description: String,
-    val url: String
+    @SerialName("Apk name") val name: String,
+    @SerialName("isRootVersion") val isRootVersion: Boolean,
+    @SerialName("Short description") val description: String,
+    @SerialName("Apk link") val url: String
 )

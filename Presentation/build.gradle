@@ -59,6 +59,12 @@ dependencies {
     debugImplementation libs.androidx.compose.ui.ui.tooling.asProvider()
     ksp libs.io.github.raamcosta.compose.destinations.ksp
 
+    // Compose Markdown
+    implementation libs.compose.markdown
+
+    // Coil
+    implementation libs.coil
+
     // Koin
     implementation libs.koin.android
     implementation libs.koin.androidx.compose
@@ -69,6 +75,7 @@ dependencies {
     // Modules
     implementation project(path: ':Domain')
     implementation project(path: ':Data')
+    implementation project(path: ':Services')
 
     // material-color-utilities
     implementation(files("libs/material-color-util.jar"))

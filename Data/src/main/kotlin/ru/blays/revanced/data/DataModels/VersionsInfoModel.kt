@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.DataClasses
+package ru.blays.revanced.data.DataModels
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

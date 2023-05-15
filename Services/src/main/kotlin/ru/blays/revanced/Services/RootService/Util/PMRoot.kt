@@ -1,4 +1,4 @@
-package ru.blays.revanced.RootService.Util
+package ru.blays.revanced.Services.RootService.Util
 
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.nio.ExtendedFile

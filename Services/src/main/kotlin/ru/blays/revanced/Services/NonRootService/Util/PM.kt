@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import com.vanced.manager.installer.service.AppInstallService
 import com.vanced.manager.installer.service.AppUninstallService
 import java.io.File
@@ -37,6 +38,15 @@ object PM {
     fun uninstallPackage(pkg: String, context: Context) {
         val packageInstaller = context.packageManager.packageInstaller
         packageInstaller.uninstall(pkg, context.uninstallIntentSender)
+    }
+
+    fun launchApp(pkg: String, context: Context) {
+        val intent = context.packageManager.getLaunchIntentForPackage(pkg)
+        val apk = context.packageManager.getPackageInfo(pkg, 0)
+        Log.d("PMLog", intent.toString() + apk)
+        if (intent != null) {
+            context.startActivity(intent)
+        }
     }
 }
 

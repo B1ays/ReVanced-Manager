@@ -8,4 +8,6 @@ interface AppInfoRepositoryInterface {
     suspend fun getVersionsInfo(jsonUrl: String): List<VersionsInfoModelDto>?
 
     suspend fun getApkList(jsonUrl: String): List<ApkInfoModelDto>?
+
+    suspend fun getChangelog(changelogUrl: String): String
 }

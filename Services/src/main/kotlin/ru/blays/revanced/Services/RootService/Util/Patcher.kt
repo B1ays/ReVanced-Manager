@@ -5,7 +5,7 @@ import com.topjohnwu.superuser.Shell.cmd
 import com.vanced.manager.repository.manager.PackageManagerError
 import com.vanced.manager.repository.manager.PackageManagerResult
 import com.vanced.manager.util.errString
-import ru.blays.revanced.RootService.Util.FileSystemManagerImplementation
+import ru.blays.revanced.Services.RootService.Util.FileSystemManagerImplementation
 import java.io.File
 import java.io.IOException
 

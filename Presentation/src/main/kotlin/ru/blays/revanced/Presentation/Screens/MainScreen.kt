@@ -52,8 +52,8 @@ fun MainScreen(
                 AppInfoCard(
                     icon = app.ico,
                     title = app.name,
-                    currentVersion = "1.10.1",
-                    availableVersion = "1.12.2",
+                    currentVersion = "18.16.39",
+                    availableVersion = "18.16.39",
                     onClick = app.action
                 )
             }

@@ -14,7 +14,7 @@ import com.vanced.manager.util.SuException
 import com.vanced.manager.util.awaitOutputOrThrow
 import com.vanced.manager.util.doubleUnionTryCatch
 import com.vanced.manager.util.tripleUnionTryCatch
-import ru.blays.revanced.RootService.Util.FileSystemManagerImplementation
+import ru.blays.revanced.Services.RootService.Util.FileSystemManagerImplementation
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException

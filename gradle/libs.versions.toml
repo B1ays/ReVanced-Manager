@@ -10,8 +10,10 @@ androidx-core = "1.12.0-alpha04"
 androidx-lifecycle = "2.6.1"
 androidx-room = "2.6.0-alpha01"
 androidx-savedstate = "1.2.1"
+coil = "2.3.0"
 com-google-devtools-ksp = "1.8.21-1.0.11"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
+compose-markdown = "0.3.3"
 io-github-raamcosta-compose-destinations = "1.9.42-beta"
 koin-android = "3.4.0"
 koin-androidx-compose = "3.4.4"
@@ -68,11 +70,13 @@ androidx-savedstate = { module = "androidx.savedstate:savedstate", version.ref =
 androidx-savedstate-savedstate-ktx = { module = "androidx.savedstate:savedstate-ktx", version.ref = "androidx-savedstate" }
 androidx-startup-startup-runtime = "androidx.startup:startup-runtime:1.1.1"
 androidx-versionedparcelable = "androidx.versionedparcelable:versionedparcelable:1.1.1"
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 com-google-devtools-ksp-symbol-processing = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "com-google-devtools-ksp" }
 com-google-devtools-ksp-symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "com-google-devtools-ksp" }
 com-google-devtools-ksp-symbol-processing-cmdline = { module = "com.google.devtools.ksp:symbol-processing-cmdline", version.ref = "com-google-devtools-ksp" }
 com-squareup-okhttp3-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "com-squareup-okhttp3" }
 com-squareup-okhttp3-okhttp-jvm = { module = "com.squareup.okhttp3:okhttp-jvm", version.ref = "com-squareup-okhttp3" }
+compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "compose-markdown" }
 io-github-raamcosta-compose-destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "io-github-raamcosta-compose-destinations" }
 io-github-raamcosta-compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "io-github-raamcosta-compose-destinations" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }

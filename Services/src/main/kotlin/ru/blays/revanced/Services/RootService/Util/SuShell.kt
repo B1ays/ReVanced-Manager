@@ -11,8 +11,8 @@ val Shell.Result.outString
 val Shell.Result.errString
     get() = err.joinToString("\n")
 
-val isMagiskInstalled
-    get() = Shell.isAppGrantedRoot() == true && Shell.cmd("magisk", "-c").exec().isSuccess
+val isRootGranted
+    get() = Shell.cmd("su").exec().isSuccess && Shell.cmd("magisk -v").exec().isSuccess
 
 suspend fun Shell.Job.await(): Shell.Result {
     return suspendCoroutine { continuation ->

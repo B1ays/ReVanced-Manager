@@ -1,13 +1,12 @@
 package ru.blays.revanced.data.repositories
 
 import android.util.Log
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException
-import ru.blays.revanced.data.DataClasses.ApkInfoModel
-import ru.blays.revanced.data.DataClasses.VersionsInfoModel
+import ru.blays.revanced.data.DataModels.ApkInfoModel
+import ru.blays.revanced.data.DataModels.VersionsInfoModel
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
@@ -60,7 +59,7 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
         this@mapApkInfoModelToDomainClass.forEach { item ->
             this.add(
                 ApkInfoModelDto(
-                    item.type,
+                    item.isRootVersion,
                     item.name,
                     item.description,
                     item.url
@@ -77,5 +76,7 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
     override suspend fun getApkList(jsonUrl: String) : List<ApkInfoModelDto>? = getHtmlBody(jsonUrl)
         ?.serializeJsonFromString<List<ApkInfoModel>>()
         ?.mapApkInfoModelToDomainClass()
+
+    override suspend fun getChangelog(changelogUrl: String): String = getHtmlBody(changelogUrl).orEmpty()
 
 }

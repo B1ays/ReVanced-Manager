@@ -21,6 +21,10 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
 
     private var _accentColorItem by mutableStateOf(1)
 
+    private var _isRootMode by mutableStateOf(false)
+
+    private var _installerType by mutableStateOf(0)
+
     var buildedTheme: MutableState<BuildedTheme>
         private set
 
@@ -40,6 +44,10 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
         _monetTheme = settingsRepositoryImplementation.monetTheme
 
         _accentColorItem = settingsRepositoryImplementation.accentColor
+
+        _isRootMode = settingsRepositoryImplementation.isRootMode
+
+        _installerType = settingsRepositoryImplementation.installerType
 
         buildedTheme = mutableStateOf(generateTheme(_accentColorItem))
     }
@@ -73,6 +81,21 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
             _accentColorItem = value
             settingsRepositoryImplementation.accentColor = value
         }
+
+    var isRootMode: Boolean
+        get() = _isRootMode
+        set(value) {
+            _isRootMode = value
+            settingsRepositoryImplementation.isRootMode = value
+        }
+
+    var installerType: Int
+        get() = _installerType
+        set(value) {
+            _installerType = value
+            settingsRepositoryImplementation.installerType = value
+        }
+
 
     private fun generateTheme(index: Int) : BuildedTheme =  with(
         AccentColorItem.list[if (index in AccentColorItem.list.indices) index else 1]
