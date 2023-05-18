@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 import org.koin.android.ext.android.inject
 import ru.Blays.ReVanced.Manager.ui.Navigation.Navigator
 import ru.blays.revanced.Presentation.Repository.SettingsRepository
-import ru.blays.revanced.Presentation.theme.ReVancedManagerTheme
+import ru.blays.revanced.Presentation.Theme.ReVancedManagerTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

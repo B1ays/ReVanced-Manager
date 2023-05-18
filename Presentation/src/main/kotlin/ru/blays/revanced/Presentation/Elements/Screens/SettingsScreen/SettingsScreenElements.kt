@@ -51,19 +51,16 @@ private val ModifierWithExpandAnimation = Modifier
         )
     )
 
-
 @Composable
 fun SettingsGroup(title: String, content: @Composable () -> Unit) {
-    Column {
-        Text(
-            modifier = Modifier
-                .padding(12.dp),
-            text = title,
-            style = MaterialTheme.typography.titleLarge
-        )
-        content()
-        Spacer(modifier = Modifier.height(16.dp))
-    }
+    Text(
+        modifier = Modifier
+            .padding(12.dp),
+        text = title,
+        style = MaterialTheme.typography.titleLarge
+    )
+    content()
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable
@@ -231,3 +228,4 @@ fun ColorPickerItem(
             }
     )
 }
+

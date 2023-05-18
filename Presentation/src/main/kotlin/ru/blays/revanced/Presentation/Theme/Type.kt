@@ -1,4 +1,4 @@
-package ru.blays.revanced.Presentation.theme
+package ru.blays.revanced.Presentation.Theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

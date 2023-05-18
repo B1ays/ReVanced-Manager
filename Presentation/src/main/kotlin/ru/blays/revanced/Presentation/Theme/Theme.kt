@@ -1,4 +1,4 @@
-package ru.blays.revanced.Presentation.theme
+package ru.blays.revanced.Presentation.Theme
 
 import android.app.Activity
 import android.os.Build

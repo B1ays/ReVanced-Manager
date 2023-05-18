@@ -74,9 +74,9 @@ dependencies {
     implementation libs.koin.androidx.compose
 
     // LibSu
-    implementation 'com.github.topjohnwu.libsu:core:5.0.5'
-    implementation 'com.github.topjohnwu.libsu:service:5.0.5'
-    implementation 'com.github.topjohnwu.libsu:nio:5.0.5'
+    implementation libs.core
+    implementation libs.service
+    implementation libs.nio
 
     // Modules
     implementation project (path: ':Presentation')

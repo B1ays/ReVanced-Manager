@@ -1,6 +1,6 @@
 package com.vanced.manager.installer.util
 
-enum class PMRootStatus {
+internal enum class PMRootStatus {
     ACTION_FAILED_SET_INSTALLER,
     ACTION_FAILED_GET_PACKAGE_DIR,
     ACTION_FAILED_GET_PACKAGE_VERSION_NAME,
@@ -40,7 +40,7 @@ enum class PMRootStatus {
     UNINSTALL_FAILED,
 }
 
-sealed class PMRootResult<out V> {
+internal sealed class PMRootResult<out V> {
     data class Success<out V>(val value: V? = null) : PMRootResult<V>()
     data class Error(val error: PMRootStatus, val message: String) : PMRootResult<Nothing>()
 
@@ -51,7 +51,7 @@ sealed class PMRootResult<out V> {
         get() = this is Success
 }
 
-inline fun <R, T : R> PMRootResult<T>.getOrElse(onError: (PMRootResult.Error) -> R): R? {
+internal inline fun <R, T : R> PMRootResult<T>.getOrElse(onError: (PMRootResult.Error) -> R): R? {
     return when (this) {
         is PMRootResult.Error -> onError(this)
         is PMRootResult.Success -> return this.value

@@ -3,7 +3,7 @@ package com.vanced.manager.util
 //Dear reader, welcome to HELL.
 //We don't kink-shame here.
 
-inline fun <reified E1 : Exception, reified E2 : Exception, R> doubleUnionTryCatch(
+internal inline fun <reified E1 : Exception, reified E2 : Exception, R> doubleUnionTryCatch(
     onCatch: (Exception) -> R,
     onTry: () -> R
 ): R {
@@ -17,7 +17,7 @@ inline fun <reified E1 : Exception, reified E2 : Exception, R> doubleUnionTryCat
     }
 }
 
-inline fun <reified E1 : Exception, reified E2 : Exception, reified E3 : Exception, R> tripleUnionTryCatch(
+internal inline fun <reified E1 : Exception, reified E2 : Exception, reified E3 : Exception, R> tripleUnionTryCatch(
     onCatch: (Exception) -> R,
     onTry: () -> R
 ): R {

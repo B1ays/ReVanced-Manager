@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.os.IBinder
 
-class AppUninstallService : Service() {
+internal class AppUninstallService : Service() {
 
     override fun onStartCommand(
         intent: Intent,

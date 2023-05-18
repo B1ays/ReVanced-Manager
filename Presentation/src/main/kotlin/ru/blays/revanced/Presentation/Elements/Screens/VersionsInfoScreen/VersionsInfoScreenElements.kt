@@ -52,23 +52,25 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.vanced.manager.installer.util.PM
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.koin.java.KoinJavaComponent.inject
 import ru.blays.revanced.Presentation.DataClasses.DefaultPadding
 import ru.blays.revanced.Presentation.DataClasses.InstalledAppInfo
 import ru.blays.revanced.Presentation.DataClasses.NavBarExpandedContent
 import ru.blays.revanced.Presentation.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.Presentation.Elements.GradientProgressIndicator.GradientLinearProgressIndicator
 import ru.blays.revanced.Presentation.R
-import ru.blays.revanced.Presentation.Utils.createDownloadSession
+import ru.blays.revanced.Presentation.Repository.SettingsRepository
+import ru.blays.revanced.Presentation.Theme.cardBorderBlue
+import ru.blays.revanced.Presentation.Theme.cardBorderRed
+import ru.blays.revanced.Presentation.Utils.createDownloadAndInstallSession
 import ru.blays.revanced.Presentation.ViewModels.VersionsListScreenViewModel
-import ru.blays.revanced.Presentation.theme.cardBorderBlue
-import ru.blays.revanced.Presentation.theme.cardBorderRed
+import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.data.Utils.FileDownloader
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
@@ -95,12 +97,20 @@ fun VersionsListScreenHeader(viewModel: VersionsListScreenViewModel, installedAp
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            OutlinedButton(onClick = { /*PM.uninstallPackage(installedAppInfo.packageName, context)*/ }) {
+            OutlinedButton(
+                onClick = {
+                    /*val pm: PackageManagerApi by inject(PackageManagerApi::class.java)
+                    pm.uninstall(InstalledAppInfo.youtubePackageName)*/
+                }
+            ) {
                 Text(text = "Удалить")
             }
             Spacer(modifier = Modifier.width(10.dp))
             Button(
-                onClick = { PM.launchApp(pkg = installedAppInfo.packageName, context = context) }
+                onClick = {
+                    val pm: PackageManagerApi by inject(PackageManagerApi::class.java)
+                    pm.launchApp(packageName = installedAppInfo.packageName)
+                }
             ) {
                 Text(text = "Открыть")
             }
@@ -321,6 +331,8 @@ fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: Strin
 
     val context = LocalContext.current
 
+    val settingsRepository: SettingsRepository = koinInject()
+
     Card(
         border = BorderStroke(
             color = if (item.isRootVersion) cardBorderRed else cardBorderBlue,
@@ -349,7 +361,12 @@ fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: Strin
             IconButton(
                 onClick = {
                     callback()
-                    val downloadSession = createDownloadSession(item.name, item.url, context)
+                    val downloadSession = createDownloadAndInstallSession(
+                        fileName = item.name,
+                        url = item.url,
+                        installerType = settingsRepository.installerType,
+                        context = context
+                    )
                     NavBarExpandedContent.setContent { DownloadProgressContent(fileName = item.name, downloader = downloadSession) }
                 }
             ) {
@@ -363,16 +380,16 @@ fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: Strin
     }
 }
 
-
-private fun Duration.toMillisInt(): Int = this.toMillis().toInt()
-
 @Composable
 private fun DownloadProgressContent(fileName: String, downloader: FileDownloader) {
+
     val progress = downloader.progressFlow.collectAsState().value
 
     val status = downloader.downloadStatusFlow.collectAsState().value
 
-    if (status == FileDownloader.END_DOWNLOAD) NavBarExpandedContent.hide()
+    if (status == FileDownloader.END_DOWNLOAD) {
+        NavBarExpandedContent.hide()
+    }
 
     Column(
         modifier = Modifier
@@ -397,3 +414,5 @@ private fun DownloadProgressContent(fileName: String, downloader: FileDownloader
         )
     }
 }
+
+private fun Duration.toMillisInt(): Int = this.toMillis().toInt()

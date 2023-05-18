@@ -9,7 +9,7 @@ import ru.blays.revanced.Services.RootService.Util.FileSystemManagerImplementati
 import java.io.File
 import java.io.IOException
 
-object Patcher {
+internal object Patcher {
 
     fun setupScript(
         app: String,
@@ -188,7 +188,7 @@ private fun copyScriptToDestination(
     return Result.success(null)
 }
 
-sealed class SuFileResult {
+internal sealed class SuFileResult {
     data class Success(val output: String) : SuFileResult()
     data class Error(val error: String) : SuFileResult()
 }

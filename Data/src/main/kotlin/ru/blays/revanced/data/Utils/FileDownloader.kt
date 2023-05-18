@@ -44,10 +44,13 @@ class FileDownloader : FileDownloaderInterface {
 
     override val progressFlow = MutableStateFlow(0F)
 
+    lateinit var file: File
+
     override fun downloadFile(url: String, file: File) {
 
         val client = OkHttpClient()
 
+        this.file = file
 
         job.launch {
             try {

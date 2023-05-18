@@ -5,7 +5,8 @@ import com.topjohnwu.superuser.nio.FileSystemManager
 import java.io.File
 import java.nio.channels.FileChannel
 
-class FileSystemManagerImplementation : FileSystemManager() {
+internal class FileSystemManagerImplementation : FileSystemManager() {
+
 
     private val local = getLocal()
     override fun getFile(pathname: String): ExtendedFile {

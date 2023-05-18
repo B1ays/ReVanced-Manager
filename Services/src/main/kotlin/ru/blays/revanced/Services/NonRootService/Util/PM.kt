@@ -6,14 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import com.vanced.manager.installer.service.AppInstallService
 import com.vanced.manager.installer.service.AppUninstallService
 import java.io.File
 
 private const val byteArraySize = 1024 * 1024 // Because 1,048,576 is not readable
 
-object PM {
+internal object PM {
 
     fun installApp(apk: File, context: Context) {
         val packageInstaller = context.packageManager.packageInstaller
@@ -43,10 +42,17 @@ object PM {
     fun launchApp(pkg: String, context: Context) {
         val intent = context.packageManager.getLaunchIntentForPackage(pkg)
         val apk = context.packageManager.getPackageInfo(pkg, 0)
-        Log.d("PMLog", intent.toString() + apk)
         if (intent != null) {
             context.startActivity(intent)
         }
+    }
+
+    @Suppress("DEPRECATION")
+    fun getAppName(pkg: String, context: Context): String {
+
+        val packageManager = context.packageManager
+
+        return packageManager.getApplicationInfo(pkg, 0).name
     }
 }
 

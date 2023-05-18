@@ -14,6 +14,7 @@ coil = "2.3.0"
 com-google-devtools-ksp = "1.8.21-1.0.11"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-markdown = "0.3.3"
+core = "5.0.5"
 io-github-raamcosta-compose-destinations = "1.9.42-beta"
 koin-android = "3.4.0"
 koin-androidx-compose = "3.4.4"
@@ -77,10 +78,12 @@ com-google-devtools-ksp-symbol-processing-cmdline = { module = "com.google.devto
 com-squareup-okhttp3-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "com-squareup-okhttp3" }
 com-squareup-okhttp3-okhttp-jvm = { module = "com.squareup.okhttp3:okhttp-jvm", version.ref = "com-squareup-okhttp3" }
 compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "compose-markdown" }
+core = { module = "com.github.topjohnwu.libsu:core", version.ref = "core" }
 io-github-raamcosta-compose-destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "io-github-raamcosta-compose-destinations" }
 io-github-raamcosta-compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "io-github-raamcosta-compose-destinations" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-androidx-compose" }
+nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "core" }
 org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:2.20.0"
 org-jetbrains-kotlin-kotlin-scripting-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "org-jetbrains-kotlin" }
@@ -95,6 +98,7 @@ org-jetbrains-kotlinx-kotlinx-serialization-core-jvm = "org.jetbrains.kotlinx:ko
 org-jetbrains-kotlinx-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 org-jetbrains-kotlinx-kotlinx-serialization-json-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.5.1"
 rebugger = { module = "com.github.theapache64:rebugger", version.ref = "rebugger" }
+service = { module = "com.github.topjohnwu.libsu:service", version.ref = "core" }
 
 [plugins]
 com-android-application = "com.android.application:8.2.0-alpha03"

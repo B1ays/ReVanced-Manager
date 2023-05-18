@@ -10,25 +10,22 @@ import com.vanced.manager.util.outString
 import java.io.File
 import java.io.IOException
 
-object PMRoot {
+internal object PMRoot {
 
-    fun installApp(apkPath: String): PackageManagerResult<Nothing> {
-        val apk = File(apkPath)
-        val tmpApk = copyApkToTemp(apk).getOrElse { exception ->
-            return PackageManagerResult.Error(
-                PackageManagerError.SESSION_FAILED_COPY,
-                exception.stackTraceToString()
-            )
-        }
+    fun installApp(file: File): PackageManagerResult<Nothing> {
 
-        val install = Shell.cmd("pm", "install", "-r", tmpApk.absolutePath).exec()
+        val apkPath = file.absolutePath
 
-        tmpApk.delete()
+        val size = file.length()
+
+        val install = Shell.cmd("cat '$apkPath' | pm install -S $size").exec()
+
 
         if (!install.isSuccess) {
             val errString = install.errString
             return PackageManagerResult.Error(getEnumForInstallFailed(errString), errString)
         }
+
 
         return PackageManagerResult.Success(null)
     }
@@ -60,8 +57,7 @@ object PMRoot {
             }
 
             val installWrite =
-                Shell.cmd("pm", "install-write", sessionId, tmpApk.name, tmpApk.absolutePath)
-                    .exec()
+                Shell.cmd("pm", "install-write", sessionId, tmpApk.name, tmpApk.absolutePath).exec()
 
             tmpApk.delete()
 

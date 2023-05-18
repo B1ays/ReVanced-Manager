@@ -1,7 +1,7 @@
 package ru.blays.revanced.Presentation.Screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,6 +35,7 @@ import ru.blays.revanced.Presentation.ViewModels.VersionsListScreenViewModel
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 
+@OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
 fun VersionsListScreen(
@@ -78,17 +79,16 @@ fun VersionsListScreen(
                 .padding(padding)
                 .fillMaxSize()
         ) {
-            Column {
-                VersionsListScreenHeader(viewModel = viewModel, installedAppInfo = viewModel.installedAppInfo)
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    items(list) { item ->
-                        VersionsInfoCard(item = item, viewModel = viewModel)
-                    }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                stickyHeader { VersionsListScreenHeader(viewModel = viewModel, installedAppInfo = viewModel.installedAppInfo) }
+                items(list) { item ->
+                    VersionsInfoCard(item = item, viewModel = viewModel)
                 }
             }
+
             PullRefreshIndicator(
                 refreshing = viewModel.isRefreshing,
                 state = pullRefreshState,
@@ -105,11 +105,11 @@ fun VersionsListScreen(
         ),
     )*/
 
-    val apkListBottomSheetSate by viewModel.isApkListBottomSheetExpanded.collectAsState()
+    val apkListBottomSheetState by viewModel.isApkListBottomSheetExpanded.collectAsState()
 
     val changelogBottomSheetState by viewModel.isChangelogBottomSheetExpanded.collectAsState()
 
-    if (apkListBottomSheetSate) {
+    if (apkListBottomSheetState) {
         SubversionsListBottomSheet(
             isExpanded = viewModel.isApkListBottomSheetExpanded,
             list = viewModel.bottomSheetList

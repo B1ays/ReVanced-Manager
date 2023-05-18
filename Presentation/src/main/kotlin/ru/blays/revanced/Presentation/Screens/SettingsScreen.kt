@@ -7,15 +7,24 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.navigate
 import com.vanced.manager.util.isRootGranted
 import org.koin.compose.koinInject
 import ru.blays.revanced.Presentation.DataClasses.AccentColorItem
@@ -26,6 +35,7 @@ import ru.blays.revanced.Presentation.Elements.Screens.SettingsScreen.SettingsGr
 import ru.blays.revanced.Presentation.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
 import ru.blays.revanced.Presentation.Repository.SettingsRepository
 import ru.blays.revanced.Presentation.Repository.ThemeModel
+import ru.blays.revanced.Presentation.Screens.destinations.AboutScreenDestination
 import ru.blays.revanced.Presentation.Utils.isSAndAboveCompose
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
@@ -39,6 +49,10 @@ fun SettingsScreen(
 ) {
 
     val scrollBehavior = rememberToolbarScrollBehavior()
+    
+    var isSpinnerExpanded by remember { mutableStateOf(false) }
+    
+    val changeExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
 
     Scaffold(
         modifier = Modifier
@@ -51,6 +65,14 @@ fun SettingsScreen(
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "NavigateBack")
+                    }
+                },
+                actions = {
+                    DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeExpanded) {
+                        DropdownMenuItem(text = { Text(text = "О приложении") }, onClick = { navController.navigate(AboutScreenDestination) })
+                    }
+                    IconButton(onClick = changeExpanded) {
+                        Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -66,7 +88,7 @@ fun SettingsScreen(
             item {
                 SettingsGroup(title = "Тема приложения") {
                     ThemeSelector(repository = settingsRepository)
-                    isSAndAboveCompose { MonetSettings(repository = settingsRepository) }
+                    isSAndAboveCompose { MonetColors(repository = settingsRepository) }
                     AccentSelector(settingsRepository)
                 }
             }
@@ -99,7 +121,7 @@ private fun ThemeSelector(repository: SettingsRepository) {
 }
 
 @Composable
-private fun MonetSettings(repository: SettingsRepository) {
+private fun MonetColors(repository: SettingsRepository) {
     SettingsCardWithSwitch(title = "Monet цвета", subtitle = "Использовать цвета из Monet", state = repository.monetTheme) {
         repository.monetTheme = it
     }

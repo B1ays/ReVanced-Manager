@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.os.IBinder
 
-class AppInstallService : Service() {
+internal class AppInstallService : Service() {
 
     override fun onStartCommand(
         intent: Intent,

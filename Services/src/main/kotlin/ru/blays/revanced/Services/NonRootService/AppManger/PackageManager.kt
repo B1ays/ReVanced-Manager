@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.os.Build
+import androidx.annotation.RequiresApi
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.nio.*
 import com.vanced.manager.installer.service.AppInstallService
@@ -13,8 +14,8 @@ import com.vanced.manager.installer.service.AppUninstallService
 import com.vanced.manager.util.SuException
 import com.vanced.manager.util.awaitOutputOrThrow
 import com.vanced.manager.util.doubleUnionTryCatch
+import com.vanced.manager.util.errString
 import com.vanced.manager.util.tripleUnionTryCatch
-import ru.blays.revanced.Services.RootService.Util.FileSystemManagerImplementation
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -37,6 +38,8 @@ interface PackageManager {
 
     suspend fun uninstallApp(packageName: String): PackageManagerResult<Nothing>
 
+    suspend fun launchApp(packageName: String): PackageManagerResult<Nothing>
+
 }
 
 class NonrootPackageManager(
@@ -47,7 +50,13 @@ class NonrootPackageManager(
     @Suppress("DEPRECATION")
     override suspend fun getVersionCode(packageName: String): PackageManagerResult<Int> {
         return try {
-            val packageInfo = context.packageManager.getPackageInfo(packageName, FLAG_NOTHING)
+
+            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.packageManager.getPackageInfo(packageName, FLAG_NOTHING_TIRAMISU)
+            } else {
+                context.packageManager.getPackageInfo(packageName, FLAG_NOTHING_OLD)
+            }
+
             val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageInfo.longVersionCode.and(VERSION_IGNORE_MAJOR).toInt()
             } else {
@@ -63,12 +72,18 @@ class NonrootPackageManager(
         }
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("WrongConstant")
     override suspend fun getVersionName(packageName: String): PackageManagerResult<String> {
         return try {
-            val versionName = context.packageManager
-                .getPackageInfo(packageName, FLAG_NOTHING)
-                .versionName
+
+            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.packageManager.getPackageInfo(packageName, FLAG_NOTHING_TIRAMISU)
+            } else {
+                context.packageManager.getPackageInfo(packageName, FLAG_NOTHING_OLD)
+            }
+
+            val versionName = packageInfo.versionName
 
             PackageManagerResult.Success(versionName)
         } catch (e: android.content.pm.PackageManager.NameNotFoundException) {
@@ -79,11 +94,18 @@ class NonrootPackageManager(
         }
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("WrongConstant")
     override suspend fun getInstallationDir(packageName: String): PackageManagerResult<String> {
         return try {
-            val installationDir = context.packageManager
-                .getPackageInfo(packageName, FLAG_NOTHING)
+
+            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.packageManager.getPackageInfo(packageName, FLAG_NOTHING_TIRAMISU)
+            } else {
+                context.packageManager.getPackageInfo(packageName, FLAG_NOTHING_OLD)
+            }
+
+            val installationDir = packageInfo
                 .applicationInfo
                 .sourceDir
 
@@ -139,17 +161,26 @@ class NonrootPackageManager(
         return PackageManagerResult.Success(null)
     }
 
+    override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> {
+        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+        return if (intent != null) {
+            context.startActivity(intent)
+            PackageManagerResult.Success(null)
+        } else PackageManagerResult.Error(error = PackageManagerError.LAUNCH_FAILED, message = "App launch failed")
+    }
+
     private inline fun createInstallationSession(
         block: PackageInstaller.Session.() -> Unit
     ): PackageManagerResult<Nothing> {
+
         val packageInstaller = context.packageManager.packageInstaller
+
         val sessionParams = PackageInstaller.SessionParams(
             PackageInstaller.SessionParams.MODE_FULL_INSTALL
         ).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                setInstallReason(android.content.pm.PackageManager.INSTALL_REASON_USER)
-            }
+            setInstallReason(android.content.pm.PackageManager.INSTALL_REASON_USER)
         }
+
         val pendingIntent = PendingIntent.getService(
             context,
             0,
@@ -219,7 +250,11 @@ class NonrootPackageManager(
     private companion object {
         const val byteArraySize = 1024 * 1024
 
-        const val FLAG_NOTHING = 0
+        const val FLAG_NOTHING_OLD = 0
+
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        val FLAG_NOTHING_TIRAMISU = android.content.pm.PackageManager.PackageInfoFlags.of(0)
+
         const val VERSION_IGNORE_MAJOR = 0xFFFFFFFF
     }
 
@@ -230,8 +265,8 @@ class RootPackageManager : PackageManager {
     override suspend fun getVersionCode(packageName: String): PackageManagerResult<Int> {
         return try {
             val keyword = "versionCode="
-            val dumpsys = Shell.cmd("dumpsys", "package", packageName, "|", "grep", keyword).awaitOutputOrThrow()
-            val versionCode =  dumpsys.removePrefix(keyword).substringAfter("minSdk").toInt()
+            val dumpsys = Shell.cmd("dumpsys package $packageName | grep $keyword").awaitOutputOrThrow()
+            val versionCode = dumpsys.removePrefix(keyword).substringAfter("minSdk").toInt()
 
             PackageManagerResult.Success(versionCode)
         } catch (e: SuException) {
@@ -239,7 +274,7 @@ class RootPackageManager : PackageManager {
                 error = PackageManagerError.GET_FAILED_PACKAGE_VERSION_CODE,
                 message = e.stderrOut
             )
-        } catch (e: java.lang.NumberFormatException) {
+        } catch (e: NumberFormatException) {
             PackageManagerResult.Error(
                 error = PackageManagerError.GET_FAILED_PACKAGE_VERSION_CODE,
                 message = e.stackTraceToString()
@@ -250,7 +285,7 @@ class RootPackageManager : PackageManager {
     override suspend fun getVersionName(packageName: String): PackageManagerResult<String> {
         return try {
             val keyword = "versionName="
-            val dumpsys = Shell.cmd("dumpsys", "package", packageName, "|", "grep", keyword).awaitOutputOrThrow()
+            val dumpsys = Shell.cmd("dumpsys package $packageName | grep $keyword").awaitOutputOrThrow()
             val versionName = dumpsys.removePrefix(keyword)
 
             PackageManagerResult.Success(versionName)
@@ -265,7 +300,7 @@ class RootPackageManager : PackageManager {
     override suspend fun getInstallationDir(packageName: String): PackageManagerResult<String> {
         return try {
             val keyword = "path: "
-            val dumpsys = Shell.cmd("dumpsys", "package", packageName, "|", "grep", keyword).awaitOutputOrThrow()
+            val dumpsys = Shell.cmd("dumpsys package $packageName | grep $keyword").awaitOutputOrThrow()
             val installationDir = dumpsys.removePrefix(keyword)
 
             PackageManagerResult.Success(installationDir)
@@ -282,7 +317,7 @@ class RootPackageManager : PackageManager {
         installerPackage: String
     ): PackageManagerResult<Nothing> {
         return try {
-            Shell.cmd("pm", "set-installer", targetPackage, installerPackage).awaitOutputOrThrow()
+            Shell.cmd("pm set-installer $targetPackage $installerPackage").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
         } catch (e: SuException) {
@@ -295,7 +330,7 @@ class RootPackageManager : PackageManager {
 
     override suspend fun forceStop(packageName: String): PackageManagerResult<Nothing> {
         return try {
-            Shell.cmd("am", "force-stop", packageName).awaitOutputOrThrow()
+            Shell.cmd("am force-stop $packageName").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
         } catch (e: SuException) {
@@ -307,30 +342,23 @@ class RootPackageManager : PackageManager {
     }
 
     override suspend fun installApp(apk: File): PackageManagerResult<Nothing> {
-        var tempApk: File? = null
-        return try {
-            tempApk = copyApkToTemp(apk)
-            Shell.cmd("pm", "install", "-r", tempApk.absolutePath).awaitOutputOrThrow()
+        val apkPath = apk.absolutePath
 
-            PackageManagerResult.Success(null)
-        } catch (e: IOException) {
-             PackageManagerResult.Error(
-                 error = PackageManagerError.SESSION_FAILED_COPY,
-                 message = e.stackTraceToString()
-             )
-        } catch (e: SuException) {
-            PackageManagerResult.Error(
-                error = getEnumForInstallFailed(e.stderrOut),
-                message = e.stderrOut
-            )
-        } finally {
-            tempApk?.delete()
+        val size = apk.length()
+
+        val install = Shell.cmd("cat '$apkPath' | pm install -S $size").exec()
+
+        if (!install.isSuccess) {
+            val errString = install.errString
+            return PackageManagerResult.Error(getEnumForInstallFailed(errString), errString)
         }
+
+        return PackageManagerResult.Success(null)
     }
 
     override suspend fun installSplitApp(apks: Array<File>): PackageManagerResult<Nothing> {
         val sessionId = try {
-            val installCreate = Shell.cmd("pm", "install-create", "-r").awaitOutputOrThrow()
+            val installCreate = Shell.cmd("pm install-create -r").awaitOutputOrThrow()
 
             installCreate.toInt()
         } catch (e: SuException) {
@@ -346,10 +374,10 @@ class RootPackageManager : PackageManager {
         }
 
         for (apk in apks) {
-            var tempApk: File? = null
+            var tempApk: String? = null
             try {
                 tempApk = copyApkToTemp(apk)
-                Shell.cmd("pm", "install-write", sessionId.toString(), tempApk.name, tempApk.absolutePath).awaitOutputOrThrow()
+                Shell.cmd("pm install-write $sessionId '${apk.name}' '$tempApk'").awaitOutputOrThrow()
             } catch (e: SuException) {
                 return PackageManagerResult.Error(
                     error = PackageManagerError.SESSION_FAILED_WRITE,
@@ -361,12 +389,12 @@ class RootPackageManager : PackageManager {
                     message = e.stackTraceToString()
                 )
             } finally {
-                tempApk?.delete()
+                tempApk?.let { deleteTempApk(it) }
             }
         }
 
         return try {
-            Shell.cmd("pm", "install-commit", sessionId.toString()).awaitOutputOrThrow()
+            Shell.cmd("pm install-commit $sessionId").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
         } catch (e: SuException) {
@@ -379,7 +407,7 @@ class RootPackageManager : PackageManager {
 
     override suspend fun uninstallApp(packageName: String): PackageManagerResult<Nothing> {
         return try {
-            Shell.cmd("pm", "uninstall", packageName).awaitOutputOrThrow()
+            Shell.cmd("pm uninstall $packageName").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
         } catch (e: SuException) {
@@ -390,28 +418,35 @@ class RootPackageManager : PackageManager {
         }
     }
 
+    override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> {
+        return try {
+            Shell.cmd("monkey -p $packageName -c android.intent.category.LAUNCHER 1")
+            PackageManagerResult.Success(null)
+        } catch (e: SuException) {
+            PackageManagerResult.Error(
+                error = PackageManagerError.LAUNCH_FAILED,
+                message = e.stderrOut
+            )
+        }
+    }
+
     @Throws(
         IOException::class,
         FileNotFoundException::class
     )
-    private fun copyApkToTemp(apk: File): ExtendedFile {
+    private fun copyApkToTemp(apk: File): String? {
 
-        val fileManager = FileSystemManagerImplementation()
+        val apkAbsolutePath = apk.absolutePath
 
-        val tmpPath = "/data/local/tmp/${apk.name}"
+        val tmpPath = "/data/local/tmp/'${apk.name}'"
 
-        val tmpApk = fileManager.getFile(tmpPath).apply {
-            createNewFile()
-        }
+        val copy = Shell.cmd("cp -f '$apkAbsolutePath' '$tmpPath'").exec()
 
-        tmpApk.inputStream().use { inputStream ->
-            tmpApk.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
-                outputStream.flush()
-            }
-        }
+        return if (copy.isSuccess) tmpPath else null
+    }
 
-        return tmpApk
+    private fun deleteTempApk(tmpPath: String) {
+        Shell.cmd("rm -f '$tmpPath'")
     }
 
 }
@@ -442,6 +477,8 @@ enum class PackageManagerError {
 
     UNINSTALL_FAILED,
 
+    LAUNCH_FAILED,
+
     LINK_FAILED_UNMOUNT,
     LINK_FAILED_MOUNT,
 
@@ -457,7 +494,7 @@ enum class PackageManagerError {
     SCRIPT_FAILED_DESTROY_SERVICE_D,
 }
 
-fun getEnumForInstallFailed(outString: String): PackageManagerError {
+internal fun getEnumForInstallFailed(outString: String): PackageManagerError {
     return when {
         outString.contains("INSTALL_FAILED_ABORTED") -> PackageManagerError.INSTALL_FAILED_ABORTED
         outString.contains("INSTALL_FAILED_ALREADY_EXISTS") -> PackageManagerError.INSTALL_FAILED_ALREADY_EXISTS
@@ -483,7 +520,7 @@ sealed class PackageManagerResult<out V> {
         get() = this is Success
 }
 
-inline fun <R, T : R> PackageManagerResult<T>.getOrElse(
+internal inline fun <R, T : R> PackageManagerResult<T>.getOrElse(
     onError: (PackageManagerResult.Error) -> R?
 ): R? {
     return when (this) {

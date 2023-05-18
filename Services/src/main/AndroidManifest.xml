@@ -4,6 +4,14 @@
 
     <uses-permission android:name="android.permission.DELETE_PACKAGES"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <application>
+        <service android:name="com.vanced.manager.installer.service.AppInstallService" />
+        <service android:name="com.vanced.manager.installer.service.AppUninstallService" />
+    </application>
 
 </manifest>
-

@@ -10,5 +10,4 @@ data class InstalledAppInfo(
         const val youtubePackageName = "com.google.android.youtube"
         const val musicPackageName = "com.google.android.apps.youtube.music"
     }
-
 }

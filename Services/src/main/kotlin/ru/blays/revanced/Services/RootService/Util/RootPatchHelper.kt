@@ -4,7 +4,7 @@ import com.vanced.manager.installer.util.Patcher
 import com.vanced.manager.repository.manager.PackageManagerResult
 import com.vanced.manager.repository.manager.getOrElse
 
-object RootPatchHelper {
+internal object RootPatchHelper {
 
     fun cleanPatches(app: String): PackageManagerResult<Nothing> {
         val cleanOldPatches = Patcher.destroyOldPatch(app)

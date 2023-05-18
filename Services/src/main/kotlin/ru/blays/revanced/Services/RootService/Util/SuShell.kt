@@ -5,16 +5,16 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-val Shell.Result.outString
+internal val Shell.Result.outString
     get() = out.joinToString("\n")
 
-val Shell.Result.errString
+internal val Shell.Result.errString
     get() = err.joinToString("\n")
 
 val isRootGranted
     get() = Shell.cmd("su").exec().isSuccess && Shell.cmd("magisk -v").exec().isSuccess
 
-suspend fun Shell.Job.await(): Shell.Result {
+internal suspend fun Shell.Job.await(): Shell.Result {
     return suspendCoroutine { continuation ->
         submit {
             continuation.resume(it)
@@ -22,10 +22,10 @@ suspend fun Shell.Job.await(): Shell.Result {
     }
 }
 
-class SuException(val stderrOut: String) : Exception(stderrOut)
+internal class SuException(val stderrOut: String) : Exception(stderrOut)
 
 @Throws(SuException::class)
-suspend fun Shell.Job.awaitOutputOrThrow(): String {
+internal suspend fun Shell.Job.awaitOutputOrThrow(): String {
     return suspendCoroutine { continuation ->
         submit {
             if (it.isSuccess) {
