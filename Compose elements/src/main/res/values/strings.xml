@@ -1,0 +1,64 @@
+<resources>
+
+    <!--  AppBar titles  -->
+    <string name="AppBar_Main">Main</string>
+    <string name="AppBar_Versions">Versions</string>
+    <string name="AppBar_Settings">Settings</string>
+    <string name="AppBar_About">About</string>
+
+    <!--  App info  -->
+    <string name="Installed_version">Installed version</string>
+    <string name="Available_version">Available version</string>
+    <string name="Version">Version</string>
+    <string name="Patches_version">Patches version</string>
+    <string name="Build_date">Build date</string>
+    <string name="Description">Description</string>
+
+    <!--  Download  -->
+    <string name="Download">Download</string>
+    <string name="Progress">Progress</string>
+
+    <!--  Actions  -->
+    <string name="Action_download">Download</string>
+    <string name="Action_install">Install</string>
+    <string name="Action_uninstall">Uninstall</string>
+    <string name="Action_launch">Launch</string>
+    <string name="Action_changelog" translatable="false">Changelog</string>
+
+    <!--  Dropdown menu items  -->
+    <string name="About_app">About app</string>
+
+    <!--  Settings group titles  -->
+    <string name="Settings_title_theme">App theme &amp; colors</string>
+    <string name="Settings_title_main">Main settings</string>
+
+    <!--  Dark mode setting  -->
+    <string name="Settings_card_theme_title">Theme</string>
+    <string name="Settings_card_theme_description">Select app theme</string>
+
+    <string name="Settings_card_theme_system">System</string>
+    <string name="Settings_card_theme_dark">Dark</string>
+    <string name="Settings_card_theme_light">Light</string>
+
+    <!--  Monet setting  -->
+    <string name="Settings_card_monet_title">Monet colors</string>
+    <string name="Settings_card_monet_description">Use Monet colors</string>
+
+    <!--  Accent color setting  -->
+    <string name="Settings_card_accent_title">Accent color</string>
+    <string name="Settings_card_accent_description">Manually select accent color</string>
+
+    <!--  Apk installer setting  -->
+    <string name="Settings_card_installer_title">Installer type</string>
+    <string name="Settings_card_installer_description">Used for install non-root versions and original app</string>
+
+    <string name="Settings_card_installer_session">Session installer</string>
+    <string name="Settings_card_installer_root">Root installer</string>
+    <string name="Settings_card_installer_shizuku">Shizuku installer</string>
+
+    <!--  Selected apps setting  -->
+    <string name="Settings_card_selected_apps_title">Selected apps</string>
+    <string name="Settings_card_selected_apps_description">Apps what managed by manager</string>
+
+
+</resources>

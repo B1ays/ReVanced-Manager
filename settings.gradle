@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ReVanced Manager"
 include ':app'
-include ':Presentation'
+include ':Compose elements'
 include ':Domain'
 include ':Data'
 include ':Services'

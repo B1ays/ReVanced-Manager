@@ -10,8 +10,8 @@
         tools:ignore="QueryAllPackagesPermission" />
 
     <application>
-        <service android:name="com.vanced.manager.installer.service.AppInstallService" />
-        <service android:name="com.vanced.manager.installer.service.AppUninstallService" />
+        <service android:name="ru.blays.revanced.Services.NonRootService.InstallService.AppInstallService" />
+        <service android:name="ru.blays.revanced.Services.NonRootService.InstallService.AppUninstallService" />
     </application>
 
 </manifest>

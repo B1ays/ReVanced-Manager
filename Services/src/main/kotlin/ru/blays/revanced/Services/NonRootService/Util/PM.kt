@@ -1,4 +1,4 @@
-package com.vanced.manager.installer.util
+package ru.blays.revanced.Services.NonRootService.Util
 
 import android.app.PendingIntent
 import android.content.Context
@@ -6,8 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.os.Build
-import com.vanced.manager.installer.service.AppInstallService
-import com.vanced.manager.installer.service.AppUninstallService
+import ru.blays.revanced.Services.NonRootService.InstallService.AppInstallService
+import ru.blays.revanced.Services.NonRootService.InstallService.AppUninstallService
 import java.io.File
 
 private const val byteArraySize = 1024 * 1024 // Because 1,048,576 is not readable

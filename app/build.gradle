@@ -77,9 +77,9 @@ dependencies {
     implementation libs.core
     implementation libs.service
     implementation libs.nio
+    implementation project(path: ':Compose elements')
 
     // Modules
-    implementation project (path: ':Presentation')
     implementation project (path: ':Domain')
     implementation project (path: ':Data')
     implementation project(path: ':Services')

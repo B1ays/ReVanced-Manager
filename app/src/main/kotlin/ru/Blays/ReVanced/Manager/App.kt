@@ -4,7 +4,8 @@ import android.app.Application
 import com.topjohnwu.superuser.Shell
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import ru.Blays.ReVanced.Manager.di.appModule
+import ru.Blays.ReVanced.Manager.DI.appModule
+import ru.blays.revanced.Elements.DI.composeElementsModule
 
 class App: Application() {
 
@@ -17,14 +18,10 @@ class App: Application() {
                 .setTimeout(20)
         )
 
-        /*val isRootExist = Shell.cmd("su").exec().isSuccess
-        val isMagiskExist = Shell.cmd("magisk -v").exec().isSuccess
-
-        Log.d("MagiskLog", "Magisk: $isMagiskExist, Root: $isRootExist")*/
-
         startKoin {
             androidContext(this@App)
             modules(appModule)
+            modules(composeElementsModule)
         }
     }
 }

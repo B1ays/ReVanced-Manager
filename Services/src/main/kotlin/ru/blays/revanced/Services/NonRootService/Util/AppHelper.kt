@@ -1,4 +1,4 @@
-package com.vanced.manager.util
+package ru.blays.revanced.Services.NonRootService.Util
 
 import android.os.Build
 

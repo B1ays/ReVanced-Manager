@@ -1,14 +1,14 @@
 package ru.blays.revanced.Services.PublicApi
 
 import android.content.Context
-import com.vanced.manager.repository.manager.NonrootPackageManager
-import com.vanced.manager.repository.manager.PackageManager
-import com.vanced.manager.repository.manager.RootPackageManager
-import com.vanced.manager.util.isRootGranted
+import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerInterface
+import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import ru.blays.revanced.Services.NonRootService.PackageManager.NonrootPackageManager
+import ru.blays.revanced.Services.NonRootService.PackageManager.RootPackageManager
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
@@ -16,7 +16,7 @@ class PackageManagerApiImpl(context: Context, private val installerType: Int): P
 
     override val coroutineContext: CoroutineContext = Dispatchers.Default
 
-    override val packageManager: PackageManager = when {
+    override val packageManagerInterface: PackageManagerInterface = when {
         installerType == 1 -> NonrootPackageManager(context)
         installerType == 2 && isRootGranted -> RootPackageManager()
         else -> NonrootPackageManager(context)
@@ -24,7 +24,7 @@ class PackageManagerApiImpl(context: Context, private val installerType: Int): P
 
     override fun installApk(file: File, installerType: Int) {
         launch {
-            packageManager.installApp(file)
+            packageManagerInterface.installApp(file)
         }
     }
 
@@ -33,24 +33,24 @@ class PackageManagerApiImpl(context: Context, private val installerType: Int): P
         installerType: Int
     ) {
         launch {
-            packageManager.installSplitApp(apks = files.toTypedArray())
+            packageManagerInterface.installSplitApp(apks = files.toTypedArray())
         }
     }
 
     override fun uninstall(packageName: String) {
         launch {
-            packageManager.uninstallApp(packageName)
+            packageManagerInterface.uninstallApp(packageName)
         }
     }
 
     override fun launchApp(packageName: String) {
         launch {
-            packageManager.launchApp(packageName)
+            packageManagerInterface.launchApp(packageName)
         }
     }
 
     override fun getVersionName(packageName: String) = async {
-        packageManager.getVersionName(packageName)
+        packageManagerInterface.getVersionName(packageName)
     }
 
 }

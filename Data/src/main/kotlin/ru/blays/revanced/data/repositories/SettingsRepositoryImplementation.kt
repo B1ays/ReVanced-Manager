@@ -9,6 +9,10 @@ private const val APP_THEME_ACCENT = "AccentColor"
 private const val ROOT_MODE = "RootMode"
 private const val INSTALLER_TYPE = "InstallerType"
 
+private const val MANAGED_YOUTUBE = "youtubeManaging"
+private const val MANAGED_MUSIC = "musicManaging"
+private const val MANAGED_MICROG = "microGManaging"
+
 class SettingsRepositoryImplementation(context: Context) {
 
     private val preferences: SharedPreferences = context.getSharedPreferences("App", Context.MODE_PRIVATE)
@@ -54,5 +58,15 @@ class SettingsRepositoryImplementation(context: Context) {
         get() = getSetting(INSTALLER_TYPE, 1)!!
         set(value) = putSetting(INSTALLER_TYPE, value)
 
+    var youtubeManaged: Boolean
+        get() = getSetting(MANAGED_YOUTUBE, true)!!
+        set(value) = putSetting(MANAGED_YOUTUBE, value)
 
+    var musicManaged: Boolean
+        get() = getSetting(MANAGED_MUSIC, false)!!
+        set(value) = putSetting(MANAGED_MUSIC, value)
+
+    var microGManaged: Boolean
+        get() = getSetting(MANAGED_MICROG, false)!!
+        set(value) = putSetting(MANAGED_MICROG, value)
 }

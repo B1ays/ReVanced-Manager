@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="AppBar_Main">Главная</string>
+    <string name="AppBar_Versions">Версии</string>
+    <string name="AppBar_Settings">Настройки</string>
+    <string name="AppBar_About">О приложении</string>
+    <string name="Installed_version">Устновленная версия</string>
+    <string name="Available_version">Доступная версия</string>
+    <string name="About_app">О приложении</string>
+    <string name="Settings_title_theme">Тема и цвета приложения</string>
+    <string name="Settings_title_main">Основные настройки</string>
+    <string name="Settings_card_theme_title">Тема</string>
+    <string name="Settings_card_theme_description">Выбрать тему приложения</string>
+    <string name="Settings_card_theme_system">Системная</string>
+    <string name="Settings_card_theme_dark">Тёмная</string>
+    <string name="Settings_card_theme_light">Светлая</string>
+    <string name="Version">Версия</string>
+    <string name="Patches_version">Версия патчей</string>
+    <string name="Build_date">Дата сборки</string>
+    <string name="Description">Описание</string>
+    <string name="Download">Скачивание</string>
+    <string name="Progress">Прогресс</string>
+    <string name="Action_download">Скачать</string>
+    <string name="Action_install">Установить</string>
+    <string name="Action_uninstall">Удалить</string>
+    <string name="Action_launch">Открыть</string>
+    <string name="Settings_card_monet_title">Monet цвета</string>
+    <string name="Settings_card_monet_description">Использовать цвета из Monet</string>
+    <string name="Settings_card_accent_title">Цветовой акцент</string>
+    <string name="Settings_card_accent_description">Вручную устновить цветовой акцент</string>
+    <string name="Settings_card_installer_title">Тип установщика</string>
+    <string name="Settings_card_installer_description">Используется для установки non-root и оригингальных версий приложений</string>
+    <string name="Settings_card_installer_session">Сессионный установщик</string>
+    <string name="Settings_card_installer_root">Root установщик</string>
+    <string name="Settings_card_installer_shizuku">Shiziku установщик</string>
+    <string name="Settings_card_selected_apps_title">Выбранные приложения</string>
+    <string name="Settings_card_selected_apps_description">Приложения, которыми управляет менеджер</string>
+</resources>

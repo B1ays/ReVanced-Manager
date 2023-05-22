@@ -1,13 +1,13 @@
 package ru.blays.revanced.Services.PublicApi
 
-import com.vanced.manager.repository.manager.PackageManager
-import com.vanced.manager.repository.manager.PackageManagerResult
+import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerInterface
+import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerResult
 import kotlinx.coroutines.Deferred
 import java.io.File
 
 interface PackageManagerApi {
 
-    val packageManager: PackageManager
+    val packageManagerInterface: PackageManagerInterface
 
     fun installApk(file: File, installerType: Int)
 

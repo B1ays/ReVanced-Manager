@@ -19,6 +19,8 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
     private suspend fun getHtmlBody(url: String): String? {
         val client = OkHttpClient()
 
+        if (url.isEmpty()) return null
+
         val request = Request.Builder()
             .url(url)
             .build()

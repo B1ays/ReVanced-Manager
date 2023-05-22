@@ -8,17 +8,21 @@ class GetVersionsListUseCase(private val appInfoRepositoryInterface: AppInfoRepo
     companion object {
         const val YOUTUBE = "YouTube"
         const val MUSIC = "Music"
+        const val MICROG = "MicroG"
 
-        const val YOUTUBE_JSON_LINK = "https://raw.githubusercontent.com/B1ays/RVMusicModule/main/versionsInfo.json"
-        const val MUSIC_JSON_LINK = ""
+        private const val YOUTUBE_JSON_LINK = "https://raw.githubusercontent.com/B1ays/RVMusicModule/main/versionsInfo.json"
+        private const val MUSIC_JSON_LINK = ""
+        private const val MICROG_JSON_LINK = ""
     }
 
     suspend fun execut(appType: String) : List<VersionsInfoModelDto> = when (appType) {
 
-            YOUTUBE -> appInfoRepositoryInterface.getVersionsInfo(YOUTUBE_JSON_LINK) ?: emptyList()
+        YOUTUBE -> appInfoRepositoryInterface.getVersionsInfo(YOUTUBE_JSON_LINK) ?: emptyList()
 
-            MUSIC -> appInfoRepositoryInterface.getVersionsInfo(MUSIC_JSON_LINK) ?: emptyList()
+        MUSIC -> appInfoRepositoryInterface.getVersionsInfo(MUSIC_JSON_LINK) ?: emptyList()
 
-            else -> emptyList()
-        }
+        MICROG -> appInfoRepositoryInterface.getVersionsInfo(MICROG_JSON_LINK) ?: emptyList()
+
+        else -> emptyList()
+    }
 }
