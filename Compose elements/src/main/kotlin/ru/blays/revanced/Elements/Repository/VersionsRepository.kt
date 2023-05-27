@@ -99,6 +99,8 @@ abstract class VersionsRepository : CoroutineScope {
             packageName
         ) else AppInfo()
     }
+
+    abstract suspend fun updateInfo()
 }
 
 class YoutubeVersionsRepository(private val getVersionsListUseCase: GetVersionsListUseCase) : VersionsRepository() {
@@ -114,13 +116,17 @@ class YoutubeVersionsRepository(private val getVersionsListUseCase: GetVersionsL
     override val isModuleInstalled = MutableStateFlow(false)
     override val isNonRootVersionInstalled = MutableStateFlow(false)
 
+    override suspend fun updateInfo() {
+        getAvailableVersions(getVersionsListUseCase)
+        getLocalVersions()
+    }
+
     init {
         launch {
             isModuleInstalled.value = MagiskInstaller.checkModuleExist(moduleType)
             isNonRootVersionInstalled.value = checkNonRootVersionExist(nonRootPackageName)
 
-            getAvailableVersions(getVersionsListUseCase)
-            getLocalVersions()
+            updateInfo()
         }
     }
 }
@@ -138,13 +144,17 @@ class YoutubeMusicVersionsRepository(private val getVersionsListUseCase: GetVers
     override val isModuleInstalled = MutableStateFlow(false)
     override val isNonRootVersionInstalled = MutableStateFlow(false)
 
+    override suspend fun updateInfo() {
+        getAvailableVersions(getVersionsListUseCase)
+        getLocalVersions()
+    }
+
     init {
         launch {
             isModuleInstalled.value = MagiskInstaller.checkModuleExist(moduleType)
             isNonRootVersionInstalled.value = checkNonRootVersionExist(nonRootPackageName)
 
-            getAvailableVersions(getVersionsListUseCase)
-            getLocalVersions()
+            updateInfo()
         }
     }
 }
@@ -157,10 +167,14 @@ class MicroGVersionsRepository(private val getVersionsListUseCase: GetVersionsLi
 
     override val hasRootVersion = false
 
+    override suspend fun updateInfo() {
+        getAvailableVersions(getVersionsListUseCase)
+        getLocalVersions()
+    }
+
     init {
         launch {
-            getAvailableVersions(getVersionsListUseCase)
-            getLocalVersions()
+           updateInfo()
         }
     }
 }

@@ -13,9 +13,6 @@ import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
 
 class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
 
-    val youTubeVersionsJsonLink = ""
-    val musicVersionsJsonLink = ""
-
     private suspend fun getHtmlBody(url: String): String? {
         val client = OkHttpClient()
 

@@ -3,7 +3,6 @@ package ru.Blays.ReVanced.Manager.UI.ViewModels
 import android.content.Context
 import android.os.Environment.DIRECTORY_DOWNLOADS
 import android.os.Environment.getExternalStoragePublicDirectory
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -35,15 +34,15 @@ import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 import java.io.File
 
-@OptIn(ExperimentalFoundationApi::class)
+
 class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
     private val getApkListUseCase: GetApkListUseCase,
     private val getChangelogUseCase: GetChangelogUseCase
-) : ViewModel() {
+) : ViewModel(), CoroutineScope {
 
     // Coroutine scope for launch suspend functions
-    val coroutineScope = CoroutineScope(Dispatchers.IO)
+    override val coroutineContext = Dispatchers.IO
 
     // UI states
     var isRefreshing by mutableStateOf(false)
@@ -84,7 +83,7 @@ class VersionsListScreenViewModel(
         if (repo.versionsList.isNotEmpty()) {
             list = repo.versionsList
         } else {
-            coroutineScope.launch { getList(repo.appType) }
+            launch { getList(repo.appType) }
         }
     }
 
@@ -98,6 +97,10 @@ class VersionsListScreenViewModel(
         isRefreshing = true
         list = getVersionsListUseCase.execut(appType)
         isRefreshing = false
+    }
+
+    fun onRefresh() {
+        launch { repository?.updateInfo() }
     }
 
     suspend fun showApkListBottomSheet(url: String) {

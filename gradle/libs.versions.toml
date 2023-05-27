@@ -69,6 +69,7 @@ androidx-room-room-runtime = { module = "androidx.room:room-runtime", version.re
 androidx-savedstate = { module = "androidx.savedstate:savedstate", version.ref = "androidx-savedstate" }
 androidx-savedstate-savedstate-ktx = { module = "androidx.savedstate:savedstate-ktx", version.ref = "androidx-savedstate" }
 androidx-startup-startup-runtime = "androidx.startup:startup-runtime:1.1.1"
+androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose-ui" }
 androidx-versionedparcelable = "androidx.versionedparcelable:versionedparcelable:1.1.1"
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 com-google-devtools-ksp-symbol-processing = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "com-google-devtools-ksp" }

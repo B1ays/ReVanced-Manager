@@ -1,12 +1,20 @@
 package ru.Blays.ReVanced.Manager.UI.Screens
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.pullrefresh.pullRefresh
+import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
@@ -23,41 +31,68 @@ import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
+import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
 
+@OptIn(ExperimentalStdlibApi::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
 fun MainScreen(
-    mainScreenViewModel: MainScreenViewModel = koinViewModel(),
+    viewModel: MainScreenViewModel = koinViewModel(),
     settingsRepository: SettingsRepository = koinInject(),
     navController: NavController
 ) {
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.onRefresh()
+    }
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.isRefreshing,
+        onRefresh = viewModel::onRefresh
+    )
+
+    val scrollBehavior = rememberToolbarScrollBehavior()
+
     Scaffold(
         topBar = {
             CustomToolbar(
-                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Main))
+                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Main)),
+                scrollBehavior = scrollBehavior
             )
         }
     ) { padding ->
 
-        LazyColumn(
+        Box(
             modifier = Modifier
-                .padding(top = padding.calculateTopPadding() + 40.dp)
-                .fillMaxWidth()
+                .pullRefresh(pullRefreshState)
         ) {
-            items(Apps.values()) { app ->
-                if (
-                    (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
-                    (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
-                    (app == Apps.MICROG && settingsRepository.microGManaged)
-                ) {
-                    AppInfoCard(
-                        app = app,
-                        actionNavigateToVersionsListScreen = { navController.navigate(VersionsListScreenDestination(appType = it)) }
-                    )
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = padding.calculateTopPadding() + 40.dp)
+                    .fillMaxSize()
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+            ) {
+                items(Apps.entries) { app ->
+                    if (
+                        (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
+                        (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
+                        (app == Apps.MICROG && settingsRepository.microGManaged)
+                    ) {
+                        AppInfoCard(
+                            app = app,
+                            actionNavigateToVersionsListScreen = { navController.navigate(VersionsListScreenDestination(appType = it)) }
+                        )
+                    }
                 }
             }
+            PullRefreshIndicator(
+                modifier = Modifier
+                    .align(Alignment.TopCenter),
+                refreshing = viewModel.isRefreshing,
+                state = pullRefreshState,
+                contentColor = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

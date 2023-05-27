@@ -58,10 +58,6 @@ fun SettingsScreen(
     val changeExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
 
     Scaffold(
-        modifier = Modifier
-            .nestedScroll(
-            scrollBehavior.nestedScrollConnection
-        ),
         topBar = {
             CustomToolbar(
                 collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
@@ -85,7 +81,8 @@ fun SettingsScreen(
 
         LazyColumn(
             modifier = Modifier
-                .padding(padding)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .padding(top = padding.calculateTopPadding())
                 .fillMaxSize()
         ) {
             item {

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -63,11 +65,20 @@ dependencies {
     implementation libs.androidx.compose.foundation.asProvider()
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.runtime.asProvider()
-    implementation libs.androidx.compose.ui.asProvider()
+    implementation libs.androidx.compose.ui.ui.geometry
+    implementation libs.androidx.compose.ui.ui.graphics
+    implementation libs.androidx.compose.ui.ui.text
+    implementation libs.androidx.compose.ui.ui.tooling.data
+    implementation libs.androidx.compose.ui.ui.tooling.preview
+    implementation libs.androidx.compose.ui.ui.unit
+    implementation libs.androidx.compose.ui.ui.util
 
     // Compose Destinations
     implementation libs.io.github.raamcosta.compose.destinations.core
     ksp libs.io.github.raamcosta.compose.destinations.ksp
+
+    // Rebugger
+    implementation libs.rebugger
 
     // Koin
     implementation libs.koin.android
@@ -84,4 +95,10 @@ dependencies {
     implementation project (path: ':Services')
     implementation project (path: ':Compose elements')
 
+}
+
+tasks.withType(KotlinCompile).all {
+    kotlinOptions {
+        languageVersion = "1.9"
+    }
 }

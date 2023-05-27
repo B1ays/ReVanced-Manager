@@ -1,12 +1,10 @@
 package ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen
 
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MarqueeSpacing
-import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,7 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.TabPosition
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -48,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
@@ -60,7 +55,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.CoroutineScope
@@ -103,8 +97,8 @@ fun VersionsListScreenHeader(
             text = appInfo.appName ?: "",
             style = MaterialTheme.typography.titleMedium
         )
-        Text(text = "${getStringRes(R.string.Installed_version)}: ${appInfo.version}")
-        Text(text = "${getStringRes(R.string.Patches_version)}: ${appInfo.patchesVersion}")
+        appInfo.version?.let { Text(text = "${getStringRes(R.string.Installed_version)}: $it") }
+        appInfo.patchesVersion?.let { Text(text = "${getStringRes(R.string.Patches_version)}: $it") }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier
@@ -640,44 +634,6 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadState>)
             )
         }
     }
-}
-
-@Composable
-fun CustomTabIndicator(
-    modifier: Modifier = Modifier,
-    height: Dp = 3.dp,
-    color: Color = MaterialTheme.colorScheme.primary,
-    currentPagePosition: TabPosition
-) {
-    Box(
-        modifier
-            .customTabIndicatorOffset(currentPagePosition)
-            .height(height)
-            .clip(RoundedCornerShape(topStart = height, topEnd = height))
-            .background(color = color)
-
-    )
-}
-
-@Suppress("AnimateAsStateLabel")
-private fun Modifier.customTabIndicatorOffset(
-    currentTabPosition: TabPosition
-): Modifier = composed {
-    val currentTabWidth by animateDpAsState(
-        targetValue = currentTabPosition.width,
-        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
-    )
-    val indicatorOffset by animateDpAsState(
-        targetValue = currentTabPosition.left,
-        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
-    )
-
-    val initialOffset = (currentTabWidth / 4)
-
-    fillMaxWidth()
-        .wrapContentSize(Alignment.BottomStart)
-        .offset(x = initialOffset + indicatorOffset)
-        .width(currentTabWidth / 2)
 }
 
 private fun Duration.toMillisInt(): Int = this.toMillis().toInt()
