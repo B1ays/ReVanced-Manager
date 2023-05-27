@@ -8,5 +8,6 @@ data class ApkInfoModel(
     @SerialName("Apk name") val name: String,
     @SerialName("isRootVersion") val isRootVersion: Boolean,
     @SerialName("Short description") val description: String,
-    @SerialName("Apk link") val url: String
+    @SerialName("Apk link") val url: String,
+    @SerialName("Original apk link") val originalApkLink: String? = null
 )

@@ -14,19 +14,21 @@ import java.io.FileOutputStream
 
 interface FileDownloaderInterface {
 
-    val downloadStatusFlow: MutableStateFlow<String>
+    fun downloadFile(model: FileDownloadDto): DownloadState
 
-    val progressFlow: MutableStateFlow<Float>
-
-    fun downloadFile(url: String, file: File)
-
-    suspend fun downloadFiles(files: List<FileDownloadDto>)
+    suspend fun downloadFiles(files: List<FileDownloadDto>): DownloadState
 
 }
 
 data class FileDownloadDto(
     val url: String,
     val file: File
+)
+
+data class DownloadState(
+    val downloadStatusFlow: MutableStateFlow<String>,
+    val progressFlow: MutableStateFlow<Float>,
+    val fileNameFlow: MutableStateFlow<String>
 )
 
 class FileDownloader : FileDownloaderInterface {
@@ -40,23 +42,26 @@ class FileDownloader : FileDownloaderInterface {
 
     private val job = CoroutineScope(Dispatchers.IO)
 
-    override val downloadStatusFlow = MutableStateFlow("")
-
-    override val progressFlow = MutableStateFlow(0F)
-
     lateinit var file: File
 
-    override fun downloadFile(url: String, file: File) {
+    override fun downloadFile(model: FileDownloadDto): DownloadState {
+
+        val downloadStatusFlow = MutableStateFlow("")
+
+        val progressFlow = MutableStateFlow(0F)
+
+        val fileNameFlow = MutableStateFlow(model.file.name)
 
         val client = OkHttpClient()
 
-        this.file = file
+        this.file = model.file
 
         job.launch {
+
             try {
 
                 val request = Request.Builder()
-                    .url(url = url)
+                    .url(url = model.url)
                     .build()
 
                 downloadStatusFlow.tryEmit(START_REQUEST)
@@ -69,19 +74,17 @@ class FileDownloader : FileDownloaderInterface {
                         )
                     }
 
-                   /* if (file.exists()) {
+                    if (model.file.exists()) {
                         downloadStatusFlow.tryEmit(END_DOWNLOAD)
                         Log.i("Downloader", "file already exists")
                         job.cancel()
                         return@launch
-                    }*/
-
-                    /*Log.i("Downloader", "download update")*/
+                    }
 
                     downloadStatusFlow.tryEmit(START_DOWNLOAD)
 
                     val inputStream = response.body.byteStream()
-                    val outputStream = FileOutputStream(file)
+                    val outputStream = FileOutputStream(model.file)
 
 
                     val fileSize = response.body.contentLength()
@@ -106,23 +109,31 @@ class FileDownloader : FileDownloaderInterface {
                 job.cancel()
             }
         }
+        return DownloadState(downloadStatusFlow, progressFlow, fileNameFlow)
     }
 
-    override suspend fun downloadFiles(files: List<FileDownloadDto>) {
+    override suspend fun downloadFiles(files: List<FileDownloadDto>): DownloadState {
+
+        val downloadStatusFlow = MutableStateFlow("")
+
+        val progressFlow = MutableStateFlow(0F)
+
+        val fileNameFlow = MutableStateFlow("")
 
         val client = OkHttpClient()
 
-        val job = CoroutineScope(Dispatchers.IO)
+        job.launch {
 
-        for (file in files) {
+            for (item in files) {
 
-            progressFlow.emit(0F)
+                progressFlow.emit(0F)
 
-            job.launch {
+                fileNameFlow.emit(item.file.name)
+
                 try {
 
                     val request = Request.Builder()
-                        .url(url = file.url)
+                        .url(url = item.url)
                         .build()
 
                     downloadStatusFlow.tryEmit(START_REQUEST)
@@ -135,11 +146,10 @@ class FileDownloader : FileDownloaderInterface {
                             )
                         }
 
-                        if (file.file.exists()) {
-                            downloadStatusFlow.tryEmit(END_DOWNLOAD)
-                            Log.i("Downloader", "file already exists")
+                        if (item.file.exists()) {
+                            Log.i("Downloader", "item already exists")
                             job.cancel()
-                            return@launch
+                            throw (FileAlreadyExistsException(file))
                         }
 
                         Log.i("Downloader", "download update")
@@ -147,8 +157,7 @@ class FileDownloader : FileDownloaderInterface {
                         downloadStatusFlow.tryEmit(START_DOWNLOAD)
 
                         val inputStream = response.body.byteStream()
-                        val outputStream = FileOutputStream(file.file)
-
+                        val outputStream = FileOutputStream(item.file)
 
                         val fileSize = response.body.contentLength()
 
@@ -164,14 +173,14 @@ class FileDownloader : FileDownloaderInterface {
                         }
                         inputStream.close()
                         outputStream.close()
-                        downloadStatusFlow.tryEmit(END_DOWNLOAD)
                     }
                 } catch (e: IOException) {
                     downloadStatusFlow.tryEmit(ERROR)
-                    Log.w("Downloader", "Ошибка подключения: $e")
-                    job.cancel()
+                    Log.w("Downloader", "Ошибка: $e")
                 }
             }
+            downloadStatusFlow.emit(END_DOWNLOAD)
         }
+        return DownloadState(downloadStatusFlow, progressFlow, fileNameFlow)
     }
 }

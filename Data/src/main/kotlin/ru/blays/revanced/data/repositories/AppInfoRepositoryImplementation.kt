@@ -64,7 +64,8 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
                     item.isRootVersion,
                     item.name,
                     item.description,
-                    item.url
+                    item.url,
+                    item.originalApkLink
                 )
             )
         }

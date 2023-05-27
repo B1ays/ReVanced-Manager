@@ -10,7 +10,7 @@ class GetVersionsListUseCase(private val appInfoRepositoryInterface: AppInfoRepo
         const val MUSIC = "Music"
         const val MICROG = "MicroG"
 
-        private const val YOUTUBE_JSON_LINK = "https://raw.githubusercontent.com/B1ays/RVMusicModule/main/versionsInfo.json"
+        private const val YOUTUBE_JSON_LINK = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/YouTube/VersionsList.json"
         private const val MUSIC_JSON_LINK = ""
         private const val MICROG_JSON_LINK = ""
     }

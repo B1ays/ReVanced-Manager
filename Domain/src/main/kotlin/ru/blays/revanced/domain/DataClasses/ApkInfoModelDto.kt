@@ -4,5 +4,6 @@ data class ApkInfoModelDto(
     val isRootVersion: Boolean,
     val name: String,
     val description: String,
-    val url: String
+    val url: String,
+    val origApkUrl: String? = null
 )

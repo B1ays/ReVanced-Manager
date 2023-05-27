@@ -1,20 +1,19 @@
 package ru.blays.revanced.Services.PublicApi
 
 import android.content.Context
-import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerInterface
-import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.blays.revanced.Services.NonRootService.PackageManager.NonrootPackageManager
+import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerInterface
 import ru.blays.revanced.Services.NonRootService.PackageManager.RootPackageManager
+import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import java.io.File
-import kotlin.coroutines.CoroutineContext
 
-class PackageManagerApiImpl(context: Context, private val installerType: Int): PackageManagerApi, CoroutineScope {
+class PackageManagerApiImpl(context: Context, installerType: Int): PackageManagerApi, CoroutineScope {
 
-    override val coroutineContext: CoroutineContext = Dispatchers.Default
+    override val coroutineContext = Dispatchers.Default
 
     override val packageManagerInterface: PackageManagerInterface = when {
         installerType == 1 -> NonrootPackageManager(context)
@@ -22,10 +21,8 @@ class PackageManagerApiImpl(context: Context, private val installerType: Int): P
         else -> NonrootPackageManager(context)
     }
 
-    override fun installApk(file: File, installerType: Int) {
-        launch {
-            packageManagerInterface.installApp(file)
-        }
+    override fun installApk(file: File, installerType: Int) = async {
+        packageManagerInterface.installApp(file)
     }
 
     override fun installSplitApks(

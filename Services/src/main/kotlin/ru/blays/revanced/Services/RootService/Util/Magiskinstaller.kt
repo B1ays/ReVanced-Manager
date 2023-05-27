@@ -142,12 +142,20 @@ object MagiskInstaller {
     }
 
     // Get full path to module folder
+    // Module.moduleId -> path
     private val getPathToModule: (String) -> String = { "/data/adb/modules/$it/" }
 
     private fun checkModuleExist(path: String): Boolean {
         val check = Shell.cmd("test -e $path").exec()
         return check.isSuccess
     }
+
+    fun checkModuleExist(module: Module): Boolean {
+        val path = getPathToModule(module.moduleId)
+        val check = Shell.cmd("test -e $path").exec()
+        return check.isSuccess
+    }
+
 
     private fun checkModuleFilesExist(path: String): Boolean {
         val checkBaseApk = Shell.cmd("test -e ${path}base.apk").exec()

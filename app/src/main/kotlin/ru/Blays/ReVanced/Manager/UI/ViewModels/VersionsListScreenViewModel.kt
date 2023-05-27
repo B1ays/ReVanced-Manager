@@ -1,8 +1,12 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
 import android.content.Context
-import android.os.Environment
+import android.os.Environment.DIRECTORY_DOWNLOADS
+import android.os.Environment.getExternalStoragePublicDirectory
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -12,15 +16,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.java.KoinJavaComponent.get
-import org.koin.java.KoinJavaComponent.inject
-import ru.blays.revanced.Elements.DataClasses.AppInfo
+import ru.Blays.ReVanced.Manager.DI.autoInject
 import ru.blays.revanced.Elements.DataClasses.Apps
 import ru.blays.revanced.Elements.DataClasses.NavBarExpandedContent
+import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
 import ru.blays.revanced.Elements.Repository.SettingsRepository
 import ru.blays.revanced.Elements.Repository.VersionsRepository
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
+import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
+import ru.blays.revanced.data.Utils.DownloadState
+import ru.blays.revanced.data.Utils.FileDownloadDto
 import ru.blays.revanced.data.Utils.FileDownloader
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
@@ -29,6 +35,7 @@ import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 import java.io.File
 
+@OptIn(ExperimentalFoundationApi::class)
 class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
     private val getApkListUseCase: GetApkListUseCase,
@@ -51,15 +58,15 @@ class VersionsListScreenViewModel(
 
     var changelog = MutableStateFlow("")
 
-    var appInfo: AppInfo by mutableStateOf(AppInfo())
+    var pagesCount by mutableIntStateOf(0)
 
-    private val packageManager: PackageManagerApi by inject(PackageManagerApi::class.java)
+    private val packageManager: PackageManagerApi by autoInject()
 
-    private val settingsRepository: SettingsRepository by inject(SettingsRepository::class.java)
+    private val settingsRepository: SettingsRepository by autoInject()
 
     private var app: Apps? = null
 
-    private var repository: VersionsRepository? = null
+    var repository: VersionsRepository? = null
 
     fun getAppsEnumByAppType(appType: String) {
         app = when(appType) {
@@ -73,12 +80,18 @@ class VersionsListScreenViewModel(
 
     private fun getDataFromRepository(repo: VersionsRepository) {
         repository = repo
-        appInfo = repo.appInfo
+        calculatePagesCount(repo)
         if (repo.versionsList.isNotEmpty()) {
             list = repo.versionsList
         } else {
             coroutineScope.launch { getList(repo.appType) }
         }
+    }
+
+    private fun calculatePagesCount(repo: VersionsRepository) {
+        pagesCount = if (repo.hasRootVersion) 2 else 1
+        /*Log.d("pagerLog", "hasRootVersion: ${repo.hasRootVersion}")
+        Log.d("pagerLog", "PagesCount $pagesCount")*/
     }
 
     suspend fun getList(appType: String) = withContext(Dispatchers.IO) {
@@ -97,10 +110,6 @@ class VersionsListScreenViewModel(
         isChangelogBottomSheetExpanded.emit(true)
     }
 
-    fun install(file: File, installerType: Int) {
-        packageManager.installApk(file, installerType)
-    }
-
     fun delete(packageName: String) {
         packageManager.uninstall(packageName)
     }
@@ -109,42 +118,93 @@ class VersionsListScreenViewModel(
         packageManager.launchApp(packageName)
     }
 
-    fun downloadApk(
+    fun downloadNonRootVersion(
         fileName: String,
-        url: String,
-        isRootVersion: Boolean
+        url: String
     ) {
-        val scope = CoroutineScope(Dispatchers.IO)
 
-        val context: Context = get(Context::class.java)
-
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "$fileName.apk")
+        val file = File(getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS), "$fileName.apk")
 
         val fileDownloader = FileDownloader()
 
-        scope.launch { fileDownloader.downloadFile(url, file) }
+        val downloadState = fileDownloader.downloadFile(FileDownloadDto(url, file))
 
-        NavBarExpandedContent.setContent { DownloadProgressContent(fileName = fileName, downloader = fileDownloader) }
+        val stateList = mutableStateListOf(downloadState)
 
-        if (isRootVersion) {
+        NavBarExpandedContent.setContent { DownloadProgressContent(downloadStateList = stateList) }
 
-        } else {
-            waitDownloadAndInstall(
-                status = fileDownloader.downloadStatusFlow,
-                file = file
-            )
-        }
+        waitDownloadAndInstall(
+            state = downloadState,
+            file = file
+        )
 
     }
 
+    fun downloadRootVersion(
+        filesModel: RootVersionDownloadModel
+    ) {
+
+        if  (filesModel.origUrl == null) return
+
+        val context: Context by autoInject()
+
+        val fileDownloader = FileDownloader()
+
+        val stateList = mutableStateListOf<DownloadState>()
+
+        val modFile = File(getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS), filesModel.fileName)
+
+        val origFile = File(getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS), "${filesModel.fileName}-orig.apk")
+
+        NavBarExpandedContent.setContent { DownloadProgressContent(downloadStateList = stateList) }
+
+        val modFileDownloadState = fileDownloader.downloadFile(
+            FileDownloadDto(
+                url = filesModel.modUrl,
+                file = modFile
+            )
+        ).also {
+            stateList.add(it)
+        }
+
+        val origFileDownloadState = fileDownloader.downloadFile(
+            FileDownloadDto(
+                url = filesModel.origUrl!!,
+                file = origFile
+            )
+        ).also {
+            stateList.add(it)
+        }
+
+        viewModelScope.launch {
+            origFileDownloadState.downloadStatusFlow.collect { status ->
+                if (status == FileDownloader.END_DOWNLOAD) {
+                    val installResult = packageManager.installApk(origFile, installerType = settingsRepository.installerType).await()
+                    if (installResult.isSuccess)
+                        viewModelScope.launch {
+                        modFileDownloadState.downloadStatusFlow.collect { status2 ->
+                            if (status2 == FileDownloader.END_DOWNLOAD) {
+                                MagiskInstaller.install(repository?.moduleType!!, modFile, context)
+                                NavBarExpandedContent.hide()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    @Suppress("DeferredResultUnused")
     private fun waitDownloadAndInstall(
-        status: MutableStateFlow<String>,
-        file: File
+        file: File,
+        state: DownloadState
     ) {
         viewModelScope.launch {
-            status.collect {
+            state.downloadStatusFlow.collect {
                 if (it == FileDownloader.END_DOWNLOAD) {
-                    install(file, settingsRepository.installerType)
+                    packageManager.installApk(file, settingsRepository.installerType)
+                    NavBarExpandedContent.hide()
                 }
             }
         }

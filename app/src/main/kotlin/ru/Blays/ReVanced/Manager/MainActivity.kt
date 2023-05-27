@@ -1,7 +1,6 @@
 package ru.Blays.ReVanced.Manager
 
 import android.os.Bundle
-import android.os.Environment
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,19 +12,20 @@ import org.koin.android.ext.android.inject
 import ru.Blays.ReVanced.Manager.UI.Navigation.Navigator
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 import ru.blays.revanced.Elements.Repository.SettingsRepository
-import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
-import java.io.File
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val settingsRepository: SettingsRepository by inject()
 
-        val path = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val buildedTheme = settingsRepository.buildedTheme
+
+        /*val path = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         val testApk = File(path, "base.apk")
-        MagiskInstaller.install(module = MagiskInstaller.Module.YOUTUBE, file = testApk, this)
+        MagiskInstaller.install(module = MagiskInstaller.Module.YOUTUBE, file = testApk, this)*/
 
         setContent {
 
@@ -33,7 +33,8 @@ class MainActivity : ComponentActivity() {
 
             ReVancedManagerTheme(
                 darkTheme = settingsRepository.appTheme.isDarkMode!!,
-                dynamicColor = settingsRepository.monetTheme
+                dynamicColor = settingsRepository.monetTheme,
+                buildedTheme = buildedTheme
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

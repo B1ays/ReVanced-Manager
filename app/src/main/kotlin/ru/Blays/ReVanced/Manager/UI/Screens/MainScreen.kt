@@ -54,7 +54,7 @@ fun MainScreen(
                 ) {
                     AppInfoCard(
                         app = app,
-                        actionNavigateToVersionsListScreen = {navController.navigate(VersionsListScreenDestination(appType = it))}
+                        actionNavigateToVersionsListScreen = { navController.navigate(VersionsListScreenDestination(appType = it)) }
                     )
                 }
             }

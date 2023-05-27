@@ -9,7 +9,7 @@ interface PackageManagerApi {
 
     val packageManagerInterface: PackageManagerInterface
 
-    fun installApk(file: File, installerType: Int)
+    fun installApk(file: File, installerType: Int): Deferred<PackageManagerResult<Nothing>>
 
     fun installSplitApks(files: List<File>, installerType: Int)
 

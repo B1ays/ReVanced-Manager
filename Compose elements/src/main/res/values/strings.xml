@@ -10,6 +10,8 @@
     <string name="Installed_version">Installed version</string>
     <string name="Available_version">Available version</string>
     <string name="Version">Version</string>
+    <string name="NonRoot_Version">Non-Root version</string>
+    <string name="Root_Version">Root version</string>
     <string name="Patches_version">Patches version</string>
     <string name="Build_date">Build date</string>
     <string name="Description">Description</string>
@@ -22,8 +24,11 @@
     <string name="Action_download">Download</string>
     <string name="Action_install">Install</string>
     <string name="Action_uninstall">Uninstall</string>
+    <string name="Action_uninstall_confirm">Are you sure?</string>
     <string name="Action_launch">Launch</string>
     <string name="Action_changelog" translatable="false">Changelog</string>
+    <string name="Action_OK">Ok</string>
+    <string name="Action_Cancel">Cancel</string>
 
     <!--  Dropdown menu items  -->
     <string name="About_app">About app</string>

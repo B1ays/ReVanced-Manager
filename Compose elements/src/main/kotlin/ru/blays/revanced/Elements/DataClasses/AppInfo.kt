@@ -1,7 +1,7 @@
 package ru.blays.revanced.Elements.DataClasses
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import org.koin.java.KoinJavaComponent.inject
+import ru.blays.revanced.Elements.DI.autoInject
 import ru.blays.revanced.Elements.Elements.VectorImages.AppsIcons
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.Microg
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.MusicMonochrome
@@ -22,18 +22,17 @@ enum class Apps {
 
     YOUTUBE {
         override val icon = AppsIcons.YoutubeMonochrome
-        override val repository: YoutubeVersionsRepository by inject(YoutubeVersionsRepository::class.java)
+        override val repository: YoutubeVersionsRepository by autoInject()
     },
 
     YOUTUBE_MUSIC {
         override val icon = AppsIcons.MusicMonochrome
-        override val repository: YoutubeMusicVersionsRepository by inject(YoutubeMusicVersionsRepository::class.java)
+        override val repository: YoutubeMusicVersionsRepository by autoInject()
     },
 
     MICROG {
         override val icon = AppsIcons.Microg
-        override val repository: MicroGVersionsRepository by inject(
-            MicroGVersionsRepository::class.java)
+        override val repository: MicroGVersionsRepository by autoInject()
     };
 
     abstract val icon: ImageVector

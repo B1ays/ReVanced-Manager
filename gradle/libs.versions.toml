@@ -2,23 +2,23 @@
 androidx-activity = "1.8.0-alpha04"
 androidx-arch-core = "2.2.0"
 androidx-collection = "1.2.0"
-androidx-compose-animation = "1.5.0-alpha04"
-androidx-compose-foundation = "1.5.0-alpha04"
-androidx-compose-runtime = "1.5.0-alpha04"
-androidx-compose-ui = "1.5.0-alpha04"
+androidx-compose-animation = "1.5.0-beta01"
+androidx-compose-foundation = "1.5.0-beta01"
+androidx-compose-runtime = "1.5.0-beta01"
+androidx-compose-ui = "1.5.0-beta01"
 androidx-core = "1.12.0-alpha04"
 androidx-lifecycle = "2.6.1"
 androidx-room = "2.6.0-alpha01"
 androidx-savedstate = "1.2.1"
-coil = "2.3.0"
-com-google-devtools-ksp = "1.8.21-1.0.11"
+coil = "2.4.0"
+com-google-devtools-ksp = "1.9.0-Beta-1.0.11"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-markdown = "0.3.3"
 core = "5.0.5"
 io-github-raamcosta-compose-destinations = "1.9.42-beta"
 koin-android = "3.4.0"
 koin-androidx-compose = "3.4.4"
-org-jetbrains-kotlin = "1.8.21"
+org-jetbrains-kotlin = "1.9.0-Beta"
 rebugger = "1.0.0-alpha05"
 
 [libraries]
@@ -36,10 +36,10 @@ androidx-compose-animation-animation-core = { module = "androidx.compose.animati
 androidx-compose-compiler = "androidx.compose.compiler:compiler:1.4.7"
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose-foundation" }
 androidx-compose-foundation-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "androidx-compose-foundation" }
-androidx-compose-material3 = "androidx.compose.material3:material3:1.2.0-alpha01"
+androidx-compose-material3 = "androidx.compose.material3:material3:1.2.0-alpha02"
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidx-compose-runtime" }
 androidx-compose-runtime-runtime-saveable = { module = "androidx.compose.runtime:runtime-saveable", version.ref = "androidx-compose-runtime" }
-androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose-ui" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui-android", version.ref = "androidx-compose-ui" }
 androidx-compose-ui-ui-geometry = { module = "androidx.compose.ui:ui-geometry", version.ref = "androidx-compose-ui" }
 androidx-compose-ui-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "androidx-compose-ui" }
 androidx-compose-ui-ui-text = { module = "androidx.compose.ui:ui-text", version.ref = "androidx-compose-ui" }
@@ -49,11 +49,10 @@ androidx-compose-ui-ui-tooling-preview = { module = "androidx.compose.ui:ui-tool
 androidx-compose-ui-ui-unit = { module = "androidx.compose.ui:ui-unit", version.ref = "androidx-compose-ui" }
 androidx-compose-ui-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose-ui" }
 androidx-concurrent-concurrent-futures = "androidx.concurrent:concurrent-futures:1.1.0"
-androidx-constraintlayout-constraintlayout-compose = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha09"
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-core-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-customview-customview-poolingcontainer = "androidx.customview:customview-poolingcontainer:1.0.0"
-androidx-emoji2 = "androidx.emoji2:emoji2:1.4.0-beta03"
+androidx-emoji2 = "androidx.emoji2:emoji2:1.4.0-beta04"
 androidx-interpolator = "androidx.interpolator:interpolator:1.0.0"
 androidx-lifecycle-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "androidx-lifecycle" }
@@ -87,9 +86,9 @@ nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "core" }
 org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:2.20.0"
 org-jetbrains-kotlin-kotlin-scripting-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-kotlin-stdlib-common = { module = "org.jetbrains.kotlin:kotlin-stdlib-common", version.ref = "org-jetbrains-kotlin" }
-org-jetbrains-kotlin-kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-kotlin-stdlib = "org.jetbrains.kotlin:kotlin-stdlib:1.8.21"
+org-jetbrains-kotlin-kotlin-stdlib-common = "org.jetbrains.kotlin:kotlin-stdlib-common:1.8.21"
+org-jetbrains-kotlin-kotlin-stdlib-jdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.21"
 org-jetbrains-kotlin-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlinx-kotlinx-coroutines-core-jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1"
 org-jetbrains-kotlinx-kotlinx-serialization-bom = "org.jetbrains.kotlinx:kotlinx-serialization-bom:1.5.1"
@@ -101,12 +100,12 @@ rebugger = { module = "com.github.theapache64:rebugger", version.ref = "rebugger
 service = { module = "com.github.topjohnwu.libsu:service", version.ref = "core" }
 
 [plugins]
-com-android-application = "com.android.application:8.2.0-alpha03"
-com-android-library = "com.android.library:8.2.0-alpha03"
+com-android-application = "com.android.application:8.2.0-alpha05"
+com-android-library = "com.android.library:8.2.0-alpha05"
 com-github-ben-manes-versions = "com.github.ben-manes.versions:0.46.0"
-com-google-devtools-ksp = "com.google.devtools.ksp:1.8.21-1.0.11"
-kotlinx-serialization = "kotlinx-serialization:1.8.21"
+com-google-devtools-ksp = "com.google.devtools.ksp:1.9.0-Beta-1.0.11"
+kotlinx-serialization = "kotlinx-serialization:1.9.0-Beta"
 nl-littlerobots-version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.0"
-org-jetbrains-kotlin-android = "org.jetbrains.kotlin.android:1.8.21"
-org-jetbrains-kotlin-jvm = "org.jetbrains.kotlin.jvm:1.8.21"
-org-jetbrains-kotlin-plugin-serialization = "org.jetbrains.kotlin.plugin.serialization:1.8.21"
+org-jetbrains-kotlin-android = "org.jetbrains.kotlin.android:1.9.0-Beta"
+org-jetbrains-kotlin-jvm = "org.jetbrains.kotlin.jvm:1.9.0-Beta"
+org-jetbrains-kotlin-plugin-serialization = "org.jetbrains.kotlin.plugin.serialization:1.9.0-Beta"

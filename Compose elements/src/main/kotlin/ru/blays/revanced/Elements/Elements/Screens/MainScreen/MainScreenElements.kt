@@ -43,8 +43,8 @@ fun AppInfoCard(
     val repository = app.repository
 
     // element state from repository
-    val version by repository.version.collectAsState()
     val availableVersion by repository.availableVersion.collectAsState()
+
 
     // Content
     ElevatedCard(
@@ -81,11 +81,29 @@ fun AppInfoCard(
                 Column {
                     Text(text = repository.appName, style = MaterialTheme.typography.titleLarge)
                     Spacer(modifier = Modifier.height(6.dp))
-                    // Text elements with null check using let function
-                    version?.let {
-                        Text(text = "${getStringRes(R.string.Installed_version)}: $it")
+
+                    // Check variables non null. If null -> default text; if notNull -> split version info for nonRoot and RootVersion
+                    if (repository.hasRootVersion) {
+
+                        val nonRootVersion by repository.nonRootVersion.collectAsState()
+                        val rootVersion by repository.rootVersion.collectAsState()
+
+                        val isModuleInstalled = repository.isModuleInstalled?.collectAsState()?.value
+                        val isNonRootVersionInstalled = repository.isNonRootVersionInstalled?.collectAsState()?.value
+
+                        if (isNonRootVersionInstalled == true) nonRootVersion?.let { Text(text = "${getStringRes(R.string.NonRoot_Version)}: $it") }
                         Spacer(modifier = Modifier.height(6.dp))
+                        if (isModuleInstalled == true) rootVersion?.let { Text(text = "${getStringRes(R.string.Root_Version)}: $it")}
+                    } else {
+
+                        val version by repository.version.collectAsState()
+
+                        // Text elements with null check using let function
+                        version?.let {
+                            Text(text = "${getStringRes(R.string.Installed_version)}: $it")
+                        }
                     }
+                    Spacer(modifier = Modifier.height(6.dp))
                     availableVersion?.let { Text(text = "${getStringRes(R.string.Available_version)}: $it") }
                 }
             }
