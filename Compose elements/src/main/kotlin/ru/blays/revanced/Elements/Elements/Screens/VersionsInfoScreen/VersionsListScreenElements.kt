@@ -73,6 +73,7 @@ import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import java.time.Duration
 import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction2
 
 @Composable
 fun VersionsListScreenHeader(
@@ -97,25 +98,31 @@ fun VersionsListScreenHeader(
             text = appInfo.appName ?: "",
             style = MaterialTheme.typography.titleMedium
         )
-        appInfo.version?.let { Text(text = "${getStringRes(R.string.Installed_version)}: $it") }
-        appInfo.patchesVersion?.let { Text(text = "${getStringRes(R.string.Patches_version)}: $it") }
+        appInfo.version.collectAsState().value?.let {
+            Text(text = "${getStringRes(R.string.Installed_version)}: $it")
+        }
+        appInfo.patchesVersion.collectAsState().value?.let {
+            Text(text = "${getStringRes(R.string.Patches_version)}: $it")
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            OutlinedButton(
-                onClick = showAlertDialog
-            ) {
-                Text(text = getStringRes(R.string.Action_uninstall))
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Button(
-                onClick = {
-                    appInfo.packageName?.let { actionOpen(it) }
+            appInfo.version.collectAsState().value?.let {
+                OutlinedButton(
+                    onClick = showAlertDialog
+                ) {
+                    Text(text = getStringRes(R.string.Action_uninstall))
                 }
-            ) {
-                Text(text = getStringRes(R.string.Action_launch))
+                Spacer(modifier = Modifier.width(10.dp))
+                Button(
+                    onClick = {
+                        appInfo.packageName?.let { actionOpen(it) }
+                    }
+                ) {
+                    Text(text = getStringRes(R.string.Action_launch))
+                }
             }
         }
         Divider(
@@ -154,7 +161,8 @@ fun VersionsListScreenHeader(
 fun VersionsInfoCard(
     item: VersionsInfoModelDto,
     actionShowChangelog: KSuspendFunction1<String, Unit>,
-    actionShowApkList: KSuspendFunction1<String, Unit>
+    actionShowApkList: KSuspendFunction2<String, Boolean, Unit>,
+    rootVersions: Boolean
 ) {
 
     var isExpanded by remember {
@@ -247,7 +255,7 @@ fun VersionsInfoCard(
                     Button(
                         onClick = {
                             CoroutineScope(Dispatchers.IO).launch {
-                                actionShowApkList(item.versionsListLink.orEmpty())
+                                actionShowApkList(item.versionsListLink.orEmpty(), rootVersions)
                             }
                         }
                     ) {
@@ -297,157 +305,6 @@ fun VersionsInfoCard(
     }
 }
 
-/*@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun VersionsInfoCard(
-    item: VersionsInfoModelDto,
-    actionShowChangelog: KSuspendFunction1<String, Unit>,
-    actionShowApkList: KSuspendFunction1<String, Unit>
-) {
-
-    var isExpanded by remember {
-        mutableStateOf(false)
-    }
-
-    val mainContent: @Composable () -> Unit = {
-        Card(
-            modifier = Modifier
-                .padding(
-                    vertical = DefaultPadding.CardVerticalPadding,
-                    horizontal = DefaultPadding.CardHorizontalPadding
-                )
-                .fillMaxWidth(),
-           *//* shape = RectangleShape,*//*
-            onClick = {
-                isExpanded = !isExpanded
-            }
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(text = "${getStringRes(R.string.Version)}: ${item.version}")
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "${getStringRes(R.string.Patches_version)}: ${item.patchesVersion}")
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "${getStringRes(R.string.Build_date)}: ${item.buildDate}")
-            }
-        }
-    }
-
-    SubcomposeLayout(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) { constraints ->
-
-        val mainCard = subcompose(slotId = Slots.MAIN, mainContent).map {
-            it.measure(Constraints(
-                maxWidth = constraints.maxWidth
-            ))
-        }
-
-        val mainCardMaxSize = mainCard.fold(IntSize.Zero) { currentMax, placeable ->
-            IntSize(
-                width = maxOf(currentMax.width, placeable.width),
-                height = maxOf(currentMax.height, placeable.height)
-            )
-        }
-
-        val slidingCard = subcompose(slotId = Slots.SLIDING) {
-            SlidingActionCard(
-                targetHeight = mainCardMaxSize.height.toDp(),
-                isExpanded = isExpanded,
-                changelogLink = item.changelogLink,
-                versionsListLink = item.versionsListLink,
-                actionShowChangelog = actionShowChangelog,
-                actionShowApkList = actionShowApkList
-            )
-        }.map {
-            it.measure(Constraints(maxWidth = mainCardMaxSize.width))
-        }
-
-        val slidingCardMaxSize = slidingCard.fold(IntSize.Zero) { currentMax, placeable ->
-            IntSize(
-                width = maxOf(currentMax.width, placeable.width),
-                height = maxOf(currentMax.height, placeable.height)
-            )
-        }
-
-        layout(constraints.maxWidth, mainCardMaxSize.height) {
-            mainCard[0].place(0, 0)
-            slidingCard[0].place(0, mainCardMaxSize.height)
-        }
-    }
-}
-
-@Suppress("AnimateAsStateLabel")
-@Composable
-private fun SlidingActionCard(
-    targetHeight: Dp,
-    isExpanded: Boolean,
-    changelogLink: String?,
-    versionsListLink: String?,
-    actionShowChangelog: KSuspendFunction1<String, Unit>,
-    actionShowApkList: KSuspendFunction1<String, Unit>
-) {
-
-    val height by animateDpAsState(targetValue = if (isExpanded) targetHeight else 0.dp)
-
-    Card(
-        modifier = Modifier
-            .padding(
-                vertical = DefaultPadding.CardVerticalPadding,
-                horizontal = DefaultPadding.CardHorizontalPadding
-            )
-            .fillMaxWidth()
-            .height(height)
-        *//*.clip(
-            RoundedCornerShape(
-                topStart = animatedCorners,
-                bottomStart = 12.dp,
-                bottomEnd = 12.dp,
-                topEnd = animatedCorners
-            )
-        )*//*,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.1f)
-        )*//*,
-            shape = RectangleShape*//*
-    ) {
-
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            OutlinedButton(
-                onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        changelogLink?.let { actionShowChangelog(it) }
-                    }
-                }
-            ) {
-                Text(text = getStringRes(R.string.Action_changelog))
-            }
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Button(
-                onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        versionsListLink?.let { actionShowApkList(it) }
-                    }
-                }
-            ) {
-                Text(text = getStringRes(R.string.Action_download))
-            }
-        }
-    }
-}*/
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubversionsListBottomSheet(
@@ -456,8 +313,7 @@ fun SubversionsListBottomSheet(
     actionDownloadNonRootVersion: (String, String) -> Unit,
     actionDownloadRootVersion: (RootVersionDownloadModel) -> Unit,
     rootItemBackground: Color,
-    nonRootItemBackground: Color,
-    rootVersionsPage: Boolean
+    nonRootItemBackground: Color
 ) {
 
     val state = rememberModalBottomSheetState()
@@ -467,10 +323,6 @@ fun SubversionsListBottomSheet(
     }
 
     val listState = list.collectAsState().value
-
-    val filteredList = listState.filter {
-        it.isRootVersion == rootVersionsPage
-    }
 
     val hideBottomSheet = {
         isExpanded.tryEmit(false)
@@ -486,13 +338,13 @@ fun SubversionsListBottomSheet(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                items(filteredList) {item ->
+                items(listState) { item ->
                     ApkListItem(
                         item = item,
                         actionDownloadNonRootVersion = actionDownloadNonRootVersion,
                         actionDownloadRootVersion = actionDownloadRootVersion,
                         hideBottomSheet = hideBottomSheet,
-                        rootItemBackground = rootItemBackground ,
+                        rootItemBackground = rootItemBackground,
                         nonRootItemBackground = nonRootItemBackground
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -637,8 +489,3 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadState>)
 }
 
 private fun Duration.toMillisInt(): Int = this.toMillis().toInt()
-
-private enum class Slots {
-    MAIN,
-    SLIDING;
-}

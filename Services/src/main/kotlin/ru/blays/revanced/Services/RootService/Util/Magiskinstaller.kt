@@ -128,6 +128,14 @@ object MagiskInstaller {
         }
     }
 
+    fun delete(module: Module): Boolean {
+
+        // Create path to app module
+        val pathToModule = getPathToModule(module.moduleId)
+
+        return deleteFile(pathToModule)
+    }
+
     private fun updateModule(path: String, newApkPath: String, newServicesSh: String): Boolean {
 
         val replaceBaseApk = moveApkToModuleFolder(modulePath = path, apkPath = newApkPath)
@@ -209,10 +217,15 @@ description=ReVanced Manager module."""
     private fun moveApkToModuleFolder(modulePath: String, apkPath: String): Boolean {
         val moveBaseApk = Shell.cmd("cp -f $apkPath ${modulePath}base.apk").exec()
         val applyChmod = Shell.cmd("chmod 644 ${modulePath}base.apk").exec()
-        Log.d("MagiskInstaller", moveBaseApk.out.toString())
-        return moveBaseApk.isSuccess
+        return moveBaseApk.isSuccess && applyChmod.isSuccess
     }
 
+    private fun deleteFile(filePath: String): Boolean {
+
+        val delete = Shell.cmd("rm -r -f $filePath").exec()
+
+        return delete.isSuccess
+    }
 
     private fun postStatusAndWriteToLog(status: Status, logPath: String) {
         Log.i("MagiskInstaller", status.message)

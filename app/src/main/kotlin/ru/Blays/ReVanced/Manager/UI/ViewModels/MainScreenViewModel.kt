@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.blays.revanced.Elements.DataClasses.Apps
+import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
 class MainScreenViewModel(private val getVersionsListUseCase: GetVersionsListUseCase) : ViewModel(), CoroutineScope {

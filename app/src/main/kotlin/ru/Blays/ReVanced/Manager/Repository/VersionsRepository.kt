@@ -1,10 +1,11 @@
-package ru.blays.revanced.Elements.Repository
+package ru.Blays.ReVanced.Manager.Repository
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import ru.blays.revanced.Elements.DI.autoInject
+import ru.Blays.ReVanced.Manager.DI.autoInject
+
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
@@ -82,20 +83,20 @@ abstract class VersionsRepository : CoroutineScope {
 
     fun generateAppInfo(isRootVersion: Boolean = false): AppInfo {
         return if (isRootVersion && hasRootVersion) AppInfo(
-            appName = "$appName (Root)",
-            version = rootVersion.value,
-            patchesVersion = patchesVersion.value,
+            appName = appName,
+            version = rootVersion,
+            patchesVersion = patchesVersion,
             packageName = packageName
         ) else if (!isRootVersion && hasRootVersion) AppInfo(
-            appName = "$appName (Non-Root)",
-            version = nonRootVersion.value,
-            patchesVersion = patchesVersion.value,
+            appName = appName,
+            version = nonRootVersion,
+            patchesVersion = patchesVersion,
             packageName = nonRootPackageName
         )
         else if (!isRootVersion && !hasRootVersion) AppInfo(
             appName,
-            version.value,
-            patchesVersion.value,
+            version,
+            patchesVersion,
             packageName
         ) else AppInfo()
     }

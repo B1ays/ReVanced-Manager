@@ -22,11 +22,11 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.navigate
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import ru.Blays.ReVanced.Manager.Data.Apps
+import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
-import ru.blays.revanced.Elements.DataClasses.Apps
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppInfoCard
-import ru.blays.revanced.Elements.Repository.SettingsRepository
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -80,9 +80,21 @@ fun MainScreen(
                         (app == Apps.MICROG && settingsRepository.microGManaged)
                     ) {
                         AppInfoCard(
-                            app = app,
-                            actionNavigateToVersionsListScreen = { navController.navigate(VersionsListScreenDestination(appType = it)) }
-                        )
+                            icon = app.icon,
+                            appType = app.repository.appType,
+                            appName = app.repository.appName,
+                            availableVersion = app.repository.availableVersion,
+                            rootVersion = app.repository.rootVersion,
+                            version = app.repository.version,
+                            nonRootVersion = app.repository.nonRootVersion,
+                            hasRootVersion = app.repository.hasRootVersion,
+                            isNonRootVersionInstalled = app.repository.isNonRootVersionInstalled,
+                            isModuleInstalled = app.repository.isModuleInstalled,
+                        ) {
+                            navController.navigate(
+                                VersionsListScreenDestination(appType = it)
+                            )
+                        }
                     }
                 }
             }

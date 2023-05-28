@@ -16,12 +16,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.Blays.ReVanced.Manager.DI.autoInject
-import ru.blays.revanced.Elements.DataClasses.Apps
+import ru.Blays.ReVanced.Manager.Data.Apps
+import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
+import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
 import ru.blays.revanced.Elements.DataClasses.NavBarExpandedContent
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
-import ru.blays.revanced.Elements.Repository.SettingsRepository
-import ru.blays.revanced.Elements.Repository.VersionsRepository
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.data.Utils.DownloadState
@@ -89,8 +89,6 @@ class VersionsListScreenViewModel(
 
     private fun calculatePagesCount(repo: VersionsRepository) {
         pagesCount = if (repo.hasRootVersion) 2 else 1
-        /*Log.d("pagerLog", "hasRootVersion: ${repo.hasRootVersion}")
-        Log.d("pagerLog", "PagesCount $pagesCount")*/
     }
 
     suspend fun getList(appType: String) = withContext(Dispatchers.IO) {
@@ -103,8 +101,10 @@ class VersionsListScreenViewModel(
         launch { repository?.updateInfo() }
     }
 
-    suspend fun showApkListBottomSheet(url: String) {
-        bottomSheetList.emit(getApkListUseCase.execute(url) ?: emptyList())
+    suspend fun showApkListBottomSheet(url: String, rootVersion: Boolean) {
+        bottomSheetList.value = getApkListUseCase.execute(url)?.filter {
+            it.isRootVersion == rootVersion
+        } ?: emptyList()
         isApkListBottomSheetExpanded.emit(true)
     }
 
@@ -115,6 +115,12 @@ class VersionsListScreenViewModel(
 
     fun delete(packageName: String) {
         packageManager.uninstall(packageName)
+    }
+
+    fun deleteModule(packageName: String) {
+        repository?.moduleType?.let { module ->
+            MagiskInstaller.delete(module = module)
+        }
     }
 
     fun launch(packageName: String) {

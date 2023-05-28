@@ -5,7 +5,6 @@ import com.topjohnwu.superuser.Shell
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.Blays.ReVanced.Manager.DI.appModule
-import ru.blays.revanced.Elements.DI.composeElementsModule
 
 class App: Application() {
 
@@ -21,7 +20,6 @@ class App: Application() {
         startKoin {
             androidContext(this@App)
             modules(appModule)
-            modules(composeElementsModule)
         }
     }
 }

@@ -26,6 +26,8 @@ import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.navigate
 import org.koin.compose.koinInject
+import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
+import ru.Blays.ReVanced.Manager.Repository.ThemeModel
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
 import ru.blays.revanced.Elements.DataClasses.AccentColorItem
@@ -35,8 +37,6 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCheckb
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsGroup
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
-import ru.blays.revanced.Elements.Repository.SettingsRepository
-import ru.blays.revanced.Elements.Repository.ThemeModel
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
 import ru.blays.revanced.Services.RootService.Util.isRootGranted

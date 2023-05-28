@@ -126,7 +126,7 @@ fun VersionsListScreen(
                             selected = currentPage == 0,
                             selectedContentColor = MaterialTheme.colorScheme.surface,
                             unselectedContentColor = MaterialTheme.colorScheme.primary,
-                            minHeight = 40.dp,
+                            minHeight = 45.dp,
                             onClick = { scope.launch { pagerState.animateScrollToPage(0) } }
                         ) {
                             Text(text = "Non-Root")
@@ -136,7 +136,7 @@ fun VersionsListScreen(
                             selected = currentPage == 1,
                             selectedContentColor = MaterialTheme.colorScheme.surface,
                             unselectedContentColor = MaterialTheme.colorScheme.primary,
-                            minHeight = 40.dp,
+                            minHeight = 45.dp,
                             onClick = { scope.launch { pagerState.animateScrollToPage(1) } }
                         ) {
                             Text(text = "Root")
@@ -164,17 +164,19 @@ fun VersionsListScreen(
                             stickyHeader {
                                 VersionsListScreenHeader(
                                     appInfo = viewModel.repository?.generateAppInfo(true) ?: AppInfo(),
-                                    actionDelete = viewModel::delete,
+                                    actionDelete = viewModel::deleteModule,
                                     actionOpen = viewModel::launch
                                 )
                             }
                         }
 
                         items(viewModel.list) { item ->
+                            @Suppress("PackageName")
                             VersionsInfoCard(
                                 item = item,
                                 actionShowChangelog = viewModel::showChangelogBottomSheet,
-                                actionShowApkList = viewModel::showApkListBottomSheet
+                                actionShowApkList = viewModel::showApkListBottomSheet,
+                                rootVersions = rootVersionsPage
                             )
                         }
                     }
@@ -192,7 +194,6 @@ fun VersionsListScreen(
     }
 
     SubversionsListBottomSheet(
-        rootVersionsPage = rootVersionsPage,
         isExpanded = viewModel.isApkListBottomSheetExpanded,
         list = viewModel.bottomSheetList,
         actionDownloadNonRootVersion = viewModel::downloadNonRootVersion,

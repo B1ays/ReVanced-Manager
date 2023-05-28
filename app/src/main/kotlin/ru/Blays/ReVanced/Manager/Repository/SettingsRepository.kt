@@ -1,4 +1,4 @@
-package ru.blays.revanced.Elements.Repository
+package ru.Blays.ReVanced.Manager.Repository
 
 
 

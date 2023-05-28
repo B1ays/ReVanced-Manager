@@ -18,38 +18,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import ru.blays.revanced.Elements.DataClasses.Apps
-
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppInfoCard(
-    app: Apps,
+    icon: ImageVector,
+    appType: String,
+    appName: String,
+    availableVersion: MutableStateFlow<String?>,
+    rootVersion: MutableStateFlow<String?>,
+    version: MutableStateFlow<String?>,
+    nonRootVersion: MutableStateFlow<String?>,
+    hasRootVersion: Boolean,
+    isNonRootVersionInstalled: MutableStateFlow<Boolean>?,
+    isModuleInstalled: MutableStateFlow<Boolean>?,
     actionNavigateToVersionsListScreen: (String) -> Unit
 ) {
 
     // App icon default size
     val iconSize = 80.dp
 
-    // Repository that provides info about app
-    val repository = app.repository
-
-    // element state from repository
-    val availableVersion by repository.availableVersion.collectAsState()
-
-
     // Content
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        onClick = { actionNavigateToVersionsListScreen(repository.appType) },
+        onClick = { actionNavigateToVersionsListScreen(appType) },
         modifier = Modifier
             .padding(12.dp)
             .fillMaxWidth()
@@ -69,7 +69,7 @@ fun AppInfoCard(
             ) {
 
                 Icon(
-                    imageVector = app.icon,
+                    imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier
                         .size(iconSize),
@@ -79,32 +79,28 @@ fun AppInfoCard(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column {
-                    Text(text = repository.appName, style = MaterialTheme.typography.titleLarge)
+                    Text(text = appName, style = MaterialTheme.typography.titleLarge)
                     Spacer(modifier = Modifier.height(6.dp))
 
                     // Check variables non null. If null -> default text; if notNull -> split version info for nonRoot and RootVersion
-                    if (repository.hasRootVersion) {
+                    if (hasRootVersion) {
 
-                        val nonRootVersion by repository.nonRootVersion.collectAsState()
-                        val rootVersion by repository.rootVersion.collectAsState()
-
-                        val isModuleInstalled = repository.isModuleInstalled?.collectAsState()?.value
-                        val isNonRootVersionInstalled = repository.isNonRootVersionInstalled?.collectAsState()?.value
-
-                        if (isNonRootVersionInstalled == true) nonRootVersion?.let { Text(text = "${getStringRes(R.string.NonRoot_Version)}: $it") }
+                        if (isNonRootVersionInstalled?.collectAsState()?.value  == true) nonRootVersion.collectAsState().value?.let {
+                            Text(text = "${getStringRes(R.string.NonRoot_Version)}: $it")
+                        }
                         Spacer(modifier = Modifier.height(6.dp))
-                        if (isModuleInstalled == true) rootVersion?.let { Text(text = "${getStringRes(R.string.Root_Version)}: $it")}
+                        if (isModuleInstalled?.collectAsState()?.value == true) rootVersion.collectAsState().value?.let {
+                            Text(text = "${getStringRes(R.string.Root_Version)}: $it")
+                        }
                     } else {
 
-                        val version by repository.version.collectAsState()
-
                         // Text elements with null check using let function
-                        version?.let {
+                        version.collectAsState().value?.let {
                             Text(text = "${getStringRes(R.string.Installed_version)}: $it")
                         }
                     }
                     Spacer(modifier = Modifier.height(6.dp))
-                    availableVersion?.let { Text(text = "${getStringRes(R.string.Available_version)}: $it") }
+                    availableVersion.collectAsState().value?.let { Text(text = "${getStringRes(R.string.Available_version)}: $it") }
                 }
             }
 
