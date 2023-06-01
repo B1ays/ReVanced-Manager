@@ -89,6 +89,7 @@ fun SettingsScreen(
                 SettingsGroup(title = getStringRes(R.string.Settings_title_theme)) {
                     ThemeSelector(repository = settingsRepository)
                     isSAndAboveCompose { MonetColors(repository = settingsRepository) }
+                    AmoledTheme(repository = settingsRepository)
                     AccentSelector(settingsRepository)
                 }
             }
@@ -136,11 +137,22 @@ private fun MonetColors(repository: SettingsRepository) {
 }
 
 @Composable
+fun AmoledTheme(repository: SettingsRepository) {
+    SettingsCardWithSwitch(
+        title = "Amoled theme",
+        subtitle = "Set black color as background",
+        state = repository.isAmoledTheme
+    ) {
+        repository.isAmoledTheme = it
+    }
+}
+
+@Composable
 private fun AccentSelector(
     repository: SettingsRepository
 ) {
 
-    val callback: (Int) -> Unit = { repository.accentColorItem = it}
+    val callback: (Int) -> Unit = { repository.accentColorItem = it }
 
     SettingsExpandableCard(
         title = getStringRes(R.string.Settings_card_accent_title),

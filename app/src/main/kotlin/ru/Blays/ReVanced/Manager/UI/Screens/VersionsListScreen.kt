@@ -58,8 +58,10 @@ fun VersionsListScreen(
     navController: NavController
 ) {
 
+    // Coroutine scope for launch suspend functions
     val scope = rememberCoroutineScope()
 
+    // Get info about app on screen launch
     LaunchedEffect(key1 = appType) {
         viewModel.getAppsEnumByAppType(appType)
     }
@@ -69,27 +71,35 @@ fun VersionsListScreen(
         onRefresh = viewModel::onRefresh
     )
 
+    // AppBar scroll behavior
     val scrollBehavior = rememberToolbarScrollBehavior()
 
     val pagerState = rememberPagerState {
         viewModel.pagesCount
     }
 
+    // page number with real time update
     val currentPage = pagerState.currentPage
+
+    // page number of static page
     val settledPage = pagerState.settledPage
+
+    // Is the current page a page with root versions
     val rootVersionsPage = settledPage == 1
 
     Scaffold(
         topBar = {
             CustomToolbar(
-                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Versions)),
+                collapsingTitle = CollapsingTitle.large(
+                    titleText = getStringRes(R.string.AppBar_Versions)
+                ),
                 navigationIcon = {
                     IconButton(
                         onClick = navController::navigateUp
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = "NavigateBack"
+                            contentDescription = null
                         )
                     }
                 },
@@ -106,6 +116,7 @@ fun VersionsListScreen(
 
             Column {
 
+                // If pages > 1 then show tabs
                 if (viewModel.pagesCount > 1) {
                     CustomTabRow(
                         modifier = Modifier

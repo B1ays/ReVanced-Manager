@@ -63,6 +63,7 @@ fun CustomToolbar(
     Surface(
         modifier = modifier,
         shadowElevation = elevationState.value,
+        color = MaterialTheme.colorScheme.background
     ) {
         Layout(
             content = {

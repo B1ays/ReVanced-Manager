@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 
 private const val APP_THEME_TYPE = "AppTheme"
 private const val APP_THEME_MONET = "MonetTheme"
+private const val AMOLED_THEME = "AmoledTheme"
 private const val APP_THEME_ACCENT = "AccentColor"
 private const val ROOT_MODE = "RootMode"
 private const val INSTALLER_TYPE = "InstallerType"
@@ -45,6 +46,10 @@ class SettingsRepositoryImplementation(context: Context) {
     var monetTheme: Boolean
         get() = getSetting(APP_THEME_MONET, true)!!
         set(value) = putSetting(APP_THEME_MONET, value)
+
+    var isAmoledTheme: Boolean
+        get() = getSetting(AMOLED_THEME, false)!!
+        set(value) = putSetting(AMOLED_THEME, value)
 
     var accentColor: Int
         get() = getSetting(APP_THEME_ACCENT, 1)!!

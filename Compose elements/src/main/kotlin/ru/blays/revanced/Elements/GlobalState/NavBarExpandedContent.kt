@@ -1,4 +1,4 @@
-package ru.blays.revanced.Elements.DataClasses
+package ru.blays.revanced.Elements.GlobalState
 
 import androidx.compose.runtime.Composable
 import kotlinx.coroutines.flow.MutableStateFlow

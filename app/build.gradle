@@ -58,6 +58,8 @@ dependencies {
     implementation libs.androidx.core.core.ktx
     implementation libs.androidx.lifecycle.lifecycle.runtime.ktx
 
+    // Work manager
+    implementation libs.androidx.work.runtime.ktx
 
     // Compose
     implementation libs.androidx.activity.activity.compose
@@ -72,6 +74,9 @@ dependencies {
     implementation libs.androidx.compose.ui.ui.tooling.preview
     implementation libs.androidx.compose.ui.ui.unit
     implementation libs.androidx.compose.ui.ui.util
+
+    // Accompanist
+    implementation libs.accompanist.permissions
 
     // Compose Destinations
     implementation libs.io.github.raamcosta.compose.destinations.core

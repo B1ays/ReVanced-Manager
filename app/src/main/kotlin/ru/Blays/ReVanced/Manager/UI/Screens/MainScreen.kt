@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pullrefresh.PullRefreshIndicator
@@ -27,6 +28,7 @@ import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppInfoCard
+import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -54,6 +56,13 @@ fun MainScreen(
 
     val scrollBehavior = rememberToolbarScrollBehavior()
 
+    val lazyListState = rememberLazyListState()
+
+    if (!lazyListState.canScrollForward && lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = true
+    else if (!lazyListState.canScrollForward && !lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = false
+    else NavBarState.shouldHideNavigationBar = false
+
+
     Scaffold(
         topBar = {
             CustomToolbar(
@@ -71,7 +80,8 @@ fun MainScreen(
                 modifier = Modifier
                     .padding(top = padding.calculateTopPadding() + 40.dp)
                     .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                state = lazyListState
             ) {
                 items(Apps.entries) { app ->
                     if (
@@ -98,6 +108,7 @@ fun MainScreen(
                     }
                 }
             }
+
             PullRefreshIndicator(
                 modifier = Modifier
                     .align(Alignment.TopCenter),

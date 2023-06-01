@@ -1,5 +1,10 @@
 package ru.Blays.ReVanced.Manager.UI.Navigation
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
@@ -9,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -20,16 +26,24 @@ import ru.Blays.ReVanced.Manager.UI.Screens.NavGraphs
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DirectionDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.MainScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.SettingsScreenDestination
-import ru.blays.revanced.Elements.DataClasses.NavBarExpandedContent.Companion.bottomNavBarExpandedContent
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.BottomBarItem
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.FloatingBottomBar
+import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent.Companion.bottomNavBarExpandedContent
+import ru.blays.revanced.Elements.GlobalState.NavBarState
 
+@Suppress("AnimateAsStateLabel")
 @Composable
 fun Navigator() {
 
     val navigationController = rememberNavController()
 
     val expandedContentState by bottomNavBarExpandedContent.collectAsState()
+
+    val shouldHideNavigationBar = NavBarState.shouldHideNavigationBar
+
+    val navBarHeightDp = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
+    val navOffset by animateDpAsState(if (shouldHideNavigationBar) 80.dp + navBarHeightDp else 0.dp)
 
     val destinationsList = listOf(
         BottomBarItem.Icon(
@@ -60,7 +74,8 @@ fun Navigator() {
                 expanded = expandedContentState.isExpanded,
                 selectedItem = selectedItem,
                 items = destinationsList,
-                expandedContent = expandedContentState.content
+                expandedContent = expandedContentState.content,
+                modifier = Modifier.offset(y = navOffset)
             )
         }
     ) { padding ->

@@ -19,11 +19,12 @@ import ru.Blays.ReVanced.Manager.DI.autoInject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
-import ru.blays.revanced.Elements.DataClasses.NavBarExpandedContent
+import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
+import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import ru.blays.revanced.data.Utils.DownloadState
 import ru.blays.revanced.data.Utils.FileDownloadDto
 import ru.blays.revanced.data.Utils.FileDownloader
@@ -33,7 +34,6 @@ import ru.blays.revanced.domain.UseCases.GetApkListUseCase
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 import java.io.File
-
 
 class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
@@ -88,7 +88,7 @@ class VersionsListScreenViewModel(
     }
 
     private fun calculatePagesCount(repo: VersionsRepository) {
-        pagesCount = if (repo.hasRootVersion) 2 else 1
+        pagesCount = if (repo.hasRootVersion && isRootGranted) 2 else 1
     }
 
     suspend fun getList(appType: String) = withContext(Dispatchers.IO) {

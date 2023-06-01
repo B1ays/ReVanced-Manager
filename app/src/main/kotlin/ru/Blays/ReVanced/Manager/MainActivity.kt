@@ -1,5 +1,7 @@
 package ru.Blays.ReVanced.Manager
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,21 +18,30 @@ import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 
 class MainActivity : ComponentActivity() {
 
+    private val settingsRepository: SettingsRepository by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val settingsRepository: SettingsRepository by inject()
-
-        val buildedTheme = settingsRepository.buildedTheme
+        // Request permission for send notifications (for android 13)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1234)
+        }
 
         setContent {
 
             settingsRepository.isSystemInDarkMode = isSystemInDarkTheme()
 
+            val buildedTheme = settingsRepository.buildedTheme.value
+
+            val isAmoledTheme = settingsRepository.isAmoledTheme
+
+
             ReVancedManagerTheme(
                 darkTheme = settingsRepository.appTheme.isDarkMode!!,
                 dynamicColor = settingsRepository.monetTheme,
-                buildedTheme = buildedTheme
+                buildedTheme = buildedTheme,
+                isAmoledTheme = isAmoledTheme
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

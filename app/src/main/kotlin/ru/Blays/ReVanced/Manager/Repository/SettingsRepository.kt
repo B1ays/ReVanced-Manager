@@ -19,6 +19,8 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
 
     private var _monetTheme by mutableStateOf(true)
 
+    private var _isAmoledTheme = mutableStateOf(false)
+
     private var _accentColorItem by mutableStateOf(1)
 
     private var _isRootMode by mutableStateOf(false)
@@ -50,6 +52,8 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
         _monetTheme = settingsRepositoryImplementation.monetTheme
 
         _accentColorItem = settingsRepositoryImplementation.accentColor
+
+        _isAmoledTheme.value = settingsRepositoryImplementation.isAmoledTheme
 
         _isRootMode = settingsRepositoryImplementation.isRootMode
 
@@ -85,6 +89,14 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
             _monetTheme = value
             settingsRepositoryImplementation.monetTheme = value
         }
+
+    var isAmoledTheme: Boolean
+        get() = _isAmoledTheme.value
+        set(value) {
+            _isAmoledTheme.value = value
+            settingsRepositoryImplementation.isAmoledTheme = value
+        }
+
 
     var accentColorItem: Int
         get() = _accentColorItem

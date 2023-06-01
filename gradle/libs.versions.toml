@@ -1,4 +1,5 @@
 [versions]
+accompanist-permissions = "0.31.3-beta"
 androidx-activity = "1.8.0-alpha04"
 androidx-arch-core = "2.2.0"
 androidx-collection = "1.2.0"
@@ -14,14 +15,16 @@ coil = "2.4.0"
 com-google-devtools-ksp = "1.9.0-Beta-1.0.11"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-markdown = "0.3.3"
-core = "5.0.5"
+core = "5.1.0"
 io-github-raamcosta-compose-destinations = "1.9.42-beta"
-koin-android = "3.4.0"
-koin-androidx-compose = "3.4.4"
+koin-android = "3.4.1"
+koin-androidx-compose = "3.4.5"
 org-jetbrains-kotlin = "1.9.0-Beta"
 rebugger = "1.0.0-alpha05"
+work-runtime-ktx = "2.8.1"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
 androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
 androidx-activity-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-activity-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
@@ -71,6 +74,7 @@ androidx-savedstate-savedstate-ktx = { module = "androidx.savedstate:savedstate-
 androidx-startup-startup-runtime = "androidx.startup:startup-runtime:1.1.1"
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose-ui" }
 androidx-versionedparcelable = "androidx.versionedparcelable:versionedparcelable:1.1.1"
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 com-google-devtools-ksp-symbol-processing = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "com-google-devtools-ksp" }
 com-google-devtools-ksp-symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "com-google-devtools-ksp" }
@@ -101,8 +105,8 @@ rebugger = { module = "com.github.theapache64:rebugger", version.ref = "rebugger
 service = { module = "com.github.topjohnwu.libsu:service", version.ref = "core" }
 
 [plugins]
-com-android-application = "com.android.application:8.2.0-alpha05"
-com-android-library = "com.android.library:8.2.0-alpha05"
+com-android-application = "com.android.application:8.2.0-alpha06"
+com-android-library = "com.android.library:8.2.0-alpha06"
 com-github-ben-manes-versions = "com.github.ben-manes.versions:0.46.0"
 com-google-devtools-ksp = "com.google.devtools.ksp:1.9.0-Beta-1.0.11"
 kotlinx-serialization = "kotlinx-serialization:1.9.0-Beta"
