@@ -3,4 +3,11 @@
     <string name="notification_title">Доступно обновление</string>
     <string name="notification_message_nonRoot">Доступна новая non-Root версия</string>
     <string name="notification_message_root">Доступна новая Root версия для</string>
+    <string name="notification_channel_name">Уведомлнения о новых версиях</string>
+    <string name="about_group_information">Основная информация</string>
+    <string name="about_group_author">О разработчике</string>
+    <string name="about_card_github">Исходный код на GitHub</string>
+    <string name="about_card_telegram">Группа в Telegram</string>
+    <string name="about_card_author">Разаработано Blays\nСвязаться со мной можно сдесь:</string>
+    <string name="about_social_vk">Вконтакте</string>
 </resources>

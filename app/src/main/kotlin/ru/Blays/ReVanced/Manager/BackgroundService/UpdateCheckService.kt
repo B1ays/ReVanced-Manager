@@ -36,12 +36,12 @@ private val showNotification: (context: Context, builder: NotificationCompat.Bui
             context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED ||
             Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
         ) {
-            notify((0..900000).random(), builder.build())
+            notify((0..1000000).random(), builder.build())
         }
     }
 }
 
-private fun executeAfterTimeout(delay: Duration, block: () -> Unit): Job {
+private fun executeAfterDelay(delay: Duration, block: () -> Unit): Job {
     return CoroutineScope(Dispatchers.Default).launch {
         delay(delay)
         block()
@@ -61,15 +61,20 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
 
     Apps.entries.forEach { app ->
 
+        val repository = app.repository
+
+        // Update info inside repository
+        if (repository.availableVersion.value != null) repository.updateInfo()
+
         // Available of app
         var availableVersion = ""
 
         // Available version
          job = scope.launch {
-            app.repository.availableVersion.collect { version ->
+            repository.availableVersion.collect { version ->
                 Log.d("UpdateCheckService", "availableVersion: $version")
                 if (version?.isNotEmpty() == true) {
-                    availableVersion = version + "test"
+                    availableVersion = version
                     job?.cancel()
                 }
             }
@@ -80,17 +85,17 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
             Log.d("UpdateCheckService", "Start collect nonRoot versions")
 
             // Cancel collect flow after delay
-            val delayJob = executeAfterTimeout(DELAY) {
+            val delayedJob = executeAfterDelay(DELAY) {
                 job?.cancel()
             }
 
             //Collect current version of app
-            app.repository.nonRootVersion.collect { version ->
+            repository.nonRootVersion.collect { version ->
                 if (version?.isNotEmpty() == true && version != availableVersion) {
 
                     // Create message for notification
                     val message = "${getStringRes(R.string.notification_message_nonRoot)} " +
-                        "${app.repository.appName}, ${getStringRes(ru.blays.revanced.Presentation.R.string.Version)}: $version"
+                        "${repository.appName}, ${getStringRes(ru.blays.revanced.Presentation.R.string.Version)}: $availableVersion"
 
                     // Create notification builder with message
                     val builder = createBuilder(context, message)
@@ -99,7 +104,7 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
                     showNotification(context, builder)
 
                     // Cancel launched coroutines
-                    delayJob.cancel()
+                    delayedJob.cancel()
                     job?.cancel()
                 }
             }
@@ -111,16 +116,16 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
             Log.d("UpdateCheckService", "Start collect Root versions")
 
             // Cancel collect flow after delay
-            val cancelAfterDelay = executeAfterTimeout(DELAY) {
+            val cancelAfterDelay = executeAfterDelay(DELAY) {
                 job?.cancel()
             }
 
-            app.repository.rootVersion.collect { version ->
+            repository.rootVersion.collect { version ->
                 if (version?.isNotEmpty() == true && version != availableVersion) {
 
                     // Create message for notification
                     val message = "${getStringRes(R.string.notification_message_root)} " +
-                        "${app.repository.appName}, ${getStringRes(ru.blays.revanced.Presentation.R.string.Version)}: $version"
+                        "${repository.appName}, ${getStringRes(ru.blays.revanced.Presentation.R.string.Version)}: $availableVersion"
 
                     // Create notification builder with message
                     val builder = createBuilder(context, message)

@@ -49,6 +49,10 @@
     <string name="Settings_card_monet_title">Monet colors</string>
     <string name="Settings_card_monet_description">Use Monet colors</string>
 
+    <!--  amoled theme setting  -->
+    <string name="Settings_card_amoled_title">Amoled theme</string>
+    <string name="Settings_card_amoled_description">"Set black color as background"</string>
+
     <!--  Accent color setting  -->
     <string name="Settings_card_accent_title">Accent color</string>
     <string name="Settings_card_accent_description">Manually select accent color</string>

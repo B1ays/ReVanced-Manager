@@ -1,6 +1,21 @@
 <resources>
     <string name="app_name" translatable="false">ReVanced Manager</string>
+    <!--  Notifications  -->
     <string name="notification_title">Update available</string>
     <string name="notification_message_nonRoot">Available new nonRoot version for</string>
     <string name="notification_message_root">Available new Root version for</string>
+    <string name="notification_channel_name">New version notifications</string>
+
+    <!--  About Screen  -->
+    <string name="about_group_information">Main information</string>
+    <string name="about_group_author">About developer</string>
+
+    <string name="about_card_github">Source code on GitHub</string>
+    <string name="about_card_telegram">Telegram group</string>
+
+    <string name="about_card_author">Developed by Blays\nYou can contact me here:</string>
+
+    <string name="about_social_vk">VK</string>
+    <string name="about_social_telegram" translatable="false">Telegram</string>
+    <string name="about_social_4pda" translatable="false">4PDA</string>
 </resources>

@@ -224,6 +224,7 @@ private val ScrollableTabRowScrollSpec: AnimationSpec<Float> = tween(
     easing = FastOutSlowInEasing
 )
 
+@Suppress("AnimateAsStateLabel")
 fun Modifier.tabIndicatorOffset(
     currentTabPosition: TabPosition
 ): Modifier = composed(

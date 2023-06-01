@@ -14,6 +14,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.Blays.ReVanced.Manager.BackgroundService.updateCheckService
 import ru.Blays.ReVanced.Manager.DI.appModule
+import ru.blays.revanced.Elements.Util.getStringRes
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -36,11 +37,11 @@ class App: Application() {
         }
 
         // create channel for notifications
-        val channel = NotificationChannel("update", "channel", NotificationManager
+        val channel = NotificationChannel("update", getStringRes(R.string.notification_channel_name), NotificationManager
             .IMPORTANCE_DEFAULT).apply {
             description = "Update checker"
         }
-        NotificationManagerCompat.from(this).createNotificationChannel(channel)
+        NotificationManagerCompat.from(this@App).createNotificationChannel(channel)
 
         // Launch update check service
         val service = Executors.newSingleThreadScheduledExecutor()

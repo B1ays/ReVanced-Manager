@@ -9,11 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
@@ -42,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import ru.blays.revanced.Elements.DataClasses.AccentColorItem
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
-
+import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.Presentation.R
 
 private val ModifierWithExpandAnimation = Modifier
@@ -52,23 +49,12 @@ private val ModifierWithExpandAnimation = Modifier
         )
     )
 
-@Composable
-fun SettingsGroup(title: String, content: @Composable () -> Unit) {
-    Text(
-        modifier = Modifier
-            .padding(12.dp),
-        text = title,
-        style = MaterialTheme.typography.titleLarge
-    )
-    content()
-    Spacer(modifier = Modifier.height(16.dp))
-}
-
+@Suppress("TransitionPropertiesLabel")
 @Composable
 fun SettingsExpandableCard(
     title: String,
     subtitle: String = "",
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable () -> Unit
 ) {
 
     var isMenuExpanded by remember { mutableStateOf(false) }
@@ -84,8 +70,7 @@ fun SettingsExpandableCard(
             tween(
                 durationMillis = 300
             )
-        },
-        label = ""
+        }
     ) { expanded ->
         if (expanded) 180f else 0f
     }
@@ -117,7 +102,7 @@ fun SettingsExpandableCard(
                     text = title,
                     style = MaterialTheme.typography.titleMedium
                 )
-                if (subtitle != "") Text(
+                if (subtitle.isNotEmpty()) Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -136,7 +121,14 @@ fun SettingsExpandableCard(
 
         }
         if (isMenuExpanded) {
-            content()
+            Card(
+                modifier = ModifierWithExpandAnimation
+                    .fillMaxWidth(),
+                shape = CardShape.CardStandalone,
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.15f))
+            ) {
+                content()
+            }
         }
     }
 }

@@ -31,6 +31,8 @@
     <string name="Action_launch">Открыть</string>
     <string name="Settings_card_monet_title">Monet цвета</string>
     <string name="Settings_card_monet_description">Использовать цвета из Monet</string>
+    <string name="Settings_card_amoled_title">Amoled тема</string>
+    <string name="Settings_card_amoled_description">Сделать фон приложения чёрным</string>
     <string name="Settings_card_accent_title">Цветовой акцент</string>
     <string name="Settings_card_accent_description">Вручную устновить цветовой акцент</string>
     <string name="Settings_card_installer_title">Тип установщика</string>

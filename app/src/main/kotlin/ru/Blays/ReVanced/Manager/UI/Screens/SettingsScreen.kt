@@ -31,11 +31,11 @@ import ru.Blays.ReVanced.Manager.Repository.ThemeModel
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
 import ru.blays.revanced.Elements.DataClasses.AccentColorItem
+import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerItem
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWithSwitch
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCheckboxWithTitle
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
-import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsGroup
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
@@ -85,20 +85,16 @@ fun SettingsScreen(
                 .padding(top = padding.calculateTopPadding())
                 .fillMaxSize()
         ) {
-            item {
-                SettingsGroup(title = getStringRes(R.string.Settings_title_theme)) {
-                    ThemeSelector(repository = settingsRepository)
-                    isSAndAboveCompose { MonetColors(repository = settingsRepository) }
-                    AmoledTheme(repository = settingsRepository)
-                    AccentSelector(settingsRepository)
-                }
+            itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_theme)) {
+                ThemeSelector(repository = settingsRepository)
+                isSAndAboveCompose { MonetColors(repository = settingsRepository) }
+                AmoledTheme(repository = settingsRepository)
+                AccentSelector(settingsRepository)
             }
-            item {
-                SettingsGroup(title = getStringRes(R.string.Settings_title_main)) {
-                    RootedMode(repository = settingsRepository)
-                    InstallerType(repository = settingsRepository)
-                    ManagedApps(repository = settingsRepository)
-                }
+
+            itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
+                InstallerType(repository = settingsRepository)
+                ManagedApps(repository = settingsRepository)
             }
         }
     }
@@ -139,8 +135,8 @@ private fun MonetColors(repository: SettingsRepository) {
 @Composable
 fun AmoledTheme(repository: SettingsRepository) {
     SettingsCardWithSwitch(
-        title = "Amoled theme",
-        subtitle = "Set black color as background",
+        title = getStringRes(R.string.Settings_card_amoled_title),
+        subtitle = getStringRes(R.string.Settings_card_amoled_description),
         state = repository.isAmoledTheme
     ) {
         repository.isAmoledTheme = it
@@ -167,17 +163,6 @@ private fun AccentSelector(
     }
 }
 
-@Composable
-fun RootedMode(repository: SettingsRepository) {
-    SettingsCardWithSwitch(
-        title = "Использовать Root",
-        subtitle = "Разблокирует Root возможности приложения",
-        state = repository.isRootMode,
-        isSwitchEnabled = isRootGranted
-    ) {
-        repository.isRootMode = it
-    }
-}
 
 @Composable
 fun InstallerType(repository: SettingsRepository) {
