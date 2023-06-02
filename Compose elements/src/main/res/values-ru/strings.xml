@@ -51,4 +51,5 @@
     <string name="about_Iam">Я в</string>
     <string name="about_group_credits">Благодарности</string>
     <string name="about_credits_for">За</string>
+    <string name="Action_reboot_confirm">Перезагрузить?</string>
 </resources>

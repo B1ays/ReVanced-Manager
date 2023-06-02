@@ -40,6 +40,7 @@ import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTab
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabIndicator
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabRow
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ChangelogBottomSheet
+import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.RebootAlertDialog
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBottomSheet
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
@@ -217,4 +218,7 @@ fun VersionsListScreen(
         isExpanded = viewModel.isChangelogBottomSheetExpanded,
         changelog = viewModel.changelog
     )
+
+    if (viewModel.isRebootAlertDialogShowed)
+    RebootAlertDialog(actionReboot = viewModel::reboot, actionHide = viewModel.hideRebootAlertDialog)
 }

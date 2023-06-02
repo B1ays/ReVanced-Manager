@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,9 +20,9 @@ import ru.Blays.ReVanced.Manager.DI.autoInject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
-import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
+import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
@@ -52,6 +53,8 @@ class VersionsListScreenViewModel(
     var isApkListBottomSheetExpanded = MutableStateFlow(false)
 
     var isChangelogBottomSheetExpanded = MutableStateFlow(false)
+
+    var isRebootAlertDialogShowed by mutableStateOf(false)
 
     var bottomSheetList = MutableStateFlow(emptyList<ApkInfoModelDto>())
 
@@ -101,6 +104,9 @@ class VersionsListScreenViewModel(
         launch { repository?.updateInfo() }
     }
 
+    val hideRebootAlertDialog = { isRebootAlertDialogShowed = false }
+    val showRebootAlertDialog = { isRebootAlertDialogShowed = true }
+
     suspend fun showApkListBottomSheet(url: String, rootVersion: Boolean) {
         bottomSheetList.value = getApkListUseCase.execute(url)?.filter {
             it.isRootVersion == rootVersion
@@ -125,6 +131,10 @@ class VersionsListScreenViewModel(
 
     fun launch(packageName: String) {
         packageManager.launchApp(packageName)
+    }
+
+    fun reboot() {
+        Shell.cmd("am start -a android.intent.action.REBOOT").exec()
     }
 
     fun downloadNonRootVersion(
@@ -193,8 +203,9 @@ class VersionsListScreenViewModel(
                         viewModelScope.launch {
                         modFileDownloadState.downloadStatusFlow.collect { status2 ->
                             if (status2 == FileDownloader.END_DOWNLOAD) {
-                                MagiskInstaller.install(repository?.moduleType!!, modFile, context)
                                 NavBarExpandedContent.hide()
+                                MagiskInstaller.install(repository?.moduleType!!, modFile, context)
+                                showRebootAlertDialog()
                             }
                         }
                     }

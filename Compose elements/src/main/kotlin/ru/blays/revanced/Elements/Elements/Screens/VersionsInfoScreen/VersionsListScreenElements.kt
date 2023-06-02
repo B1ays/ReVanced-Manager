@@ -146,7 +146,7 @@ fun VersionsListScreenHeader(
             }
         },
         dismissButton = {
-            Button(
+            OutlinedButton(
                 onClick = hideAlertDialog
             ) {
                 Text(text = getStringRes(R.string.Action_Cancel))
@@ -382,6 +382,30 @@ fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: Mutab
             Spacer(Modifier.fillMaxHeight(0.1F))
         }
     }
+}
+
+@Composable
+fun RebootAlertDialog(actionReboot: () -> Unit, actionHide: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = actionHide,
+        title = {
+            Text(text = getStringRes(R.string.Action_reboot_confirm))
+        },
+        confirmButton = {
+            Button(
+                onClick = actionReboot
+            ) {
+                Text(text = getStringRes(R.string.Action_OK))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = actionHide
+            ) {
+                Text(text = getStringRes(R.string.Action_Cancel))
+            }
+        }
+    )
 }
 
 

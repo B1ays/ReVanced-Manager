@@ -25,6 +25,7 @@
     <string name="Action_install">Install</string>
     <string name="Action_uninstall">Uninstall</string>
     <string name="Action_uninstall_confirm">Are you sure?</string>
+    <string name="Action_reboot_confirm">Reboot?</string>
     <string name="Action_launch">Launch</string>
     <string name="Action_changelog" translatable="false">Changelog</string>
     <string name="Action_OK">Ok</string>
