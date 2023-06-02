@@ -11,7 +11,7 @@ class GetVersionsListUseCase(private val appInfoRepositoryInterface: AppInfoRepo
         const val MICROG = "MicroG"
 
         private const val YOUTUBE_JSON_LINK = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/YouTube/VersionsList.json"
-        private const val MUSIC_JSON_LINK = ""
+        private const val MUSIC_JSON_LINK = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/YouTube%20Music/VersionsList.json"
         private const val MICROG_JSON_LINK = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/MicroG/VersionsList.json"
     }
 

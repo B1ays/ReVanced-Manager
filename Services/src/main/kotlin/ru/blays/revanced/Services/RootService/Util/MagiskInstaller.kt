@@ -158,14 +158,16 @@ object MagiskInstaller {
         get() = { "/data/adb/modules/$it/" }
 
     private fun checkModuleExist(path: String): Boolean {
-        val check = Shell.cmd("test -e $path").exec()
-        return check.isSuccess
+        val checkModuleDirExists = Shell.cmd("test -e $path").exec()
+        val checkModuleFileExists = checkModuleFilesExist(path)
+        return checkModuleDirExists.isSuccess && checkModuleFileExists
     }
 
     fun checkModuleExist(module: Module): Boolean {
         val path = pathToModule(module.moduleId)
-        val check = Shell.cmd("test -e $path").exec()
-        return check.isSuccess
+        val checkModuleDirExists = Shell.cmd("test -e $path").exec()
+        val checkModuleFileExists = checkModuleFilesExist(path)
+        return checkModuleDirExists.isSuccess && checkModuleFileExists
     }
 
 
@@ -177,7 +179,7 @@ object MagiskInstaller {
     }
 
     private fun createModuleFolder(path: String): Boolean {
-        val create = Shell.cmd("mkdir $path").exec()
+        val create = Shell.cmd("mkdir -p $path").exec()
         return create.isSuccess
     }
 
@@ -224,7 +226,7 @@ description=ReVanced Manager module."""
 
     private fun moveApkToModuleFolder(modulePath: String, apkPath: String): Boolean {
         val filePath = "${modulePath}base.apk"
-        val moveBaseApk = Shell.cmd("cp -f $apkPath $filePath").exec()
+        val moveBaseApk = Shell.cmd("cp -f '${apkPath}' $filePath").exec()
         val applyChmod = applyChmod(filePath = filePath, 644)
         return moveBaseApk.isSuccess && applyChmod
     }
