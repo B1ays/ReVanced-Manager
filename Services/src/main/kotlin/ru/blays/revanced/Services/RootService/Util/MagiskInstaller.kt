@@ -9,6 +9,7 @@ import java.io.File
 import java.time.LocalDate
 import java.time.LocalTime
 
+@Suppress("MemberVisibilityCanBePrivate")
 object MagiskInstaller {
 
     val status = MutableStateFlow<Status>(Status.STARTING)
@@ -17,17 +18,17 @@ object MagiskInstaller {
 
         val logPath = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         val logFilePath = File(logPath, "InstallLog_${LocalDate.now()}_${LocalTime.now()}.txt").absolutePath
-        Log.d("Masisk Installer", "logFilePath: $logFilePath")
+        Log.d("Magisk Installer", "logFilePath: $logFilePath")
 
         val apkPath = file.absolutePath
 
-        Log.d("Masisk Installer", "ApkPath: $apkPath")
+        Log.d("Magisk Installer", "ApkPath: $apkPath")
 
         // post status & write to log
         postStatusAndWriteToLog(Status.STARTING, logFilePath)
 
         // Create path to app module
-        val pathToModule = getPathToModule(module.moduleId)
+        val pathToModule = pathToModule(module.moduleId)
 
         // post status & write to log
         postStatusAndWriteToLog(Status.CHECK_MODULE_EXISTS, logFilePath)
@@ -36,6 +37,8 @@ object MagiskInstaller {
         val isModuleExist = checkModuleExist(pathToModule)
 
         val isModuleFileExist = checkModuleFilesExist(pathToModule)
+
+
 
         // if module exists - update files
         if (isModuleExist && isModuleFileExist) {
@@ -131,7 +134,7 @@ object MagiskInstaller {
     fun delete(module: Module): Boolean {
 
         // Create path to app module
-        val pathToModule = getPathToModule(module.moduleId)
+        val pathToModule = pathToModule(module.moduleId)
 
         return deleteFile(pathToModule)
     }
@@ -151,7 +154,8 @@ object MagiskInstaller {
 
     // Get full path to module folder
     // Module.moduleId -> path
-    private val getPathToModule: (String) -> String = { "/data/adb/modules/$it/" }
+    private val pathToModule: (String) -> String
+        get() = { "/data/adb/modules/$it/" }
 
     private fun checkModuleExist(path: String): Boolean {
         val check = Shell.cmd("test -e $path").exec()
@@ -159,7 +163,7 @@ object MagiskInstaller {
     }
 
     fun checkModuleExist(module: Module): Boolean {
-        val path = getPathToModule(module.moduleId)
+        val path = pathToModule(module.moduleId)
         val check = Shell.cmd("test -e $path").exec()
         return check.isSuccess
     }
@@ -205,19 +209,30 @@ description=ReVanced Manager module."""
     }
 
     private fun writeServiceSh(modulePath: String, serviceSh: String): Boolean {
-        val writeServiceSh = Shell.cmd("echo \"$serviceSh\" > ${modulePath}service.sh").exec()
-        return writeServiceSh.isSuccess
+        val filePath = "${modulePath}service.sh"
+        val writeServiceSh = Shell.cmd("echo \"$serviceSh\" > $filePath").exec()
+        val applyChmod = applyChmod(filePath = filePath, 644)
+        return writeServiceSh.isSuccess && applyChmod
     }
 
-    private fun writeModuleProp(moduleProp: String, modulePath: String) : Boolean {
-        val writeModuleProp = Shell.cmd("echo \"$moduleProp\" > ${modulePath}module.prop").exec()
-        return writeModuleProp.isSuccess
+        private fun writeModuleProp(moduleProp: String, modulePath: String) : Boolean {
+        val filePath = "${modulePath}module.prop"
+        val writeModuleProp = Shell.cmd("echo \"$moduleProp\" > $filePath").exec()
+        val applyChmod = applyChmod(filePath = filePath, 644)
+        return writeModuleProp.isSuccess && applyChmod
     }
 
     private fun moveApkToModuleFolder(modulePath: String, apkPath: String): Boolean {
-        val moveBaseApk = Shell.cmd("cp -f $apkPath ${modulePath}base.apk").exec()
-        val applyChmod = Shell.cmd("chmod 644 ${modulePath}base.apk").exec()
-        return moveBaseApk.isSuccess && applyChmod.isSuccess
+        val filePath = "${modulePath}base.apk"
+        val moveBaseApk = Shell.cmd("cp -f $apkPath $filePath").exec()
+        val applyChmod = applyChmod(filePath = filePath, 644)
+        return moveBaseApk.isSuccess && applyChmod
+    }
+
+    @Suppress("SameParameterValue")
+    private fun applyChmod(filePath: String, chmod: Int): Boolean {
+        val apply = Shell.cmd("chmod $chmod $filePath").exec()
+        return apply.isSuccess
     }
 
     private fun deleteFile(filePath: String): Boolean {
