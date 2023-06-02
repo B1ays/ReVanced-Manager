@@ -169,7 +169,8 @@ class RootPackageManager: PackageManagerInterface {
 
     override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> {
         return try {
-            Shell.cmd("monkey -p $packageName -c android.intent.category.LAUNCHER 1").exec()
+            val launchCategoryLauncher = Shell.cmd("monkey -p $packageName -c android.intent.category.LAUNCHER 1").exec()
+            if (!launchCategoryLauncher.isSuccess) Shell.cmd("monkey -p $packageName -c android.intent.category.DEFAULT 1").exec()
             PackageManagerResult.Success(null)
         } catch (e: SuException) {
             PackageManagerResult.Error(
