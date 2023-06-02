@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VersionsInfoModel(
-    @SerialName("Version") val version : String,
-    @SerialName("Patches version") val patchesVersion: String,
-    @SerialName("Build date") val buildDate: String,
-    @SerialName("Changelog link") val changelogLink: String,
-    @SerialName("Versions list") val versionsListLink: String
+    @SerialName("Version") val version: String? = null,
+    @SerialName("Patches version") val patchesVersion: String? = null,
+    @SerialName("Build date") val buildDate: String? = null,
+    @SerialName("Changelog link") val changelogLink: String? = null,
+    @SerialName("Versions list") val versionsListLink: String? = null
 ) {
 
 }

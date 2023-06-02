@@ -295,11 +295,11 @@ fun VersionsInfoCard(
                     .padding(8.dp)
                     .fillMaxWidth()
             ) {
-                Text(text = "${getStringRes(R.string.Version)}: ${item.version}")
+                item.version?.let { Text(text = "${getStringRes(R.string.Version)}: $it") }
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "${getStringRes(R.string.Patches_version)}: ${item.patchesVersion}")
+                item.patchesVersion?.let { Text(text = "${getStringRes(R.string.Patches_version)}: $it") }
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "${getStringRes(R.string.Build_date)}: ${item.buildDate}")
+                item.buildDate?.let { Text(text = "${getStringRes(R.string.Build_date)}: $it") }
             }
         }
     }
