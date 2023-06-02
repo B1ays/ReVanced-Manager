@@ -106,6 +106,7 @@ class RootPackageManager: PackageManagerInterface {
 
     override suspend fun installSplitApp(apks: Array<File>): PackageManagerResult<Nothing> {
         val sessionId = try {
+
             val installCreate = Shell.cmd("pm install-create -r").awaitOutputOrThrow()
 
             installCreate.toInt()
@@ -168,7 +169,7 @@ class RootPackageManager: PackageManagerInterface {
 
     override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> {
         return try {
-            Shell.cmd("monkey -p $packageName -c android.intent.category.LAUNCHER 1")
+            Shell.cmd("monkey -p $packageName -c android.intent.category.LAUNCHER 1").exec()
             PackageManagerResult.Success(null)
         } catch (e: SuException) {
             PackageManagerResult.Error(
