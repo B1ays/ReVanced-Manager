@@ -69,5 +69,27 @@
     <string name="Settings_card_selected_apps_title">Selected apps</string>
     <string name="Settings_card_selected_apps_description">Apps what managed by manager</string>
 
+    <!--  About Screen  -->
+    <string name="about_group_information">Main information</string>
+    <string name="about_group_author">About developer</string>
+    <string name="about_group_credits">Credits</string>
+
+    <string name="about_card_github">Source code on GitHub</string>
+    <string name="about_card_telegram">Telegram group</string>
+
+    <string name="about_card_author">Developed by Blays\nYou can contact me here:</string>
+
+    <string name="about_social_vk">VK</string>
+    <string name="about_social_telegram" translatable="false">Telegram</string>
+    <string name="about_social_4pda" translatable="false">4PDA</string>
+
+    <string name="about_Iam">I\'m in</string>
+
+    <string name="about_credits_for">For</string>
+
+    <string name="about_credits_reason_hh" translatable="false">collapsing appBar</string>
+    <string name="about_credits_reason_iTaysonLab" translatable="false">floating bottom navigation bar</string>
+    <string name="about_credits_reason_material_foundation" translatable="false">material color utilities</string>
+    <string name="about_credits_reason_teamVanced" translatable="false">Root / nonRoot package manager</string>
 
 </resources>

@@ -42,4 +42,13 @@
     <string name="Settings_card_installer_shizuku">Shiziku установщик</string>
     <string name="Settings_card_selected_apps_title">Выбранные приложения</string>
     <string name="Settings_card_selected_apps_description">Приложения, которыми управляет менеджер</string>
+    <string name="about_group_information">Основная информация</string>
+    <string name="about_group_author">О разработчике</string>
+    <string name="about_card_github">Исходный код на GitHub</string>
+    <string name="about_card_telegram">Группа в Telegram</string>
+    <string name="about_card_author">Разаработано Blays\nСвязаться со мной можно сдесь:</string>
+    <string name="about_social_vk">Вконтакте</string>
+    <string name="about_Iam">Я в</string>
+    <string name="about_group_credits">Благодарности</string>
+    <string name="about_credits_for">За</string>
 </resources>
