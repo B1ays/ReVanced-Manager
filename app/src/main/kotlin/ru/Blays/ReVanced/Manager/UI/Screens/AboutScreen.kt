@@ -3,6 +3,7 @@ package ru.Blays.ReVanced.Manager.UI.Screens
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.AuthorCard
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.ContactsCards
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.CreditCards
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.HeadItem
+import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
@@ -36,6 +38,12 @@ fun AboutScreen(
 ) {
 
     val scrollBehavior = rememberToolbarScrollBehavior()
+
+    val lazyListState = rememberLazyListState()
+
+    if (!lazyListState.canScrollForward && lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = true
+    else if (!lazyListState.canScrollForward && !lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = false
+    else NavBarState.shouldHideNavigationBar = false
 
     Scaffold(
         topBar = {
@@ -58,7 +66,8 @@ fun AboutScreen(
                 .padding(
                     top = padding.calculateTopPadding()
                 )
-                .fillMaxSize()
+                .fillMaxSize(),
+            state = lazyListState
         ) {
 
             itemsGroupWithHeader(title = getStringRes(ElemetntsR.string.about_group_information)) {

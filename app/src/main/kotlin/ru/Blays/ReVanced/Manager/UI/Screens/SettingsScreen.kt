@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MoreVert
@@ -37,6 +38,7 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWi
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCheckboxWithTitle
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
+import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
@@ -56,6 +58,12 @@ fun SettingsScreen(
     var isSpinnerExpanded by remember { mutableStateOf(false) }
     
     val changeExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
+
+    val lazyListState = rememberLazyListState()
+
+    if (!lazyListState.canScrollForward && lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = true
+    else if (!lazyListState.canScrollForward && !lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = false
+    else NavBarState.shouldHideNavigationBar = false
 
     Scaffold(
         topBar = {
@@ -83,7 +91,8 @@ fun SettingsScreen(
             modifier = Modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(top = padding.calculateTopPadding())
-                .fillMaxSize()
+                .fillMaxSize(),
+            state = lazyListState
         ) {
             itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_theme)) {
                 ThemeSelector(repository = settingsRepository)
