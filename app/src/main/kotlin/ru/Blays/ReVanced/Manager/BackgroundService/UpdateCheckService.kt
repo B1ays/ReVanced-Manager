@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.minutes
 private val createBuilder: (context: Context, message: String) -> NotificationCompat.Builder
     get() = { context, message ->
         NotificationCompat.Builder(context, "update")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification_small)
             .setContentTitle(getStringRes(R.string.notification_title))
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
