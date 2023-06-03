@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class ru.Blays.ReVanced.Manager.Repository.YoutubeVersionsRepository { *; }
+-keep class ru.Blays.ReVanced.Manager.Repository.YoutubeMusicVersionsRepository { *; }
+-keep class ru.Blays.ReVanced.Manager.Repository.MicroGVersionsRepository { *; }
+-keep class ru.Blays.ReVanced.Manager.Repository.VersionsRepository { *; }
