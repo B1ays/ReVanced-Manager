@@ -183,7 +183,6 @@ fun VersionsListScreen(
                         }
 
                         items(viewModel.list) { item ->
-                            @Suppress("PackageName")
                             VersionsInfoCard(
                                 item = item,
                                 actionShowChangelog = viewModel::showChangelogBottomSheet,
