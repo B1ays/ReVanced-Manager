@@ -121,12 +121,14 @@ class VersionsListScreenViewModel(
 
     fun delete(packageName: String) {
         packageManager.uninstall(packageName)
+        onRefresh()
     }
 
     fun deleteModule(packageName: String) {
         repository?.moduleType?.let { module ->
             MagiskInstaller.delete(module = module)
         }
+        onRefresh()
     }
 
     fun launch(packageName: String) {
@@ -206,6 +208,7 @@ class VersionsListScreenViewModel(
                                 NavBarExpandedContent.hide()
                                 MagiskInstaller.install(repository?.moduleType!!, modFile, context)
                                 showRebootAlertDialog()
+                                onRefresh()
                             }
                         }
                     }
@@ -225,6 +228,7 @@ class VersionsListScreenViewModel(
                 if (it == FileDownloader.END_DOWNLOAD) {
                     packageManager.installApk(file, settingsRepository.installerType)
                     NavBarExpandedContent.hide()
+                    onRefresh()
                 }
             }
         }

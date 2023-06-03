@@ -219,6 +219,10 @@ fun VersionsListScreen(
         changelog = viewModel.changelog
     )
 
-    if (viewModel.isRebootAlertDialogShowed)
-    RebootAlertDialog(actionReboot = viewModel::reboot, actionHide = viewModel.hideRebootAlertDialog)
+    if (viewModel.isRebootAlertDialogShowed) {
+        RebootAlertDialog(
+            actionReboot = viewModel::reboot,
+            actionHide = viewModel.hideRebootAlertDialog
+        )
+    }
 }
