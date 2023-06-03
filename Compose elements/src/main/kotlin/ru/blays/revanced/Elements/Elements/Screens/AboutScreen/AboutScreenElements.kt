@@ -66,6 +66,7 @@ fun HeadItem(appIco: ImageVector, appName: String, versionName: String, buildTyp
             {
                 Image(
                     imageVector = appIco, contentDescription = "Icon",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surfaceVariant),
                     modifier = Modifier
                         .size(50.dp)
                         .background(
