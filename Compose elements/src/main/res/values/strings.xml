@@ -19,6 +19,9 @@
     <!--  Download  -->
     <string name="Download">Download</string>
     <string name="Progress">Progress</string>
+    <string name="Speed">Speed</string>
+    <string name="Speed_kbs">Kb/s</string>
+    <string name="Speed_mbs">Mb/s</string>
 
     <!--  Actions  -->
     <string name="Action_download">Download</string>
@@ -38,7 +41,7 @@
     <string name="Settings_title_theme">App theme &amp; colors</string>
     <string name="Settings_title_main">Main settings</string>
 
-    <!--  Dark mode setting  -->
+    <!--  Dark code setting  -->
     <string name="Settings_card_theme_title">Theme</string>
     <string name="Settings_card_theme_description">Select app theme</string>
 

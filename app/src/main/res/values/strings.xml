@@ -5,5 +5,6 @@
     <string name="notification_message_nonRoot">Available new nonRoot version for</string>
     <string name="notification_message_root">Available new Root version for</string>
     <string name="notification_channel_name">New version notifications</string>
+    <string name="title_activity_crash_handler">CrashHandlerActivity</string>
 
 </resources>

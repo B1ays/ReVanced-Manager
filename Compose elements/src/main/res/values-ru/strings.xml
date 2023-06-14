@@ -24,6 +24,7 @@
     <string name="Description">Описание</string>
     <string name="Download">Скачивание</string>
     <string name="Progress">Прогресс</string>
+    <string name="Speed">Скорость</string>
     <string name="Action_download">Скачать</string>
     <string name="Action_install">Установить</string>
     <string name="Action_uninstall">Удалить</string>
@@ -52,4 +53,6 @@
     <string name="about_group_credits">Благодарности</string>
     <string name="about_credits_for">За</string>
     <string name="Action_reboot_confirm">Перезагрузить?</string>
+    <string name="Speed_kbs">Кб/с</string>
+    <string name="Speed_mbs">Мб/с</string>
 </resources>
