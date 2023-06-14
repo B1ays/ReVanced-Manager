@@ -49,6 +49,9 @@ dependencies {
     annotationProcessor libs.androidx.room.room.compiler
     ksp libs.androidx.room.room.compiler
 
+    // Pausing coroutines
+    implementation libs.pausing.coroutine.dispatcher.asProvider()
+
     // Modules
     implementation project(path: ':Domain')
 }

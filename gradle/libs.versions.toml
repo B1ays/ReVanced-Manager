@@ -1,13 +1,13 @@
 [versions]
 accompanist-permissions = "0.31.3-beta"
-androidx-activity = "1.8.0-alpha04"
+androidx-activity = "1.8.0-alpha05"
 androidx-arch-core = "2.2.0"
 androidx-collection = "1.2.0"
-androidx-compose-animation = "1.5.0-beta01"
-androidx-compose-foundation = "1.5.0-beta01"
-androidx-compose-runtime = "1.5.0-beta01"
-androidx-compose-ui = "1.5.0-beta01"
-androidx-core = "1.12.0-alpha04"
+androidx-compose-animation = "1.5.0-beta02"
+androidx-compose-foundation = "1.5.0-beta02"
+androidx-compose-runtime = "1.5.0-beta02"
+androidx-compose-ui = "1.5.0-beta02"
+androidx-core = "1.12.0-alpha05"
 androidx-lifecycle = "2.6.1"
 androidx-room = "2.6.0-alpha01"
 androidx-savedstate = "1.2.1"
@@ -16,12 +16,16 @@ com-google-devtools-ksp = "1.9.0-Beta-1.0.11"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-markdown = "0.3.3"
 core = "5.1.0"
+github-pausing-coroutine-dispatcher = "ee40ae5"
 io-github-raamcosta-compose-destinations = "1.9.42-beta"
 koin-android = "3.4.1"
 koin-androidx-compose = "3.4.5"
 org-jetbrains-kotlin = "1.9.0-Beta"
+pausing-coroutine-dispatcher = "ee40ae5"
 rebugger = "1.0.0-alpha05"
 work-runtime-ktx = "2.8.1"
+kotlin = "1.8.10"
+compose-bom = "2023.06.00"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
@@ -55,7 +59,7 @@ androidx-concurrent-concurrent-futures = "androidx.concurrent:concurrent-futures
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-core-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-customview-customview-poolingcontainer = "androidx.customview:customview-poolingcontainer:1.0.0"
-androidx-emoji2 = "androidx.emoji2:emoji2:1.4.0-beta04"
+androidx-emoji2 = "androidx.emoji2:emoji2:1.4.0-beta05"
 androidx-interpolator = "androidx.interpolator:interpolator:1.0.0"
 androidx-lifecycle-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "androidx-lifecycle" }
@@ -85,7 +89,7 @@ compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.
 core = { module = "com.github.topjohnwu.libsu:core", version.ref = "core" }
 io-github-raamcosta-compose-destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "io-github-raamcosta-compose-destinations" }
 io-github-raamcosta-compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "io-github-raamcosta-compose-destinations" }
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
+koin-android = { module = "io.insert-koin:koin-android", version = "3.4.2" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-androidx-compose" }
 nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "core" }
 org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:2.20.0"
@@ -101,8 +105,14 @@ org-jetbrains-kotlinx-kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlin
 org-jetbrains-kotlinx-kotlinx-serialization-core-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.5.1"
 org-jetbrains-kotlinx-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 org-jetbrains-kotlinx-kotlinx-serialization-json-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.5.1"
+pausing-coroutine-dispatcher = { module = "com.github.Koitharu.pausing-coroutine-dispatcher:pausing-coroutine-dispatcher", version.ref = "pausing-coroutine-dispatcher" }
+pausing-coroutine-dispatcher-ee40ae5 = { module = "com.github.Koitharu.pausing-coroutine-dispatcher:pausing-coroutine-dispatcher", version.ref = "github-pausing-coroutine-dispatcher" }
 rebugger = { module = "com.github.theapache64:rebugger", version.ref = "rebugger" }
 service = { module = "com.github.topjohnwu.libsu:service", version.ref = "core" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+material3 = { group = "androidx.compose.material3", name = "material3" }
 
 [plugins]
 com-android-application = "com.android.application:8.2.0-alpha06"
@@ -114,3 +124,4 @@ nl-littlerobots-version-catalog-update = "nl.littlerobots.version-catalog-update
 org-jetbrains-kotlin-android = "org.jetbrains.kotlin.android:1.9.0-Beta"
 org-jetbrains-kotlin-jvm = "org.jetbrains.kotlin.jvm:1.9.0-Beta"
 org-jetbrains-kotlin-plugin-serialization = "org.jetbrains.kotlin.plugin.serialization:1.9.0-Beta"
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
