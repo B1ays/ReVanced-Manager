@@ -2,41 +2,47 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <queries>
         <package android:name="com.google.android.youtube" />
-        <package android:name="com.google.android.apps.youtube.music"/>
-        <package android:name="app.revanced.android.youtube"/>
-        <package android:name="app.revanced.android.apps.youtube.music"/>
-        <package android:name="com.mgoogle.android.gms"/>
+        <package android:name="com.google.android.apps.youtube.music" />
+        <package android:name="app.revanced.android.youtube" />
+        <package android:name="app.revanced.android.apps.youtube.music" />
+        <package android:name="com.mgoogle.android.gms" />
     </queries>
 
     <application
-        android:name="ru.Blays.ReVanced.Manager.App"
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.ReVancedManager"
-        tools:targetApi="31"
-        android:localeConfig="@xml/locales_config"
-        tools:ignore="UnusedAttribute">
-
+        tools:ignore="UnusedAttribute"
+        tools:targetApi="31">
+        <activity
+            android:name=".CrashHandlerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_crash_handler"
+            android:theme="@style/Theme.ReVancedManager" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.ReVancedManager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -50,6 +56,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
     </application>
+
 </manifest>
