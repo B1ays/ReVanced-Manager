@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,10 @@ class CrashHandlerActivity : ComponentActivity() {
         val stackTrace = intent.getStringExtra("StackTrace")
         val clipData = ClipData.newPlainText("StackTrace", stackTrace)
 
+        val callback = onBackPressedDispatcher.addCallback(this, true) {
+            finishAndRemoveTask()
+        }
+
         setContent {
 
             ReVancedManagerTheme {
@@ -84,17 +89,6 @@ class CrashHandlerActivity : ComponentActivity() {
                                 contentColor = MaterialTheme.colorScheme.onBackground
                             ) {
                                 Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_share_24), contentDescription = null)
-                            }
-
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            CustomIconButton(
-                                onClick = { this@CrashHandlerActivity.finishAndRemoveTask() },
-                                shape = CircleShape,
-                                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
-                                contentColor = MaterialTheme.colorScheme.onBackground
-                            ) {
-                                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_exit_to_app_24), contentDescription = null)
                             }
                         }
 
