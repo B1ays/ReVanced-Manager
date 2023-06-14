@@ -25,7 +25,7 @@ import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
 import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
-import ru.blays.revanced.Services.NonRootService.PackageManager.RootPackageManager
+import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
