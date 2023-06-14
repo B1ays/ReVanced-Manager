@@ -35,7 +35,6 @@ import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
 
-@OptIn(ExperimentalStdlibApi::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
@@ -83,7 +82,7 @@ fun MainScreen(
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 state = lazyListState
             ) {
-                items(Apps.entries) { app ->
+                items(Apps.values()) { app ->
                     if (
                         (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
                         (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
@@ -119,4 +118,3 @@ fun MainScreen(
         }
     }
 }
-

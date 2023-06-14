@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import ru.blays.revanced.Services.NonRootService.PackageManager.NonrootPackageManager
+import ru.blays.revanced.Services.NonRootService.PackageManager.NonRootPackageManager
 import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerInterface
 import ru.blays.revanced.Services.NonRootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
@@ -16,9 +16,9 @@ class PackageManagerApiImpl(context: Context, installerType: Int): PackageManage
     override val coroutineContext = Dispatchers.Default
 
     override val packageManagerInterface: PackageManagerInterface = when {
-        installerType == 1 -> NonrootPackageManager(context)
+        installerType == 1 -> NonRootPackageManager(context)
         installerType == 2 && isRootGranted -> RootPackageManager()
-        else -> NonrootPackageManager(context)
+        else -> NonRootPackageManager(context)
     }
 
     override fun installApk(file: File, installerType: Int) = async {

@@ -59,7 +59,7 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
 
     var job: Job? = null
 
-    Apps.entries.forEach { app ->
+    Apps.values().forEach { app ->
 
         val repository = app.repository
 

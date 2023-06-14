@@ -20,7 +20,7 @@ class MainScreenViewModel(private val getVersionsListUseCase: GetVersionsListUse
     fun onRefresh() {
         isRefreshing = true
         launch {
-            Apps.entries.forEach { app ->
+            Apps.values().forEach { app ->
                 app.repository.updateInfo()
             }
             isRefreshing = false

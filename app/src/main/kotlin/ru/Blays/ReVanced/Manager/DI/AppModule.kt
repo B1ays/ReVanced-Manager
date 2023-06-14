@@ -17,19 +17,20 @@ import ru.blays.revanced.domain.UseCases.GetApkListUseCase
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
-private val settingsRepository: SettingsRepository by autoInject()
-
 val appModule = module {
     viewModel { MainScreenViewModel(get()) }
     viewModel { VersionsListScreenViewModel(get(), get(), get()) }
+    factory<GetVersionsListUseCase> { GetVersionsListUseCase(get()) }
+    factory<GetApkListUseCase> { GetApkListUseCase(get()) }
+    factory<GetChangelogUseCase> { GetChangelogUseCase(get()) }
+    factory<PackageManagerApi> {
+        val installerType = get<SettingsRepository>().installerType
+        PackageManagerApiImpl(get(), installerType)
+    }
     single<AppInfoRepositoryInterface> { AppInfoRepositoryImplementation() }
     single<SettingsRepositoryImplementation> { SettingsRepositoryImplementation(get()) }
     single<SettingsRepository> { SettingsRepository(get()) }
     single<YoutubeVersionsRepository> { YoutubeVersionsRepository(get()) }
     single<YoutubeMusicVersionsRepository> { YoutubeMusicVersionsRepository(get()) }
     single<MicroGVersionsRepository> { MicroGVersionsRepository(get()) }
-    factory<PackageManagerApi> { PackageManagerApiImpl(get(), settingsRepository.installerType) }
-    factory<GetVersionsListUseCase> { GetVersionsListUseCase(get()) }
-    factory<GetApkListUseCase> { GetApkListUseCase(get()) }
-    factory<GetChangelogUseCase> { GetChangelogUseCase(get()) }
 }

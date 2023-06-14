@@ -8,14 +8,14 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageInstaller
 import android.os.Build
 import androidx.annotation.RequiresApi
-import ru.blays.revanced.Services.NonRootService.Util.doubleUnionTryCatch
-import ru.blays.revanced.Services.NonRootService.Util.tripleUnionTryCatch
 import ru.blays.revanced.Services.NonRootService.InstallService.AppInstallService
 import ru.blays.revanced.Services.NonRootService.InstallService.AppUninstallService
+import ru.blays.revanced.Services.NonRootService.Util.doubleUnionTryCatch
+import ru.blays.revanced.Services.NonRootService.Util.tripleUnionTryCatch
 import java.io.File
 import java.io.IOException
 
-class NonrootPackageManager(private val context: Context): PackageManagerInterface {
+class NonRootPackageManager(private val context: Context): PackageManagerInterface {
 
     @Suppress("DEPRECATION")
     val getPackageInfo: (String) -> PackageInfo = {

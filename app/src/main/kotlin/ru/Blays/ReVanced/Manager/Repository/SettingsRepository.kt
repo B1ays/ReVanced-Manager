@@ -4,6 +4,7 @@ package ru.Blays.ReVanced.Manager.Repository
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import ru.blays.revanced.Elements.DataClasses.AccentColorItem
@@ -13,19 +14,19 @@ import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
 
 class SettingsRepository(private val settingsRepositoryImplementation: SettingsRepositoryImplementation) {
 
-    private var _appThemeCode by mutableStateOf(0)
+    private var _appThemeCode by mutableIntStateOf(0)
 
     private var _appTheme by mutableStateOf(true)
 
     private var _monetTheme by mutableStateOf(true)
 
-    private var _isAmoledTheme = mutableStateOf(false)
+    private var _isAmoledTheme by mutableStateOf(false)
 
-    private var _accentColorItem by mutableStateOf(1)
+    private var _accentColorItem by mutableIntStateOf(1)
 
     private var _isRootMode by mutableStateOf(false)
 
-    private var _installerType by mutableStateOf(0)
+    private var _installerType by mutableIntStateOf(0)
 
     private var _youtubeManaged by mutableStateOf(true)
 
@@ -53,7 +54,7 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
 
         _accentColorItem = settingsRepositoryImplementation.accentColor
 
-        _isAmoledTheme.value = settingsRepositoryImplementation.isAmoledTheme
+        _isAmoledTheme = settingsRepositoryImplementation.isAmoledTheme
 
         _isRootMode = settingsRepositoryImplementation.isRootMode
 
@@ -91,9 +92,9 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
         }
 
     var isAmoledTheme: Boolean
-        get() = _isAmoledTheme.value
+        get() = _isAmoledTheme
         set(value) {
-            _isAmoledTheme.value = value
+            _isAmoledTheme = value
             settingsRepositoryImplementation.isAmoledTheme = value
         }
 

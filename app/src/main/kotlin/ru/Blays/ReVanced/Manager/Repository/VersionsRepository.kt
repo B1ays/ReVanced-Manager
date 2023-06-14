@@ -4,8 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import ru.Blays.ReVanced.Manager.DI.autoInject
-
+import org.koin.java.KoinJavaComponent.inject
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
@@ -48,7 +47,7 @@ abstract class VersionsRepository : CoroutineScope {
     abstract val hasRootVersion: Boolean
 
     // Package Manager by DI inject
-    private val packageManager: PackageManagerApi by autoInject()
+    private val packageManager: PackageManagerApi by inject(PackageManagerApi::class.java)
 
     // function what used to get info about app
     suspend fun getAvailableVersions(getVersionsListUseCase: GetVersionsListUseCase) {

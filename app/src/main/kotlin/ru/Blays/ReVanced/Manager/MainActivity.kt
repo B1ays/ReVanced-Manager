@@ -9,6 +9,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.koin.android.ext.android.inject
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
@@ -32,10 +33,9 @@ class MainActivity : ComponentActivity() {
 
             settingsRepository.isSystemInDarkMode = isSystemInDarkTheme()
 
-            val buildedTheme = settingsRepository.buildedTheme.value
+            val buildedTheme by settingsRepository.buildedTheme
 
             val isAmoledTheme = settingsRepository.isAmoledTheme
-
 
             ReVancedManagerTheme(
                 darkTheme = settingsRepository.appTheme.isDarkMode!!,
