@@ -23,9 +23,11 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 import ru.Blays.ReVanced.Manager.UI.Screens.NavGraphs
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DirectionDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.MainScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.SettingsScreenDestination
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.BottomBarItem
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.FloatingBottomBar
 import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent.Companion.bottomNavBarExpandedContent
@@ -65,6 +67,8 @@ fun Navigator() {
     val selectedItem = when (navigationController.currentDestinationAsState().value?.route) {
         MainScreenDestination.route -> 0
         SettingsScreenDestination.route -> 1
+        VersionsListScreenDestination.route -> 0
+        AboutScreenDestination.route -> 1
         else -> 0
     }
 
