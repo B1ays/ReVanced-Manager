@@ -5,15 +5,6 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        Release {
-            named "Release"
-            keyAlias 'key0'
-            keyPassword '1_9_8_0_'
-            storePassword '1_9_8_0_'
-            storeFile file("C:\\Users\\Tima\\MyKey.jks")
-        }
-    }
     namespace 'ru.Blays.ReVanced.Manager'
     compileSdk 33
     compileSdkPreview "UpsideDownCake"
@@ -22,12 +13,10 @@ android {
         applicationId "ru.Blays.ReVanced.Manager"
         minSdk 26
         targetSdk 33
-        versionCode 1
-        versionName "1.0 beta"
+        versionCode 2
+        versionName "1.0.1 beta"
 
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-        signingConfig signingConfigs.Release
 
         resourceConfigurations += ["en", "ru"]
 
