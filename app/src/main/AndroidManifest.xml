@@ -35,7 +35,10 @@
             android:name=".CrashHandlerActivity"
             android:exported="false"
             android:label="@string/title_activity_crash_handler"
-            android:theme="@style/Theme.ReVancedManager" />
+            android:theme="@style/Theme.ReVancedManager"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:noHistory="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

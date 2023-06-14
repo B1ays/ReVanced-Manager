@@ -8,15 +8,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Divider
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,9 +28,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
+import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
+import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 
 @OptIn(ExperimentalFoundationApi::class)
 class CrashHandlerActivity : ComponentActivity() {
+
+    val shareIntent: (stackTrace: String?) -> Intent
+        get() = {
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, it)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,33 +50,69 @@ class CrashHandlerActivity : ComponentActivity() {
         val stackTrace = intent.getStringExtra("StackTrace")
         val clipData = ClipData.newPlainText("StackTrace", stackTrace)
 
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, stackTrace)
-
         setContent {
 
             ReVancedManagerTheme {
 
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    LazyColumn(
+
+                    val scrollState = rememberScrollState()
+
+                    Column(
                         modifier = Modifier
                             .padding(12.dp)
+                            .fillMaxWidth()
                     ) {
-                        stickyHeader {
-                            Row {
-                                IconButton(onClick = { clipboardManager.setPrimaryClip(clipData) }) {
-                                    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_content_copy_24), contentDescription = null)
-                                }
-                                Spacer(modifier = Modifier.width(10.dp))
-                                IconButton(onClick = { startActivity(Intent.createChooser(intent, "Send StackTrace")) }) {
-                                    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_share_24), contentDescription = null)
-                                }
+
+                        Row {
+
+                            CustomIconButton(
+                                onClick = { clipboardManager.setPrimaryClip(clipData) },
+                                shape = CircleShape,
+                                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            ) {
+                                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_content_copy_24), contentDescription = null)
                             }
-                            Divider()
-                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            CustomIconButton(
+                                onClick = { startActivity(Intent.createChooser(shareIntent(stackTrace), "Send StackTrace")) },
+                                shape = CircleShape,
+                                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                                contentColor = MaterialTheme.colorScheme.onBackground
+                            ) {
+                                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_share_24), contentDescription = null)
+                            }
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            CustomIconButton(
+                                onClick = { this@CrashHandlerActivity.finishAndRemoveTask() },
+                                shape = CircleShape,
+                                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                                contentColor = MaterialTheme.colorScheme.onBackground
+                            ) {
+                                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_exit_to_app_24), contentDescription = null)
+                            }
                         }
-                        item { Text(text = stackTrace ?: "") }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Card(modifier = Modifier
+                            .fillMaxWidth()
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .verticalScroll(scrollState)
+                                    .padding(7.dp),
+                                text = stackTrace ?: "Log not found"
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
                     }
                 }
             }

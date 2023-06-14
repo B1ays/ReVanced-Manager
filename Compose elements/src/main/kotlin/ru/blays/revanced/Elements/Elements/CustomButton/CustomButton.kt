@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -34,7 +33,7 @@ fun CustomIconButton(
     containerColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8F),
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    contentPadding: PaddingValues = PaddingValues(6.dp),
     content: @Composable RowScope.() -> Unit
 ) {
     Surface(
@@ -47,16 +46,14 @@ fun CustomIconButton(
         border = border,
     ) {
         CompositionLocalProvider(LocalContentColor provides contentColor) {
-            ProvideTextStyle(value = MaterialTheme.typography.labelLarge) {
-                Row(
-                    Modifier
-                        .defaultMinSize(minSize, minSize)
-                        .padding(contentPadding),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    content = content
-                )
-            }
+            Row(
+                Modifier
+                    .defaultMinSize(minSize, minSize)
+                    .padding(contentPadding),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                content = content
+            )
         }
     }
 }

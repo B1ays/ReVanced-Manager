@@ -40,7 +40,7 @@ class App: Application() {
         NotificationManagerCompat.from(this@App).createNotificationChannel(channel)
 
         // Crash handler
-        if (!BuildConfig.DEBUG) Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
 
         // Launch update check service
         /*val service = Executors.newSingleThreadScheduledExecutor()
