@@ -9,6 +9,7 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -53,6 +54,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -64,11 +66,12 @@ import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
+import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.Elements.Elements.GradientProgressIndicator.GradientLinearProgressIndicator
 import ru.blays.revanced.Elements.Util.getStringRes
 import ru.blays.revanced.Presentation.R
-import ru.blays.revanced.data.Utils.DownloadState
+import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import java.time.Duration
@@ -477,8 +480,11 @@ fun RebootAlertDialog(actionReboot: () -> Unit, actionHide: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadState>) {
+fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) {
+
+    val isPaused by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier
@@ -486,11 +492,14 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadState>)
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
+
         items(downloadStateList) { state ->
 
             val progress by state.progressFlow.collectAsState()
 
-            val fileName by state.fileNameFlow.collectAsState()
+            val speed by state.speedFlow.collectAsState()
+
+            val fileName = state.fileName
 
             Text(text = "${getStringRes(R.string.Download)}: $fileName")
             Spacer(modifier = Modifier.height(10.dp))
@@ -505,9 +514,127 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadState>)
                 )
             )
             Spacer(modifier = Modifier.height(10.dp))
+
             Text(
-                text = "${getStringRes(R.string.Progress)}: ${(progress * 100F).toInt()}%"
+                text = "${stringResource(R.string.Progress)}: ${(progress * 100F).toInt()}%"
             )
+            Text(
+                text = "${stringResource(R.string.Speed)}: $speed ${stringResource(R.string.Speed_kbs)}"
+            )
+        }
+
+        stickyHeader {
+            Row {
+                CustomIconButton(
+                    onClick = {
+                        downloadStateList.forEach {
+                            it.actionPauseResume()
+                        }
+                    },
+                    shape = MaterialTheme.shapes.small,
+                    contentPadding = PaddingValues(6.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
+                            id = R.drawable.round_pause_24
+                        ),
+                        contentDescription = null
+                    )
+                }
+            }
+            CustomIconButton(
+                onClick = {
+                    downloadStateList.forEach {
+                        it.actionCancel()
+                    }
+                },
+                shape = MaterialTheme.shapes.small,
+                contentPadding = PaddingValues(6.dp)
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
+                    contentDescription = null
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DownloadProgressContent(downloadInfo: DownloadInfo) {
+
+    val progress by downloadInfo.progressFlow.collectAsState()
+
+    val speed by downloadInfo.speedFlow.collectAsState()
+
+    val fileName = downloadInfo.fileName
+
+    var isPaused by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(text = "${getStringRes(R.string.Download)}: $fileName")
+        Spacer(modifier = Modifier.height(10.dp))
+        GradientLinearProgressIndicator(
+            progress = progress,
+            strokeCap = StrokeCap.Round,
+            brush = Brush.linearGradient(
+                listOf(
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.secondary
+                )
+            )
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = "${stringResource(R.string.Progress)}: ${(progress * 100).toInt()}%"
+        )
+        Text(
+            text = "${stringResource(R.string.Speed)}: $speed ${stringResource(R.string.Speed_kbs)}"
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row {
+
+            CustomIconButton(
+                onClick = {
+                    isPaused = !isPaused
+                    downloadInfo.actionPauseResume()
+                },
+                shape = MaterialTheme.shapes.medium,
+                contentPadding = PaddingValues(6.dp)
+            ) {
+                Icon(
+                    imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
+                        id = R.drawable.round_pause_24
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.scale(1.3F)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            CustomIconButton(
+                onClick = {
+                    downloadInfo.actionCancel()
+                },
+                shape = MaterialTheme.shapes.medium,
+                contentPadding = PaddingValues(6.dp)
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
+                    contentDescription = null,
+                    modifier = Modifier.scale(1.3F)
+                )
+            }
         }
     }
 }
