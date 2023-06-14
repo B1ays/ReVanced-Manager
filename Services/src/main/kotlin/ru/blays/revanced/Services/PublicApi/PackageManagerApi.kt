@@ -1,7 +1,7 @@
 package ru.blays.revanced.Services.PublicApi
 
-import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerInterface
-import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerResult
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterface
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerResult
 import kotlinx.coroutines.Deferred
 import java.io.File
 

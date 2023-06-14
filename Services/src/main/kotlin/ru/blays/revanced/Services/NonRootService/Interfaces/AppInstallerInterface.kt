@@ -1,6 +1,4 @@
-package ru.blays.revanced.Services.NonRootService.Installer
-
-import ru.blays.revanced.Services.NonRootService.PackageManager.PackageManagerResult
+package ru.blays.revanced.Services.NonRootService.Interfaces
 
 internal abstract class AppInstallerInterface {
 

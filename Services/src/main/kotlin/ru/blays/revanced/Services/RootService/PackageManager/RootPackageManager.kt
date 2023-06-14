@@ -1,6 +1,10 @@
-package ru.blays.revanced.Services.NonRootService.PackageManager
+package ru.blays.revanced.Services.RootService.PackageManager
 
 import com.topjohnwu.superuser.Shell
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerError
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterface
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerResult
+import ru.blays.revanced.Services.NonRootService.Interfaces.getEnumForInstallFailed
 import ru.blays.revanced.Services.RootService.Util.SuException
 import ru.blays.revanced.Services.RootService.Util.awaitOutputOrThrow
 import ru.blays.revanced.Services.RootService.Util.errString

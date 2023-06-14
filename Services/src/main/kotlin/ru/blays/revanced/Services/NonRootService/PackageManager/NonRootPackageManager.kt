@@ -6,10 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageInstaller
+import android.content.pm.PackageManager
 import android.os.Build
-import androidx.annotation.RequiresApi
 import ru.blays.revanced.Services.NonRootService.InstallService.AppInstallService
 import ru.blays.revanced.Services.NonRootService.InstallService.AppUninstallService
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerError
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterface
+import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerResult
 import ru.blays.revanced.Services.NonRootService.Util.doubleUnionTryCatch
 import ru.blays.revanced.Services.NonRootService.Util.tripleUnionTryCatch
 import java.io.File
@@ -17,11 +20,14 @@ import java.io.IOException
 
 class NonRootPackageManager(private val context: Context): PackageManagerInterface {
 
-    @Suppress("DEPRECATION")
-    val getPackageInfo: (String) -> PackageInfo = {
+    @Suppress("DEPRECATION", "LocalVariableName")
+    val getPackageInfo: (String) -> PackageInfo
+        get() = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val FLAG_NOTHING_TIRAMISU = PackageManager.PackageInfoFlags.of(0)
             context.packageManager.getPackageInfo(it, FLAG_NOTHING_TIRAMISU)
         } else {
+            val FLAG_NOTHING_OLD = 0
             context.packageManager.getPackageInfo(it, FLAG_NOTHING_OLD)
         }
     }
@@ -130,7 +136,10 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
         return if (intent != null) {
             context.startActivity(intent)
             PackageManagerResult.Success(null)
-        } else PackageManagerResult.Error(error = PackageManagerError.LAUNCH_FAILED, message = "App launch failed")
+        } else PackageManagerResult.Error(
+            error = PackageManagerError.LAUNCH_FAILED,
+            message = "App launch failed"
+        )
     }
 
     private inline fun createInstallationSession(
@@ -213,11 +222,6 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
 
     private companion object {
         const val byteArraySize = 1024 * 1024
-
-        const val FLAG_NOTHING_OLD = 0
-
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-        val FLAG_NOTHING_TIRAMISU = android.content.pm.PackageManager.PackageInfoFlags.of(0)
 
         const val VERSION_IGNORE_MAJOR = 0xFFFFFFFF
     }

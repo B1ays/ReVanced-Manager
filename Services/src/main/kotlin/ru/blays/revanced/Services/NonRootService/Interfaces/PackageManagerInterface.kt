@@ -1,4 +1,4 @@
-package ru.blays.revanced.Services.NonRootService.PackageManager
+package ru.blays.revanced.Services.NonRootService.Interfaces
 
 import java.io.File
 
