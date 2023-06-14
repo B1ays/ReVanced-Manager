@@ -484,7 +484,7 @@ fun RebootAlertDialog(actionReboot: () -> Unit, actionHide: () -> Unit) {
 @Composable
 fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) {
 
-    val isPaused by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier
@@ -521,41 +521,49 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) 
             Text(
                 text = "${stringResource(R.string.Speed)}: $speed ${stringResource(R.string.Speed_kbs)}"
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         stickyHeader {
             Row {
                 CustomIconButton(
                     onClick = {
+                        isPaused = !isPaused
                         downloadStateList.forEach {
                             it.actionPauseResume()
                         }
                     },
-                    shape = MaterialTheme.shapes.small,
+                    shape = MaterialTheme.shapes.medium,
                     contentPadding = PaddingValues(6.dp)
                 ) {
                     Icon(
-                        imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
-                            id = R.drawable.round_pause_24
-                        ),
-                        contentDescription = null
+                        imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else
+                            ImageVector.vectorResource(id = R.drawable.round_pause_24),
+                        contentDescription = null,
+                        modifier = Modifier.scale(1.3F)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                CustomIconButton(
+                    onClick = {
+                        downloadStateList.forEach {
+                            it.actionCancel()
+                        }
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    contentPadding = PaddingValues(6.dp)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
+                        contentDescription = null,
+                        modifier = Modifier.scale(1.3F)
                     )
                 }
             }
-            CustomIconButton(
-                onClick = {
-                    downloadStateList.forEach {
-                        it.actionCancel()
-                    }
-                },
-                shape = MaterialTheme.shapes.small,
-                contentPadding = PaddingValues(6.dp)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
-                    contentDescription = null
-                )
-            }
+
         }
     }
 }
