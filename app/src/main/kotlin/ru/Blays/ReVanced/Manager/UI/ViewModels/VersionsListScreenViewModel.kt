@@ -1,8 +1,7 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
 import android.content.Context
-import android.os.Environment.DIRECTORY_DOWNLOADS
-import android.os.Environment.getExternalStoragePublicDirectory
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -13,28 +12,33 @@ import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.Blays.ReVanced.Manager.DI.autoInject
+import org.koin.java.KoinJavaComponent.get
+import org.koin.java.KoinJavaComponent.inject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
 import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
+import ru.blays.revanced.Services.NonRootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
-import ru.blays.revanced.data.Utils.DownloadState
-import ru.blays.revanced.data.Utils.FileDownloadDto
-import ru.blays.revanced.data.Utils.FileDownloader
+import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
+import ru.blays.revanced.data.Downloader.DataClass.DownloadMode
+import ru.blays.revanced.data.Downloader.DataClass.FileMode
+import ru.blays.revanced.data.Downloader.Task
+import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
-import java.io.File
 
 class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
@@ -62,9 +66,9 @@ class VersionsListScreenViewModel(
 
     var pagesCount by mutableIntStateOf(0)
 
-    private val packageManager: PackageManagerApi by autoInject()
+    private val packageManager: PackageManagerApi = get(PackageManagerApi::class.java)
 
-    private val settingsRepository: SettingsRepository by autoInject()
+    private val settingsRepository: SettingsRepository = get(SettingsRepository::class.java)
 
     private var app: Apps? = null
 
@@ -139,25 +143,32 @@ class VersionsListScreenViewModel(
         Shell.cmd("am start -a android.intent.action.REBOOT").exec()
     }
 
+    @Suppress("DeferredResultUnused")
     fun downloadNonRootVersion(
         fileName: String,
         url: String
     ) {
 
-        val file = File(getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS), "$fileName.apk")
+        val task = Task(url, fileName)
+            .setFileMode(FileMode.ContinueIfExists)
+            .setDownloadMode(DownloadMode.SingleTry())
+            .setDefaultActions(
+                onSuccess = {
+                    packageManager.installApk(file, settingsRepository.installerType)
+                    NavBarExpandedContent.hide()
+                    onRefresh()
+                },
+                onError = {
+                    NavBarExpandedContent.hide()
+                },
+                onCancel = {
+                    file.delete()
+                    NavBarExpandedContent.hide()
+                }
+            )
+            .build()
 
-        val fileDownloader = FileDownloader()
-
-        val downloadState = fileDownloader.downloadFile(FileDownloadDto(url, file))
-
-        val stateList = mutableStateListOf(downloadState)
-
-        NavBarExpandedContent.setContent { DownloadProgressContent(downloadStateList = stateList) }
-
-        waitDownloadAndInstall(
-            state = downloadState,
-            file = file
-        )
+        NavBarExpandedContent.setContent { DownloadProgressContent(downloadInfo = task) }
 
     }
 
@@ -165,73 +176,86 @@ class VersionsListScreenViewModel(
         filesModel: RootVersionDownloadModel
     ) {
 
-        if  (filesModel.origUrl == null) return
+        if (filesModel.origUrl == null) return
 
-        val context: Context by autoInject()
+        val c: Context by inject(Context::class.java)
 
-        val fileDownloader = FileDownloader()
-
-        val stateList = mutableStateListOf<DownloadState>()
-
-        val modFile = File(getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS), filesModel.fileName)
-
-        val origFile = File(getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS), "${filesModel.fileName}-orig.apk")
+        val stateList = mutableStateListOf<DownloadInfo>()
 
         NavBarExpandedContent.setContent { DownloadProgressContent(downloadStateList = stateList) }
 
-        val modFileDownloadState = fileDownloader.downloadFile(
-            FileDownloadDto(
-                url = filesModel.modUrl,
-                file = modFile
-            )
-        ).also {
-            stateList.add(it)
-        }
+        val origApkInstalled = MutableStateFlow(false)
 
-        val origFileDownloadState = fileDownloader.downloadFile(
-            FileDownloadDto(
-                url = filesModel.origUrl!!,
-                file = origFile
-            )
-        ).also {
-            stateList.add(it)
-        }
-
-        viewModelScope.launch {
-            origFileDownloadState.downloadStatusFlow.collect { status ->
-                if (status == FileDownloader.END_DOWNLOAD) {
-                    val installResult = packageManager.installApk(origFile, installerType = settingsRepository.installerType).await()
-                    if (installResult.isSuccess)
+        val origApkDownloadTask =
+            Task(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
+                .setFileMode(FileMode.ContinueIfExists)
+                .setDefaultActions(
+                    onSuccess = {
+                        Log.d("DownloadCallback", "orig apk download success")
                         viewModelScope.launch {
-                        modFileDownloadState.downloadStatusFlow.collect { status2 ->
-                            if (status2 == FileDownloader.END_DOWNLOAD) {
+                            val installResult = viewModelScope.async {
+                                RootPackageManager().installApp(file)
+                            }.await()
+                            if (installResult.isError) {
+                                this.cancel()
+                                return@launch
+                            }
+                            origApkInstalled.emit(true)
+                        }
+                    },
+                    onError = {
+                        NavBarExpandedContent.hide()
+                    },
+                    onCancel = {
+                        file.delete()
+                        NavBarExpandedContent.hide()
+                    }
+                )
+                .build()
+                .also {
+                    stateList.add(it)
+                }
+
+        val modApkDownloadTask = Task(url = filesModel.modUrl, fileName = filesModel.fileName)
+            .setFileMode(FileMode.ContinueIfExists)
+            .setDefaultActions(
+                onSuccess = {
+
+                    Log.d("DownloadCallback", "mod apk download success")
+
+                    viewModelScope.launch {
+
+                        origApkInstalled.collect {
+                            if (it) {
                                 NavBarExpandedContent.hide()
-                                MagiskInstaller.install(repository?.moduleType!!, modFile, context)
+                                repository?.moduleType?.let { module ->
+                                    MagiskInstaller.install(
+                                        module,
+                                        file,
+                                        c
+                                    )
+                                }
+                                file.delete()
+                                origApkDownloadTask.file.delete()
                                 showRebootAlertDialog()
                                 onRefresh()
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-
-    @Suppress("DeferredResultUnused")
-    private fun waitDownloadAndInstall(
-        file: File,
-        state: DownloadState
-    ) {
-        viewModelScope.launch {
-            state.downloadStatusFlow.collect {
-                if (it == FileDownloader.END_DOWNLOAD) {
-                    packageManager.installApk(file, settingsRepository.installerType)
+                },
+                onError = {
+                    file.delete()
+                    origApkDownloadTask.file.delete()
                     NavBarExpandedContent.hide()
-                    onRefresh()
+                },
+                onCancel = {
+                    file.delete()
+                    NavBarExpandedContent.hide()
                 }
+            )
+            .build()
+            .also {
+                stateList.add(it)
             }
-        }
     }
-
 }
