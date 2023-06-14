@@ -16,8 +16,8 @@ data class AccentColorItem(
             ),
             AccentColorItem(
                 title = "Синий",
-                accentDark = Color(0xFF3969E2),
-                accentLight = Color(0xFF183C97)
+                accentDark = Color(0xFF5D7ED3),
+                accentLight = Color(0xFF4B68AF)
             ),
             AccentColorItem(
                 title = "Розовый",
@@ -26,7 +26,7 @@ data class AccentColorItem(
             ),
             AccentColorItem(
                 title = "Бирюзовый",
-                accentDark = Color(0xFF009688),
+                accentDark = Color(0xFF00B4A3),
                 accentLight = Color(0xFF05574F)
             ),
             AccentColorItem(
@@ -36,13 +36,13 @@ data class AccentColorItem(
             ),
             AccentColorItem(
                 title = "Жёлтый",
-                accentDark = Color(0xFFFFC107),
-                accentLight = Color(0xFFA37C06)
+                accentDark = Color(0xFFD6B348),
+                accentLight = Color(0xFFC49D28)
             ),
             AccentColorItem(
                 title = "Фиолетовый",
                 accentDark = Color(0xFF724BB8),
-                accentLight = Color(0xFF411F7C)
+                accentLight = Color(0xFF482585)
             ),
             AccentColorItem(
                 title = "Зелёный",
