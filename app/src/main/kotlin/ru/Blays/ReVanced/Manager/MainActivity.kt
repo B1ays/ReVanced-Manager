@@ -24,9 +24,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Request permission for send notifications (for android 13)
+        // Request runtime permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1234)
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.MANAGE_EXTERNAL_STORAGE), 1234)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requestPermissions(arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE), 1234)
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1234)
         }
 
         setContent {
