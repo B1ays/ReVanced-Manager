@@ -41,9 +41,9 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCheckb
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
 import ru.blays.revanced.Elements.GlobalState.NavBarState
-import ru.blays.revanced.Elements.Util.getStringRes
-import ru.blays.revanced.shared.R
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
+import ru.blays.revanced.shared.R
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -99,7 +99,9 @@ fun SettingsScreen(
         ) {
             itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_theme)) {
                 ThemeSelector(repository = settingsRepository)
-                isSAndAboveCompose { MonetColors(repository = settingsRepository) }
+                isSAndAboveCompose {
+                    MonetColors(repository = settingsRepository)
+                }
                 AmoledTheme(repository = settingsRepository)
                 AccentSelector(settingsRepository)
             }

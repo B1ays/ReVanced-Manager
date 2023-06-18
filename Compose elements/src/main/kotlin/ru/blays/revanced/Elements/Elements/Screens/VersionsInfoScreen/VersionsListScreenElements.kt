@@ -69,7 +69,7 @@ import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.Elements.Elements.GradientProgressIndicator.GradientLinearProgressIndicator
-import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto

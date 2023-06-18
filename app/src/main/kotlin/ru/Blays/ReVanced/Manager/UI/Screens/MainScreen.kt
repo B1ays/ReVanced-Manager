@@ -29,7 +29,7 @@ import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDesti
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppInfoCard
 import ru.blays.revanced.Elements.GlobalState.NavBarState
-import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar

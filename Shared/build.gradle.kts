@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
@@ -11,13 +10,12 @@ android {
     defaultConfig {
         minSdk = 26
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            /*isMinifyEnabled = false*/
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -35,4 +33,10 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.core.ktx)
+
+    // Koin
+    implementation(libs.koin.android)
+
+    // Compose
+    implementation(libs.androidx.compose.ui.asProvider())
 }

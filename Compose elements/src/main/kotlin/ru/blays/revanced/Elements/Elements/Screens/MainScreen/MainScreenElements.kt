@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
-import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
 
 @OptIn(ExperimentalMaterial3Api::class)

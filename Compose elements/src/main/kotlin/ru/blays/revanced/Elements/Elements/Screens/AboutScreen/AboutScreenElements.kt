@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
-import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
 
 

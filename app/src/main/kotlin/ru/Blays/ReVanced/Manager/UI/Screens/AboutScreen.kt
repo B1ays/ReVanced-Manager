@@ -24,7 +24,7 @@ import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.ContactsCards
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.CreditCards
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.HeadItem
 import ru.blays.revanced.Elements.GlobalState.NavBarState
-import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar

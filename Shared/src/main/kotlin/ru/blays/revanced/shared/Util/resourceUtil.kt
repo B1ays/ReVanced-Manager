@@ -1,4 +1,4 @@
-package ru.blays.revanced.Elements.Util
+package ru.blays.revanced.shared.Util
 
 import android.content.Context
 import androidx.annotation.StringRes
