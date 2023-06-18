@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name" translatable="false">ReVanced Manager</string>
 
     <!--  AppBar titles  -->
     <string name="AppBar_Main">Main</string>
@@ -95,5 +96,12 @@
     <string name="about_credits_reason_iTaysonLab" translatable="false">floating bottom navigation bar</string>
     <string name="about_credits_reason_material_foundation" translatable="false">material color utilities</string>
     <string name="about_credits_reason_teamVanced" translatable="false">Root / nonRoot package manager</string>
+
+    <!--  Notifications  -->
+    <string name="notification_title">Update available</string>
+    <string name="notification_message_nonRoot">Available new nonRoot version for</string>
+    <string name="notification_message_root">Available new Root version for</string>
+    <string name="notification_channel_name">New version notifications</string>
+    <string name="title_activity_crash_handler" translatable="false">CrashHandlerActivity</string>
 
 </resources>

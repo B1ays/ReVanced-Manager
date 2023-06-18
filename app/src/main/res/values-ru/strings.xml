@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="notification_title">Доступно обновление</string>
-    <string name="notification_message_nonRoot">Доступна новая non-Root версия</string>
-    <string name="notification_message_root">Доступна новая Root версия для</string>
-    <string name="notification_channel_name">Уведомлнения о новых версиях</string>
-</resources>

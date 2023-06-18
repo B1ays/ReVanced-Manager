@@ -80,6 +80,7 @@ dependencies {
     implementation project(path: ':Domain')
     implementation project(path: ':Data')
     implementation project(path: ':Services')
+    implementation project(path: ':Shared')
 
     // material-color-utilities
     implementation(files("libs/material-color-util.jar"))

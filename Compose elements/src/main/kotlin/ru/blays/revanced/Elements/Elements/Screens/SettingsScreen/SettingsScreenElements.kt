@@ -40,7 +40,7 @@ import ru.blays.revanced.Elements.DataClasses.AccentColorItem
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
-import ru.blays.revanced.Presentation.R
+import ru.blays.revanced.shared.R
 
 private val ModifierWithExpandAnimation = Modifier
     .animateContentSize(

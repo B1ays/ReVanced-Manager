@@ -15,8 +15,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.Data.Apps
-import ru.Blays.ReVanced.Manager.R
 import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.R
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -95,7 +95,7 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
 
                     // Create message for notification
                     val message = "${getStringRes(R.string.notification_message_nonRoot)} " +
-                        "${repository.appName}, ${getStringRes(ru.blays.revanced.Presentation.R.string.Version)}: $availableVersion"
+                        "${repository.appName}, ${getStringRes(R.string.Version)}: $availableVersion"
 
                     // Create notification builder with message
                     val builder = createBuilder(context, message)
@@ -125,7 +125,7 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
 
                     // Create message for notification
                     val message = "${getStringRes(R.string.notification_message_root)} " +
-                        "${repository.appName}, ${getStringRes(ru.blays.revanced.Presentation.R.string.Version)}: $availableVersion"
+                        "${repository.appName}, ${getStringRes(R.string.Version)}: $availableVersion"
 
                     // Create notification builder with message
                     val builder = createBuilder(context, message)

@@ -45,7 +45,7 @@ import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.Subversion
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
 import ru.blays.revanced.Elements.Util.getStringRes
-import ru.blays.revanced.Presentation.R
+import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior

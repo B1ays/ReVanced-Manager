@@ -105,11 +105,6 @@ dependencies {
     implementation project (path: ':Data')
     implementation project (path: ':Services')
     implementation project (path: ':Compose elements')
+    implementation project (path: ':Shared')
 
 }
-
-/*tasks.withType(KotlinCompile).all {
-    kotlinOptions {
-        languageVersion = "1.9"
-    }
-}*/

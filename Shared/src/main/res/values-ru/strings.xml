@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="AppBar_Main">Главная</string>
     <string name="AppBar_Versions">Версии</string>
     <string name="AppBar_Settings">Настройки</string>
@@ -55,4 +56,9 @@
     <string name="Action_reboot_confirm">Перезагрузить?</string>
     <string name="Speed_kbs">Кб/с</string>
     <string name="Speed_mbs">Мб/с</string>
+
+    <string name="notification_title">Доступно обновление</string>
+    <string name="notification_message_nonRoot">Доступна новая non-Root версия</string>
+    <string name="notification_message_root">Доступна новая Root версия для</string>
+    <string name="notification_channel_name">Уведомлнения о новых версиях</string>
 </resources>

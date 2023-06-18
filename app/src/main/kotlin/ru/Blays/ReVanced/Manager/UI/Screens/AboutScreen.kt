@@ -18,7 +18,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import ru.Blays.ReVanced.Manager.BuildConfig
-import ru.Blays.ReVanced.Manager.R
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.AuthorCard
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.ContactsCards
@@ -26,10 +25,10 @@ import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.CreditCards
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.HeadItem
 import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
-import ru.blays.revanced.Presentation.R as ElemetntsR
 
 @Destination
 @Composable
@@ -48,7 +47,7 @@ fun AboutScreen(
     Scaffold(
         topBar = {
             CustomToolbar(
-                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(ElemetntsR.string.AppBar_About)),
+                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_About)),
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "NavigateBack")
@@ -70,7 +69,7 @@ fun AboutScreen(
             state = lazyListState
         ) {
 
-            itemsGroupWithHeader(title = getStringRes(ElemetntsR.string.about_group_information)) {
+            itemsGroupWithHeader(title = getStringRes(R.string.about_group_information)) {
                 HeadItem(
                     appIco = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
                     appName = stringResource(R.string.app_name),
@@ -79,12 +78,12 @@ fun AboutScreen(
                 )
             }
 
-            itemsGroupWithHeader(title = getStringRes(ElemetntsR.string.about_group_author)) {
+            itemsGroupWithHeader(title = getStringRes(R.string.about_group_author)) {
                 AuthorCard()
                 ContactsCards()
             }
 
-            itemsGroupWithHeader(title = getStringRes(ElemetntsR.string.about_group_credits)) {
+            itemsGroupWithHeader(title = getStringRes(R.string.about_group_credits)) {
                 CreditCards()
             }
         }

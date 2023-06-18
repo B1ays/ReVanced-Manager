@@ -10,6 +10,7 @@ import org.koin.core.context.startKoin
 import ru.Blays.ReVanced.Manager.BackgroundService.CrashHandlerService
 import ru.Blays.ReVanced.Manager.DI.appModule
 import ru.blays.revanced.Elements.Util.getStringRes
+import ru.blays.revanced.shared.R
 
 class App: Application() {
 

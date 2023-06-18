@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
+import ru.blays.revanced.shared.R
 
-@OptIn(ExperimentalFoundationApi::class)
 class CrashHandlerActivity : ComponentActivity() {
 
     val shareIntent: (stackTrace: String?) -> Intent
