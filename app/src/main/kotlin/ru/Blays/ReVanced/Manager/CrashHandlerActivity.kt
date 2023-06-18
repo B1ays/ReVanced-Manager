@@ -1,14 +1,9 @@
 package ru.Blays.ReVanced.Manager
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,25 +26,16 @@ import androidx.compose.ui.unit.dp
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
+import ru.blays.revanced.shared.Extensions.copyToClipBoard
+import ru.blays.revanced.shared.Extensions.share
 import ru.blays.revanced.shared.R
 
 class CrashHandlerActivity : ComponentActivity() {
 
-    val shareIntent: (stackTrace: String?) -> Intent
-        get() = {
-            Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, it)
-            }
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
         val stackTrace = intent.getStringExtra("StackTrace")
-        val clipData = ClipData.newPlainText("StackTrace", stackTrace)
 
         val callback = onBackPressedDispatcher.addCallback(this, true) {
             finishAndRemoveTask()
@@ -72,7 +58,7 @@ class CrashHandlerActivity : ComponentActivity() {
                         Row {
 
                             CustomIconButton(
-                                onClick = { clipboardManager.setPrimaryClip(clipData) },
+                                onClick = { copyToClipBoard(stackTrace) },
                                 shape = CircleShape,
                                 containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -83,7 +69,7 @@ class CrashHandlerActivity : ComponentActivity() {
                             Spacer(modifier = Modifier.width(10.dp))
 
                             CustomIconButton(
-                                onClick = { startActivity(Intent.createChooser(shareIntent(stackTrace), "Send StackTrace")) },
+                                onClick = { share(stackTrace) },
                                 shape = CircleShape,
                                 containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
                                 contentColor = MaterialTheme.colorScheme.onBackground
