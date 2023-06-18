@@ -12,7 +12,7 @@ androidx-lifecycle = "2.6.1"
 androidx-room = "2.6.0-alpha01"
 androidx-savedstate = "1.2.1"
 coil = "2.4.0"
-com-google-devtools-ksp = "1.9.0-Beta-1.0.11"
+com-google-devtools-ksp = "1.8.21-1.0.11"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-bom = "2023.06.00"
 compose-markdown = "0.3.3"
@@ -20,8 +20,8 @@ core = "5.1.0"
 github-pausing-coroutine-dispatcher = "ee40ae5"
 io-github-raamcosta-compose-destinations = "1.9.42-beta"
 koin-androidx-compose = "3.4.5"
-kotlin = "1.9.0-Beta"
-org-jetbrains-kotlin = "1.9.0-Beta"
+kotlin = "1.8.21"
+org-jetbrains-kotlin = "1.8.21"
 pausing-coroutine-dispatcher = "ee40ae5"
 rebugger = "1.0.0-alpha05"
 work-runtime-ktx = "2.9.0-alpha01"
@@ -97,8 +97,8 @@ org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:2.20.
 org-jetbrains-kotlin-kotlin-scripting-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-kotlin-stdlib = "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
-org-jetbrains-kotlin-kotlin-stdlib-common = "org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22"
-org-jetbrains-kotlin-kotlin-stdlib-jdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
+org-jetbrains-kotlin-kotlin-stdlib-common = { module = "org.jetbrains.kotlin:kotlin-stdlib-common", version.ref = "org-jetbrains-kotlin" }
+org-jetbrains-kotlin-kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlinx-kotlinx-coroutines-core-jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1"
 org-jetbrains-kotlinx-kotlinx-serialization-bom = "org.jetbrains.kotlinx:kotlinx-serialization-bom:1.5.1"
@@ -117,9 +117,9 @@ ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 com-android-application = "com.android.application:8.2.0-alpha08"
 com-android-library = "com.android.library:8.2.0-alpha08"
 com-github-ben-manes-versions = "com.github.ben-manes.versions:0.47.0"
-com-google-devtools-ksp = "com.google.devtools.ksp:1.9.0-Beta-1.0.11"
+com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "com-google-devtools-ksp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlinx-serialization = "kotlinx-serialization:1.9.0-Beta"
+kotlinx-serialization = { id = "kotlinx-serialization", version.ref = "kotlin" }
 nl-littlerobots-version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.0"
-org-jetbrains-kotlin-jvm = "org.jetbrains.kotlin.jvm:1.9.0-Beta"
-org-jetbrains-kotlin-plugin-serialization = "org.jetbrains.kotlin.plugin.serialization:1.9.0-Beta"
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+org-jetbrains-kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
