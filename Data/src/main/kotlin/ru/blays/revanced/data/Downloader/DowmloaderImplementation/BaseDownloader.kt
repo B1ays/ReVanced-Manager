@@ -23,12 +23,17 @@ abstract class BaseDownloader: Downloader, CoroutineScope {
     abstract val speedFlow: MutableStateFlow<Long>
 
 
-    fun getContentLength(url: String): Long {
-        val request = Request.Builder()
-            .url(url)
-            .build()
-        client.newCall(request).execute().use { response ->
-            return response.body.contentLength()
+    fun getContentLength(url: String): Long? {
+        try {
+            val request = Request.Builder()
+                .url(url)
+                .build()
+            client.newCall(request).execute().use { response ->
+                return response.body.contentLength()
+            }
+        } catch (_: Exception) {
+            return null
         }
+
     }
 }

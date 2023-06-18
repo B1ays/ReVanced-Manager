@@ -18,6 +18,7 @@ import ru.blays.revanced.data.Downloader.Utils.checkFileExists
 import ru.blays.revanced.data.Downloader.Utils.createChannel
 import ru.blays.revanced.data.Downloader.Utils.createFile
 import ru.blays.revanced.data.Downloader.Utils.createResponse
+import ru.blays.revanced.data.Downloader.Utils.isNull
 import ru.blays.revanced.data.Downloader.Utils.log
 import java.nio.ByteBuffer
 
@@ -42,7 +43,7 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
         if (task.fileMode == FileMode.Recreate) file.delete()
 
-        val job = launchPausing mainCoroutine@ {
+        val job = launchPausing mainJob@ {
 
             try {
 
@@ -50,14 +51,16 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
                 val fileSize = file.length()
 
-                val originalFileSize = getContentLength(task.url)
+                val originalFileSize = getContentLength(task.url).also {
+                    if (it.isNull()) return@mainJob
+                }
 
                 if (file.checkFileExists() && fileSize == originalFileSize) {
                     task.onSuccess(this@NormalDownloader)
-                    return@mainCoroutine
+                    return@mainJob
                 }
 
-                response = if (task.fileMode == FileMode.ContinueIfExists && fileSize < originalFileSize) {
+                response = if (task.fileMode == FileMode.ContinueIfExists && fileSize < originalFileSize!!) {
                     channel.position(fileSize)
                     val newRequest = task.request.newBuilder()
                         .addHeader("Range", "bytes=${fileSize}-")
@@ -72,7 +75,7 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
                         log("Response not successful, errorCode: ${resp.code}", LogType.WARN)
                         task.onError(this@NormalDownloader)
                         this.cancel()
-                        return@mainCoroutine
+                        return@mainJob
                     }
 
                     val inputStream = response.body.byteStream()
@@ -82,7 +85,7 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
                     var totalBytesRead: Long = 0
 
                     downloadSpeedJob.launchPausing speedCalculateJob@  {
-                        while (this@mainCoroutine.isActive) {
+                        while (this@mainJob.isActive) {
                             yield()
                             val startValue = totalBytesRead // total bytes read value
                             delay(500) // wait 0,5 second
@@ -103,7 +106,7 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
                         channel.write(byteBuffer)
 
                         totalBytesRead += bytesRead
-                        val progress: Float = ((totalBytesRead + fileSize).toFloat() / originalFileSize.toFloat())
+                        val progress: Float = ((totalBytesRead + fileSize).toFloat() / originalFileSize!!.toFloat())
                         progressFlow.emit(progress)
                     }
 
@@ -118,7 +121,7 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
                 task.onError(this@NormalDownloader)
                 downloadSpeedJob.cancel()
                 this.cancel()
-                return@mainCoroutine
+                return@mainJob
             }
         }
 

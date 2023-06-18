@@ -6,6 +6,7 @@ import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.data.Downloader.DataClass.DownloadMode
 import ru.blays.revanced.data.Downloader.DataClass.FileMode
 import ru.blays.revanced.data.Downloader.DowmloaderImplementation.BaseDownloader
+import ru.blays.revanced.data.Downloader.DowmloaderImplementation.InfinityTryDownloader
 import ru.blays.revanced.data.Downloader.DowmloaderImplementation.NormalDownloader
 
 private val DEFAULT_DOWNLOAD_MODE = DownloadMode.InfinityTry()
@@ -69,7 +70,7 @@ fun Task.build(okHttpClientBuilder: OkHttpClient.Builder = OkHttpClient.Builder(
     val downloader: BaseDownloader = when(downloadMode) {
         is DownloadMode.SingleTry -> NormalDownloader(client)
         is DownloadMode.MultipleTry -> NormalDownloader(client)
-        is DownloadMode.InfinityTry -> NormalDownloader(client)
+        is DownloadMode.InfinityTry -> InfinityTryDownloader(client)
     }
     return downloader.download(this)
 }
