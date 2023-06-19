@@ -12,12 +12,12 @@ import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.data.Downloader.Task
 import ru.blays.revanced.data.Downloader.Utils.LogType
 import ru.blays.revanced.data.Downloader.Utils.RWMode
-import ru.blays.revanced.data.Downloader.Utils.checkFileExists
 import ru.blays.revanced.data.Downloader.Utils.createChannel
 import ru.blays.revanced.data.Downloader.Utils.createFile
 import ru.blays.revanced.data.Downloader.Utils.createResponse
 import ru.blays.revanced.data.Downloader.Utils.isNull
 import ru.blays.revanced.data.Downloader.Utils.log
+import ru.blays.revanced.data.Downloader.Utils.position
 import java.nio.ByteBuffer
 import kotlin.time.Duration.Companion.seconds
 
@@ -46,9 +46,11 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
         val job = launchPausing mainJob@ {
 
-            var totalBytesRead: Long = 0
+            var totalBytesRead = 0L
 
             val fileSize = file.length()
+
+            log("file size: $fileSize bytes")
 
             val originalFileSize = getContentLength(task.url).also {
                 if (it.isNull()) return@mainJob
@@ -59,11 +61,14 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
             if exist && file size = real size -> download complete
             if file not exist or file size != real size -> start download & append file size to totalBytesRead
             */
-            if (file.checkFileExists() && fileSize == originalFileSize) {
+            if (/*file.checkFileExists() && */fileSize == originalFileSize) {
                 task.onSuccess(this@InfinityTryDownloader)
                 return@mainJob
             } else {
-                totalBytesRead + fileSize
+                // Add existing file size to totalBytesRead
+                totalBytesRead += fileSize
+                // Set channel position to totalBytesRead
+                channel.position = totalBytesRead
             }
 
             while(totalBytesRead < originalFileSize!!) {
@@ -72,7 +77,7 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
                     log("Create new request")
 
-                    log("total bytes read: $totalBytesRead, channel position: ${channel.position()}", LogType.DEBUG)
+                    log("total bytes read: $totalBytesRead, channel position: ${channel.position}", LogType.DEBUG)
 
                     // Create new request & add header with bytes range
                     val newRequest = task.request.newBuilder()
@@ -128,6 +133,7 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
                     }
                 } catch (e: IOException) {
                     log("Response error, exception: $e", LogType.WARN)
+                    downloadSpeedJob.cancel()
                     delay(2.seconds)
                 }
             }
@@ -146,7 +152,7 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
         val actionCancel = {
             task.onCancel(this@InfinityTryDownloader)
-            job.cancel(cause = null)
+            job.cancel()
         }
 
         return DownloadInfo(

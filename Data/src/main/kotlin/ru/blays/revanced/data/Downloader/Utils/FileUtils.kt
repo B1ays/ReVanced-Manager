@@ -17,6 +17,11 @@ fun File.createChannel(mode: RWMode): FileChannel {
     return randomAccessFile.channel
 }
 
+@Suppress("RedundantLambdaOrAnonymousFunction")
+var FileChannel.position: Long
+    get() = position()
+    set(value) = { position(value) }()
+
 @JvmName("createFileExtension")
 fun String.createFile(fileExtension: String): File {
     return File(DEFAULT_FILE_FOLDER, "${this}${fileExtension}")
