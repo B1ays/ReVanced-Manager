@@ -39,4 +39,6 @@ dependencies {
     implementation libs.service
     implementation libs.nio
 
+    implementation project(path: ':Shared')
+
 }

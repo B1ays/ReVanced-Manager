@@ -3,7 +3,6 @@ package ru.blays.revanced.Services.NonRootService.PackageManager
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
@@ -15,6 +14,8 @@ import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterf
 import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerResult
 import ru.blays.revanced.Services.NonRootService.Util.doubleUnionTryCatch
 import ru.blays.revanced.Services.NonRootService.Util.tripleUnionTryCatch
+import ru.blays.revanced.shared.Extensions.intentFor
+import ru.blays.revanced.shared.Extensions.isNotNull
 import java.io.File
 import java.io.IOException
 
@@ -24,11 +25,11 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
     val getPackageInfo: (String) -> PackageInfo
         get() = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val FLAG_NOTHING_TIRAMISU = PackageManager.PackageInfoFlags.of(0)
-            context.packageManager.getPackageInfo(it, FLAG_NOTHING_TIRAMISU)
+            val FLAG_NOTHING = PackageManager.PackageInfoFlags.of(0)
+            context.packageManager.getPackageInfo(it, FLAG_NOTHING)
         } else {
-            val FLAG_NOTHING_OLD = 0
-            context.packageManager.getPackageInfo(it, FLAG_NOTHING_OLD)
+            val FLAG_NOTHING = 0
+            context.packageManager.getPackageInfo(it, FLAG_NOTHING)
         }
     }
 
@@ -45,7 +46,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
             }
 
             PackageManagerResult.Success(versionCode)
-        } catch (e: android.content.pm.PackageManager.NameNotFoundException) {
+        } catch (e: PackageManager.NameNotFoundException) {
             PackageManagerResult.Error(
                 error = PackageManagerError.GET_FAILED_PACKAGE_VERSION_CODE,
                 message = e.stackTraceToString()
@@ -62,7 +63,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
             val versionName = packageInfo.versionName
 
             PackageManagerResult.Success(versionName)
-        } catch (e: android.content.pm.PackageManager.NameNotFoundException) {
+        } catch (e: PackageManager.NameNotFoundException) {
             PackageManagerResult.Error(
                 error = PackageManagerError.GET_FAILED_PACKAGE_VERSION_NAME,
                 message = e.stackTraceToString()
@@ -80,7 +81,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
                 .sourceDir
 
             PackageManagerResult.Success(installationDir)
-        } catch (e: android.content.pm.PackageManager.NameNotFoundException) {
+        } catch (e: PackageManager.NameNotFoundException) {
             PackageManagerResult.Error(
                 error = PackageManagerError.GET_FAILED_PACKAGE_DIR,
                 message = e.stackTraceToString()
@@ -121,10 +122,11 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
 
     override suspend fun uninstallApp(packageName: String): PackageManagerResult<Nothing> {
         val packageInstaller = context.packageManager.packageInstaller
+        val intent = context.intentFor<AppUninstallService>()
         val pendingIntent = PendingIntent.getService(
             context,
             0,
-            Intent(context, AppUninstallService::class.java),
+            intent,
             intentFlags
         ).intentSender
         packageInstaller.uninstall(packageName, pendingIntent)
@@ -133,7 +135,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
 
     override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
-        return if (intent != null) {
+        return if (intent.isNotNull()) {
             context.startActivity(intent)
             PackageManagerResult.Success(null)
         } else PackageManagerResult.Error(
@@ -151,13 +153,15 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
         val sessionParams = PackageInstaller.SessionParams(
             PackageInstaller.SessionParams.MODE_FULL_INSTALL
         ).apply {
-            setInstallReason(android.content.pm.PackageManager.INSTALL_REASON_USER)
+            setInstallReason(PackageManager.INSTALL_REASON_USER)
         }
+
+        val intent = context.intentFor<AppInstallService>()
 
         val pendingIntent = PendingIntent.getService(
             context,
             0,
-            Intent(context, AppInstallService::class.java),
+            intent,
             intentFlags
         ).intentSender
 
