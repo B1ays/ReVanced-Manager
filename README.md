@@ -2,6 +2,10 @@
 # ReVanced-Manager
 ReVancded Manager is an application designed to manage ReVancded Team mods on your device. It allows for installation, updating, removal, and more of mods. Its concept is my take on the functionality provided by Vanced Manager and implements all of that and more. The main goal of the application is user convenience. The distribution scheme of ReVancded mods has caused a lot of confusion, so why not make life a little easier?
 
+## Screenshots
+<img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_1.png" width="290" height="620"> <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_2.png" width="290" height="620"> <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_3.png" width="290" height="620"> <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_4.png" width="290" height="620"> <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_5.png" width="290" height="620"> <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_6.png" width="290" height="620"> <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_7.png" width="290" height="620">
+
+
 ## Functions
 - Download and install mods of apps like YouTube Revanced, YouTube Music Revanced and other (in future)
 
