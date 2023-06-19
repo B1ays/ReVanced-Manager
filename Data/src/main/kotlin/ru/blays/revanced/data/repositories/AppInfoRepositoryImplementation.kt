@@ -10,11 +10,16 @@ import ru.blays.revanced.data.DataModels.VersionsInfoModel
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
+import java.util.concurrent.TimeUnit
 
 class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
 
     private suspend fun getHtmlBody(url: String): String? {
-        val client = OkHttpClient()
+        val client = OkHttpClient.Builder()
+            .callTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build()
 
         if (url.isEmpty()) return null
 
@@ -26,14 +31,14 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
                     throw IOException(
-                        "Запрос к серверу не был успешен:" +
+                        "Response not successful, errorCode:" +
                         " ${response.code} ${response.message}"
                     )
                 }
                 response.body.string()
             }
         } catch (e: IOException) {
-            Log.w("VersionsInfo:","Ошибка подключения: $e")
+            Log.w("VersionsInfo:","Response error, exception: $e")
             null
         }
     }
