@@ -30,8 +30,6 @@ import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
-import ru.blays.revanced.data.Downloader.DataClass.DownloadMode
-import ru.blays.revanced.data.Downloader.DataClass.FileMode
 import ru.blays.revanced.data.Downloader.Task
 import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
@@ -98,7 +96,7 @@ class VersionsListScreenViewModel(
         pagesCount = if (repo.hasRootVersion && isRootGranted) 2 else 1
     }
 
-    suspend fun getList(appType: String) = withContext(Dispatchers.IO) {
+    private suspend fun getList(appType: String) = withContext(Dispatchers.IO) {
         isRefreshing = true
         list = getVersionsListUseCase.execut(appType)
         isRefreshing = false
@@ -150,8 +148,6 @@ class VersionsListScreenViewModel(
     ) {
 
         val task = Task(url, fileName)
-            .setFileMode(FileMode.ContinueIfExists)
-            .setDownloadMode(DownloadMode.SingleTry())
             .setDefaultActions(
                 onSuccess = {
                     packageManager.installApk(file, settingsRepository.installerType)
@@ -169,7 +165,6 @@ class VersionsListScreenViewModel(
             .build()
 
         NavBarExpandedContent.setContent { DownloadProgressContent(downloadInfo = task) }
-
     }
 
     fun downloadRootVersion(
@@ -186,38 +181,35 @@ class VersionsListScreenViewModel(
 
         val origApkInstalled = MutableStateFlow(false)
 
-        val origApkDownloadTask =
-            Task(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
-                .setFileMode(FileMode.ContinueIfExists)
-                .setDefaultActions(
-                    onSuccess = {
-                        Log.d("DownloadCallback", "orig apk download success")
-                        viewModelScope.launch {
-                            val installResult = viewModelScope.async {
-                                RootPackageManager().installApp(file)
-                            }.await()
-                            if (installResult.isError) {
-                                this.cancel()
-                                return@launch
-                            }
-                            origApkInstalled.emit(true)
+        val origApkDownloadTask = Task(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
+            .setDefaultActions(
+                onSuccess = {
+                    Log.d("DownloadCallback", "orig apk download success")
+                    viewModelScope.launch {
+                        val installResult = viewModelScope.async {
+                            RootPackageManager().installApp(file)
+                        }.await()
+                        if (installResult.isError) {
+                            this.cancel()
+                            return@launch
                         }
-                    },
-                    onError = {
-                        NavBarExpandedContent.hide()
-                    },
-                    onCancel = {
-                        file.delete()
-                        NavBarExpandedContent.hide()
+                        origApkInstalled.emit(true)
                     }
-                )
-                .build()
-                .also {
-                    stateList.add(it)
+                },
+                onError = {
+                    NavBarExpandedContent.hide()
+                },
+                onCancel = {
+                    file.delete()
+                    NavBarExpandedContent.hide()
                 }
+            )
+            .build()
+            .also {
+                stateList.add(it)
+            }
 
         val modApkDownloadTask = Task(url = filesModel.modUrl, fileName = filesModel.fileName)
-            .setFileMode(FileMode.ContinueIfExists)
             .setDefaultActions(
                 onSuccess = {
 
