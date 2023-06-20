@@ -1,5 +1,6 @@
 package ru.Blays.ReVanced.Manager
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
@@ -29,13 +30,27 @@ import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlph
 import ru.blays.revanced.shared.Extensions.copyToClipBoard
 import ru.blays.revanced.shared.Extensions.share
 import ru.blays.revanced.shared.R
+import java.time.LocalDate
+import java.time.LocalTime
+
+private val additionalInfo: String
+    get() =
+"""date: ${LocalDate.now()} | ${LocalTime.now()}
+android version: ${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT})
+device model: ${Build.DEVICE}
+device brand: ${Build.BRAND}
+Supported abi: ${Build.SUPPORTED_ABIS.joinToString()}
+============""".trimIndent() + "\n"
+
 
 class CrashHandlerActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val stackTrace = intent.getStringExtra("StackTrace")
+        val stackTrace = intent.getStringExtra("StackTrace") ?: ""
+
+        val fullLog = additionalInfo + stackTrace
 
         val callback = onBackPressedDispatcher.addCallback(this, true) {
             finishAndRemoveTask()
@@ -58,7 +73,7 @@ class CrashHandlerActivity : ComponentActivity() {
                         Row {
 
                             CustomIconButton(
-                                onClick = { copyToClipBoard(stackTrace) },
+                                onClick = { copyToClipBoard(fullLog) },
                                 shape = CircleShape,
                                 containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -69,7 +84,7 @@ class CrashHandlerActivity : ComponentActivity() {
                             Spacer(modifier = Modifier.width(10.dp))
 
                             CustomIconButton(
-                                onClick = { share(stackTrace) },
+                                onClick = { share(fullLog) },
                                 shape = CircleShape,
                                 containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
                                 contentColor = MaterialTheme.colorScheme.onBackground
@@ -87,7 +102,7 @@ class CrashHandlerActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .verticalScroll(scrollState)
                                     .padding(7.dp),
-                                text = stackTrace ?: "Log not found"
+                                text = fullLog
                             )
                         }
 
