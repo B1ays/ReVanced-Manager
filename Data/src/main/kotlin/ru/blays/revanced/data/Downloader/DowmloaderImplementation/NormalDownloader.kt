@@ -11,7 +11,7 @@ import okio.IOException
 import org.koitharu.pausingcoroutinedispatcher.launchPausing
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.data.Downloader.DataClass.FileMode
-import ru.blays.revanced.data.Downloader.Task
+import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.Utils.LogType
 import ru.blays.revanced.data.Downloader.Utils.RWMode
 import ru.blays.revanced.data.Downloader.Utils.checkFileExists
@@ -31,7 +31,7 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
     override val speedFlow = MutableStateFlow(0L)
 
-    override fun download(task: Task): DownloadInfo {
+    override fun download(task: DownloadTask): DownloadInfo {
 
         val file = createFile(fileName = task.fileName, fileExtension = task.fileExtension)
 

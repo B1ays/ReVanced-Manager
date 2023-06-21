@@ -13,7 +13,7 @@ private val DEFAULT_DOWNLOAD_MODE = DownloadMode.InfinityTry()
 private val DEFAULT_FILE_MODE = FileMode.ContinueIfExists
 private const val DEFAULT_FILE_EXTENSION = ".apk"
 
-data class Task(
+data class DownloadTask(
     val url: String,
     val fileName: String,
     val fileExtension: String = DEFAULT_FILE_EXTENSION
@@ -40,15 +40,15 @@ data class Task(
     var onCancel: BaseDownloader.() -> Unit = {}
         private set
 
-    fun setDownloadMode(downloadMode: DownloadMode): Task = this.apply {
+    fun setDownloadMode(downloadMode: DownloadMode): DownloadTask = this.apply {
         this.downloadMode = downloadMode
     }
 
-    fun setFileMode(fileMode: FileMode): Task = this.apply {
+    fun setFileMode(fileMode: FileMode): DownloadTask = this.apply {
         this.fileMode = fileMode
     }
 
-    fun setCustomRequest(request: Request): Task = this.apply {
+    fun setCustomRequest(request: Request): DownloadTask = this.apply {
         this.request = request
     }
 
@@ -57,7 +57,7 @@ data class Task(
         onError: (BaseDownloader.() -> Unit)? = null,
         onPause: (BaseDownloader.() -> Unit)? = null,
         onCancel: (BaseDownloader.() -> Unit)? = null
-    ): Task = this.apply {
+    ): DownloadTask = this.apply {
         onSuccess?.let { this.onSuccess = it }
         onError?.let { this.onError = it }
         onPause?.let { this.onPause = it }
@@ -65,7 +65,7 @@ data class Task(
     }
 }
 
-fun Task.build(okHttpClientBuilder: OkHttpClient.Builder = OkHttpClient.Builder()): DownloadInfo {
+fun DownloadTask.build(okHttpClientBuilder: OkHttpClient.Builder = OkHttpClient.Builder()): DownloadInfo {
     val client = okHttpClientBuilder.build()
     val downloader: BaseDownloader = when(downloadMode) {
         is DownloadMode.SingleTry -> NormalDownloader(client)

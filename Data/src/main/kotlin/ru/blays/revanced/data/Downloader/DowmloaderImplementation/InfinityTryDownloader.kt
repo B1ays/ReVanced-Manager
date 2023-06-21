@@ -9,7 +9,7 @@ import okhttp3.OkHttpClient
 import okio.IOException
 import org.koitharu.pausingcoroutinedispatcher.launchPausing
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
-import ru.blays.revanced.data.Downloader.Task
+import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.Utils.LogType
 import ru.blays.revanced.data.Downloader.Utils.RWMode
 import ru.blays.revanced.data.Downloader.Utils.createChannel
@@ -30,7 +30,7 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
     override val progressFlow = MutableStateFlow(0F)
     override val speedFlow = MutableStateFlow(0L)
 
-    override fun download(task: Task): DownloadInfo {
+    override fun download(task: DownloadTask): DownloadInfo {
 
         // Create file from name and extension
         val file = createFile(fileName = task.fileName, fileExtension = task.fileExtension)
