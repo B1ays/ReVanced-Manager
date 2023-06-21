@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
+import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import ru.blays.revanced.shared.Extensions.copyToClipBoard
 import ru.blays.revanced.shared.Extensions.share
 import ru.blays.revanced.shared.R
@@ -40,6 +41,7 @@ android version: ${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT})
 device model: ${Build.DEVICE}
 device brand: ${Build.BRAND}
 Supported abi: ${Build.SUPPORTED_ABIS.joinToString()}
+Root granted & Magisk installed: $isRootGranted
 ============""".trimIndent() + "\n"
 
 
