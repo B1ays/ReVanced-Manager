@@ -15,8 +15,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.Data.Apps
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
+import ru.blays.revanced.shared.Util.getStringRes
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -64,7 +64,7 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
         val repository = app.repository
 
         // Update info inside repository
-        if (repository.availableVersion.value != null) repository.updateInfo()
+        if (repository.availableVersion.value != null) repository.updateInfo(recreateCache = true)
 
         // Available of app
         var availableVersion = ""

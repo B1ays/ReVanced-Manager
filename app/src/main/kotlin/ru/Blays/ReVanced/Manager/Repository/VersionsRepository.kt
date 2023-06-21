@@ -50,8 +50,8 @@ abstract class VersionsRepository : CoroutineScope {
     private val packageManager: PackageManagerApi by inject(PackageManagerApi::class.java)
 
     // function what used to get info about app
-    suspend fun getAvailableVersions(getVersionsListUseCase: GetVersionsListUseCase) {
-        versionsList = getVersionsListUseCase.execut(appType)
+    suspend fun getAvailableVersions(getVersionsListUseCase: GetVersionsListUseCase, recreateCache: Boolean) {
+        versionsList = getVersionsListUseCase.execut(appType, recreateCache)
         with(versionsList.firstOrNull()) {
             availableVersion.emit(this?.version)
             availablePatchesVersion.emit(this?.patchesVersion)
@@ -100,7 +100,7 @@ abstract class VersionsRepository : CoroutineScope {
         ) else AppInfo()
     }
 
-    abstract suspend fun updateInfo()
+    abstract suspend fun updateInfo(recreateCache: Boolean)
 }
 
 class YoutubeVersionsRepository(private val getVersionsListUseCase: GetVersionsListUseCase) : VersionsRepository() {
@@ -116,8 +116,8 @@ class YoutubeVersionsRepository(private val getVersionsListUseCase: GetVersionsL
     override val isModuleInstalled = MutableStateFlow(false)
     override val isNonRootVersionInstalled = MutableStateFlow(false)
 
-    override suspend fun updateInfo() {
-        getAvailableVersions(getVersionsListUseCase)
+    override suspend fun updateInfo(recreateCache: Boolean) {
+        getAvailableVersions(getVersionsListUseCase, recreateCache)
         getLocalVersions()
     }
 
@@ -125,8 +125,6 @@ class YoutubeVersionsRepository(private val getVersionsListUseCase: GetVersionsL
         launch {
             isModuleInstalled.value = MagiskInstaller.checkModuleExist(moduleType)
             isNonRootVersionInstalled.value = checkNonRootVersionExist(nonRootPackageName)
-
-            updateInfo()
         }
     }
 }
@@ -144,8 +142,8 @@ class YoutubeMusicVersionsRepository(private val getVersionsListUseCase: GetVers
     override val isModuleInstalled = MutableStateFlow(false)
     override val isNonRootVersionInstalled = MutableStateFlow(false)
 
-    override suspend fun updateInfo() {
-        getAvailableVersions(getVersionsListUseCase)
+    override suspend fun updateInfo(recreateCache: Boolean) {
+        getAvailableVersions(getVersionsListUseCase, recreateCache)
         getLocalVersions()
     }
 
@@ -153,8 +151,6 @@ class YoutubeMusicVersionsRepository(private val getVersionsListUseCase: GetVers
         launch {
             isModuleInstalled.value = MagiskInstaller.checkModuleExist(moduleType)
             isNonRootVersionInstalled.value = checkNonRootVersionExist(nonRootPackageName)
-
-            updateInfo()
         }
     }
 }
@@ -167,14 +163,8 @@ class MicroGVersionsRepository(private val getVersionsListUseCase: GetVersionsLi
 
     override val hasRootVersion = false
 
-    override suspend fun updateInfo() {
-        getAvailableVersions(getVersionsListUseCase)
+    override suspend fun updateInfo(recreateCache: Boolean) {
+        getAvailableVersions(getVersionsListUseCase, recreateCache)
         getLocalVersions()
-    }
-
-    init {
-        launch {
-           updateInfo()
-        }
     }
 }

@@ -105,7 +105,7 @@ class VersionsListScreenViewModel(
     }
 
     fun onRefresh() {
-        launch { repository?.updateInfo() }
+        launch { repository?.updateInfo(recreateCache = true) }
     }
 
     val hideRebootAlertDialog = { magiskInstallerDialogState = MagiskInstallerAlertDialogState() }

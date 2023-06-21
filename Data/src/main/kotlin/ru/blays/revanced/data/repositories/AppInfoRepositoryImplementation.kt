@@ -1,10 +1,12 @@
 package ru.blays.revanced.data.repositories
 
 import android.util.Log
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException
+import ru.blays.revanced.data.CasheManager.CacheManagerInterface
 import ru.blays.revanced.data.DataModels.ApkInfoModel
 import ru.blays.revanced.data.DataModels.VersionsInfoModel
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
@@ -12,22 +14,42 @@ import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
 import java.util.concurrent.TimeUnit
 
-class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
+private const val TAG = "AppRepository"
 
-    private suspend fun getHtmlBody(url: String): String? {
+class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInterface) : AppInfoRepositoryInterface {
+
+    private suspend fun router(url: String, recreateCache: Boolean) : String? = coroutineScope {
+        var json: String?
+        if (recreateCache) {
+            json = getHtmlBody(url)
+            json?.let { cacheManager.addToCache(url, it) }
+            return@coroutineScope json
+        } else {
+            json = cacheManager.getJsonFromCache(url)
+            if (json == null) {
+                json = getHtmlBody(url)
+            } else {
+                return@coroutineScope json
+            }
+            json?.let { cacheManager.addToCache(url, it) }
+            return@coroutineScope json
+        }
+    }
+
+    private suspend fun getHtmlBody(url: String): String? = coroutineScope {
         val client = OkHttpClient.Builder()
             .callTimeout(30, TimeUnit.SECONDS)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
 
-        if (url.isEmpty()) return null
+        if (url.isEmpty()) return@coroutineScope null
 
         val request = Request.Builder()
             .url(url)
             .build()
 
-        return try {
+        return@coroutineScope try {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
                     throw IOException(
@@ -73,15 +95,21 @@ class AppInfoRepositoryImplementation : AppInfoRepositoryInterface {
         }
     }
 
-    override suspend fun getVersionsInfo(jsonUrl: String): List<VersionsInfoModelDto>? = getHtmlBody(jsonUrl)
+    override suspend fun getVersionsInfo(jsonUrl: String, recreateCache: Boolean): List<VersionsInfoModelDto>? = router(jsonUrl, recreateCache).also {
+        Log.d(TAG, "getVersionsInfo, url: $jsonUrl, recreateCache: $recreateCache")
+    }
         ?.serializeJsonFromString<List<VersionsInfoModel>>()
         ?.mapVersionsInfoModelToDomainClass()
 
 
-    override suspend fun getApkList(jsonUrl: String) : List<ApkInfoModelDto>? = getHtmlBody(jsonUrl)
+    override suspend fun getApkList(jsonUrl: String, recreateCache: Boolean) : List<ApkInfoModelDto>? = router(jsonUrl, recreateCache).also {
+        Log.d(TAG, "getVersionsInfo, url: $jsonUrl, recreateCache: $recreateCache")
+    }
         ?.serializeJsonFromString<List<ApkInfoModel>>()
         ?.mapApkInfoModelToDomainClass()
 
-    override suspend fun getChangelog(changelogUrl: String): String = getHtmlBody(changelogUrl).orEmpty()
+    override suspend fun getChangelog(changelogUrl: String, recreateCache: Boolean): String = router(changelogUrl, recreateCache).also {
+        Log.d(TAG, "getVersionsInfo, url: $changelogUrl, recreateCache: $recreateCache")
+    }.orEmpty()
 
 }

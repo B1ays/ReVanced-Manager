@@ -16,12 +16,11 @@ class MainScreenViewModel(private val getVersionsListUseCase: GetVersionsListUse
 
     var isRefreshing by mutableStateOf(false)
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun onRefresh() {
         isRefreshing = true
         launch {
             Apps.values().forEach { app ->
-                app.repository.updateInfo()
+                app.repository.updateInfo(recreateCache = true)
             }
             isRefreshing = false
         }

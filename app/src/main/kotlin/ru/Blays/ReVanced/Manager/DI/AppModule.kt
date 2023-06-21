@@ -10,6 +10,10 @@ import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.PublicApi.PackageManagerApiImpl
+import ru.blays.revanced.data.CasheManager.CacheManagerInterface
+import ru.blays.revanced.data.CasheManager.Implementation.CacheManager
+import ru.blays.revanced.data.CasheManager.StorageUtils.CacheStorageUtils
+import ru.blays.revanced.data.CasheManager.StorageUtils.StorageUtilsInterface
 import ru.blays.revanced.data.repositories.AppInfoRepositoryImplementation
 import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
 import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
@@ -27,7 +31,9 @@ val appModule = module {
         val installerType = get<SettingsRepository>().installerType
         PackageManagerApiImpl(get(), installerType)
     }
-    single<AppInfoRepositoryInterface> { AppInfoRepositoryImplementation() }
+    factory<StorageUtilsInterface> { CacheStorageUtils(get()) }
+    factory<CacheManagerInterface> { CacheManager(get()) }
+    single<AppInfoRepositoryInterface> { AppInfoRepositoryImplementation(get()) }
     single<SettingsRepositoryImplementation> { SettingsRepositoryImplementation(get()) }
     single<SettingsRepository> { SettingsRepository(get()) }
     single<YoutubeVersionsRepository> { YoutubeVersionsRepository(get()) }

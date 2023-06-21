@@ -15,13 +15,13 @@ class GetVersionsListUseCase(private val appInfoRepositoryInterface: AppInfoRepo
         private const val MICROG_JSON_LINK = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/MicroG/VersionsList.json"
     }
 
-    suspend fun execut(appType: String) : List<VersionsInfoModelDto> = when (appType) {
+    suspend fun execut(appType: String, recreateCache: Boolean = false) : List<VersionsInfoModelDto> = when (appType) {
 
-        YOUTUBE -> appInfoRepositoryInterface.getVersionsInfo(YOUTUBE_JSON_LINK) ?: emptyList()
+        YOUTUBE -> appInfoRepositoryInterface.getVersionsInfo(YOUTUBE_JSON_LINK, recreateCache) ?: emptyList()
 
-        MUSIC -> appInfoRepositoryInterface.getVersionsInfo(MUSIC_JSON_LINK) ?: emptyList()
+        MUSIC -> appInfoRepositoryInterface.getVersionsInfo(MUSIC_JSON_LINK, recreateCache) ?: emptyList()
 
-        MICROG -> appInfoRepositoryInterface.getVersionsInfo(MICROG_JSON_LINK) ?: emptyList()
+        MICROG -> appInfoRepositoryInterface.getVersionsInfo(MICROG_JSON_LINK, recreateCache) ?: emptyList()
 
         else -> emptyList()
     }
