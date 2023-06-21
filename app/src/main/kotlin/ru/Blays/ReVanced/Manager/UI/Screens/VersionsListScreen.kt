@@ -1,5 +1,6 @@
 package ru.Blays.ReVanced.Manager.UI.Screens
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,12 +41,12 @@ import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTab
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabIndicator
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabRow
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ChangelogBottomSheet
-import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.RebootAlertDialog
+import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.MagiskInstallInfoDialog
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBottomSheet
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -218,8 +219,10 @@ fun VersionsListScreen(
         changelog = viewModel.changelog
     )
 
-    if (viewModel.isRebootAlertDialogShowed) {
-        RebootAlertDialog(
+    if (viewModel.magiskInstallerDialogState.isExpanded) {
+        Log.d("AlertDialog", "show alert dialog")
+        MagiskInstallInfoDialog(
+            state = viewModel.magiskInstallerDialogState,
             actionReboot = viewModel::reboot,
             actionHide = viewModel.hideRebootAlertDialog
         )

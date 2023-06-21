@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Environment
 import android.util.Log
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 import java.time.LocalDate
@@ -14,7 +15,7 @@ object MagiskInstaller {
 
     val status = MutableStateFlow<Status>(Status.STARTING)
 
-    fun install(module: Module, file: File, context: Context) {
+    suspend fun install(module: Module, file: File, context: Context) = coroutineScope {
 
         val logPath = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         val logFilePath = File(logPath, "InstallLog_${LocalDate.now()}_${LocalTime.now()}.txt").absolutePath
@@ -51,8 +52,8 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (serviceSh.isEmpty()) {
-                status.tryEmit(Status.ERROR)
-                return
+                postStatusAndWriteToLog(Status.ERROR, "Error")
+                return@coroutineScope
             }
 
             // post status & write to log
@@ -63,9 +64,11 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!updateModule) {
-                status.tryEmit(Status.ERROR)
-                return
+                postStatusAndWriteToLog(Status.ERROR, "Error")
+                return@coroutineScope
             }
+
+            postStatusAndWriteToLog(Status.COMPLETE, "Install complete")
 
         }
         // create new module
@@ -79,8 +82,8 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!createModuleFolder) {
-                status.tryEmit(Status.ERROR)
-                return
+                postStatusAndWriteToLog(Status.ERROR, "Error")
+                return@coroutineScope
             }
 
             // post status & write to log
@@ -91,8 +94,8 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!copyApkToModuleFolder) {
-                status.tryEmit(Status.ERROR)
-                return
+                postStatusAndWriteToLog(Status.ERROR, "Error")
+                return@coroutineScope
             }
 
             // post status & write to log
@@ -112,8 +115,8 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (serviceSh.isEmpty()) {
-                status.tryEmit(Status.ERROR)
-                return
+                postStatusAndWriteToLog(Status.ERROR, "Error")
+                return@coroutineScope
             }
 
             // post status & write to log
@@ -125,9 +128,11 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!writeServiceSh || !writeModuleProp) {
-                status.tryEmit(Status.ERROR)
-                return
+                postStatusAndWriteToLog(Status.ERROR, "Error")
+                return@coroutineScope
             }
+
+            postStatusAndWriteToLog(Status.COMPLETE, "Install complete")
         }
     }
 
@@ -279,6 +284,7 @@ description=ReVanced Manager module."""
         GENERATE_SERVICE_SH("Generate service.sh"),
         COPY_APK("Copy APK"),
         WRITE_MODULE_FILES("Write module files"),
+        COMPLETE("Install complete"),
         ERROR("Error")
     }
 

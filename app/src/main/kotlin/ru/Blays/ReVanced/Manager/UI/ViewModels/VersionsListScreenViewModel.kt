@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +19,10 @@ import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 import ru.Blays.ReVanced.Manager.Data.Apps
+import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
+import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
 import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
@@ -30,13 +31,14 @@ import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
-import ru.blays.revanced.data.Downloader.Task
+import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
+import ru.blays.revanced.shared.Extensions.collect
 
 class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
@@ -56,7 +58,7 @@ class VersionsListScreenViewModel(
 
     var isChangelogBottomSheetExpanded = MutableStateFlow(false)
 
-    var isRebootAlertDialogShowed by mutableStateOf(false)
+    var magiskInstallerDialogState by mutableStateOf(MagiskInstallerAlertDialogState())
 
     var bottomSheetList = MutableStateFlow(emptyList<ApkInfoModelDto>())
 
@@ -106,8 +108,8 @@ class VersionsListScreenViewModel(
         launch { repository?.updateInfo() }
     }
 
-    val hideRebootAlertDialog = { isRebootAlertDialogShowed = false }
-    val showRebootAlertDialog = { isRebootAlertDialogShowed = true }
+    val hideRebootAlertDialog = { magiskInstallerDialogState = MagiskInstallerAlertDialogState() }
+    val showRebootAlertDialog = { magiskInstallerDialogState = magiskInstallerDialogState.copy(isExpanded = true) }
 
     suspend fun showApkListBottomSheet(url: String, rootVersion: Boolean) {
         bottomSheetList.value = getApkListUseCase.execute(url)?.filter {
@@ -134,7 +136,8 @@ class VersionsListScreenViewModel(
     }
 
     fun launch(packageName: String) {
-        packageManager.launchApp(packageName)
+        /*packageManager.launchApp(packageName)*/
+        launch(Dispatchers.Main) { magiskInstallerDialogState = MagiskInstallerAlertDialogState(MagiskInstaller.status, true) }
     }
 
     fun reboot() {
@@ -147,7 +150,7 @@ class VersionsListScreenViewModel(
         url: String
     ) {
 
-        val task = Task(url, fileName)
+        val task = DownloadTask(url, fileName)
             .setDefaultActions(
                 onSuccess = {
                     packageManager.installApk(file, settingsRepository.installerType)
@@ -179,24 +182,29 @@ class VersionsListScreenViewModel(
 
         NavBarExpandedContent.setContent { DownloadProgressContent(downloadStateList = stateList) }
 
-        val origApkInstalled = MutableStateFlow(false)
+        val state = MutableStateFlow(MagiskInstallerState())
 
-        val origApkDownloadTask = Task(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
+        val origApkDownloadTask = DownloadTask(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
             .setDefaultActions(
                 onSuccess = {
                     Log.d("DownloadCallback", "orig apk download success")
-                    viewModelScope.launch {
-                        val installResult = viewModelScope.async {
+
+                    launch {
+                        with(state) { emit(value.copy(origApkDownloaded = true)) }
+
+                        val installResult = async {
                             RootPackageManager().installApp(file)
                         }.await()
+
                         if (installResult.isError) {
                             this.cancel()
                             return@launch
                         }
-                        origApkInstalled.emit(true)
+                        with(state) { emit(value.copy(origApkInstalled = true)) }
                     }
                 },
                 onError = {
+                    file.delete()
                     NavBarExpandedContent.hide()
                 },
                 onCancel = {
@@ -205,33 +213,42 @@ class VersionsListScreenViewModel(
                 }
             )
             .build()
-            .also {
-                stateList.add(it)
+            .also { downloadInfo ->
+                stateList.add(downloadInfo)
+                collect(state) { state ->
+                    if (state.origApkDownloaded && state.modApkDownloaded) {
+                        NavBarExpandedContent.hide()
+                    } else if (state.origApkDownloaded) {
+                        stateList.remove(downloadInfo)
+                    }
+                }
             }
 
-        val modApkDownloadTask = Task(url = filesModel.modUrl, fileName = filesModel.fileName)
+        val modApkDownloadTask = DownloadTask(url = filesModel.modUrl, fileName = filesModel.fileName)
             .setDefaultActions(
                 onSuccess = {
 
                     Log.d("DownloadCallback", "mod apk download success")
 
-                    viewModelScope.launch {
+                    launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
 
-                        origApkInstalled.collect {
-                            if (it) {
-                                NavBarExpandedContent.hide()
+                    collect(state) {
+
+                        if (it.origApkInstalled) {
+                            launch {
+                                Log.d("ViewModel", "start installer")
                                 repository?.moduleType?.let { module ->
                                     MagiskInstaller.install(
                                         module,
                                         file,
                                         context
                                     )
+                                    file.delete()
+                                    origApkDownloadTask.file.delete()
+                                    onRefresh()
                                 }
-                                file.delete()
-                                origApkDownloadTask.file.delete()
-                                showRebootAlertDialog()
-                                onRefresh()
                             }
+                            magiskInstallerDialogState = MagiskInstallerAlertDialogState(MagiskInstaller.status, true)
                         }
                     }
                 },
@@ -246,8 +263,15 @@ class VersionsListScreenViewModel(
                 }
             )
             .build()
-            .also {
-                stateList.add(it)
+            .also { downloadInfo ->
+                stateList.add(downloadInfo)
+                collect(state) { state ->
+                    if (state.origApkDownloaded && state.modApkDownloaded) {
+                        NavBarExpandedContent.hide()
+                    } else if (state.modApkDownloaded) {
+                        stateList.remove(downloadInfo)
+                    }
+                }
             }
     }
 }

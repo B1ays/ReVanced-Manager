@@ -65,15 +65,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
+import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.Elements.Elements.GradientProgressIndicator.GradientLinearProgressIndicator
-import ru.blays.revanced.shared.Util.getStringRes
-import ru.blays.revanced.shared.R
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
+import ru.blays.revanced.shared.R
+import ru.blays.revanced.shared.Util.getStringRes
 import java.time.Duration
 import kotlin.reflect.KSuspendFunction1
 import kotlin.reflect.KSuspendFunction2
@@ -388,7 +389,7 @@ fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: Mutab
 }
 
 @Composable
-fun RebootAlertDialog(actionReboot: () -> Unit, actionHide: () -> Unit) {
+fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot: () -> Unit, actionHide: () -> Unit) {
     AlertDialog(
         onDismissRequest = actionHide,
         title = {
@@ -563,7 +564,6 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) 
                     )
                 }
             }
-
         }
     }
 }
