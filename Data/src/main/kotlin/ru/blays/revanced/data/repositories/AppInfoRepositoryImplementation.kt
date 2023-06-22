@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException
-import ru.blays.revanced.data.CasheManager.CacheManagerInterface
+import ru.blays.revanced.data.CacheManager.CacheManagerInterface
 import ru.blays.revanced.data.DataModels.ApkInfoModel
 import ru.blays.revanced.data.DataModels.VersionsInfoModel
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto

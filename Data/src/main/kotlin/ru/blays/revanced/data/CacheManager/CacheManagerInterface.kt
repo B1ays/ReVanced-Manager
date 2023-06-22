@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.CasheManager
+package ru.blays.revanced.data.CacheManager
 
 interface CacheManagerInterface {
 

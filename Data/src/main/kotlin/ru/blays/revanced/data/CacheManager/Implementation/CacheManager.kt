@@ -1,7 +1,7 @@
-package ru.blays.revanced.data.CasheManager.Implementation
+package ru.blays.revanced.data.CacheManager.Implementation
 
-import ru.blays.revanced.data.CasheManager.CacheManagerInterface
-import ru.blays.revanced.data.CasheManager.StorageUtils.StorageUtilsInterface
+import ru.blays.revanced.data.CacheManager.CacheManagerInterface
+import ru.blays.revanced.data.CacheManager.StorageUtils.StorageUtilsInterface
 
 class CacheManager(private val storageUtils: StorageUtilsInterface): CacheManagerInterface {
 

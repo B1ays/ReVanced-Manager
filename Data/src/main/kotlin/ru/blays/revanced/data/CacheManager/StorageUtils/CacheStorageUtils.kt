@@ -1,7 +1,7 @@
-package ru.blays.revanced.data.CasheManager.StorageUtils
+package ru.blays.revanced.data.CacheManager.StorageUtils
 
 import android.content.Context
-import ru.blays.revanced.data.CasheManager.Data.FileAndName
+import ru.blays.revanced.data.CacheManager.Data.FileAndName
 import java.io.File
 
 class CacheStorageUtils(context: Context): StorageUtilsInterface {

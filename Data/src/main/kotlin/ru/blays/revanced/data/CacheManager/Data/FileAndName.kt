@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.CasheManager.Data
+package ru.blays.revanced.data.CacheManager.Data
 
 import java.io.File
 
