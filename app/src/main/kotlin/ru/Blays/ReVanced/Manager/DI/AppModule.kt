@@ -10,13 +10,6 @@ import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.PublicApi.PackageManagerApiImpl
-import ru.blays.revanced.data.CacheManager.CacheManagerInterface
-import ru.blays.revanced.data.CacheManager.Implementation.CacheManager
-import ru.blays.revanced.data.CacheManager.StorageUtils.CacheStorageUtils
-import ru.blays.revanced.data.CacheManager.StorageUtils.StorageUtilsInterface
-import ru.blays.revanced.data.repositories.AppInfoRepositoryImplementation
-import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
-import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
@@ -31,10 +24,6 @@ val appModule = module {
         val installerType = get<SettingsRepository>().installerType
         PackageManagerApiImpl(get(), installerType)
     }
-    factory<StorageUtilsInterface> { CacheStorageUtils(get()) }
-    factory<CacheManagerInterface> { CacheManager(get(), get()) }
-    single<AppInfoRepositoryInterface> { AppInfoRepositoryImplementation(get()) }
-    single<SettingsRepositoryImplementation> { SettingsRepositoryImplementation(get()) }
     single<SettingsRepository> { SettingsRepository(get()) }
     single<YoutubeVersionsRepository> { YoutubeVersionsRepository(get()) }
     single<YoutubeMusicVersionsRepository> { YoutubeMusicVersionsRepository(get()) }
