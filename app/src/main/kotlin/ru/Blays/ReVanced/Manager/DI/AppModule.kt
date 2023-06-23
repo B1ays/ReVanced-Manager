@@ -32,7 +32,7 @@ val appModule = module {
         PackageManagerApiImpl(get(), installerType)
     }
     factory<StorageUtilsInterface> { CacheStorageUtils(get()) }
-    factory<CacheManagerInterface> { CacheManager(get()) }
+    factory<CacheManagerInterface> { CacheManager(get(), get()) }
     single<AppInfoRepositoryInterface> { AppInfoRepositoryImplementation(get()) }
     single<SettingsRepositoryImplementation> { SettingsRepositoryImplementation(get()) }
     single<SettingsRepository> { SettingsRepository(get()) }

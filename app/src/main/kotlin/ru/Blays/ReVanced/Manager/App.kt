@@ -9,6 +9,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.Blays.ReVanced.Manager.BackgroundService.CrashHandlerService
 import ru.Blays.ReVanced.Manager.DI.appModule
+import ru.blays.revanced.data.DI.dataModule
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
 
@@ -28,6 +29,7 @@ class App: Application() {
         startKoin {
             androidContext(this@App)
             modules(appModule)
+            modules(dataModule)
         }
 
         // create channel for notifications
