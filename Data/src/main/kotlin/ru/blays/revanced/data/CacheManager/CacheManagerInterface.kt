@@ -2,14 +2,14 @@ package ru.blays.revanced.data.CacheManager
 
 interface CacheManagerInterface {
 
-    fun addToCache(key: String, json: String): Boolean
+    suspend fun addToCache(key: String, json: String): Boolean
 
-    fun <T> addToCache(key: T, json: String): Boolean
+    suspend fun <T> addToCache(key: T, json: String): Boolean
 
-    fun getJsonFromCache(key: String): String?
+    suspend fun getJsonFromCache(key: String, cacheLifecycleLong: Long): String?
 
-    fun <KEY, OUT> getJsonFromCache(key: KEY): OUT?
+    suspend fun <KEY, OUT> getJsonFromCache(key: KEY): OUT?
 
-    fun removeFromCache(key: String): Boolean
+    suspend fun removeFromCache(key: String): Boolean
 
 }

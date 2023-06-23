@@ -4,13 +4,17 @@ import ru.blays.revanced.data.CacheManager.Data.FileAndName
 import java.io.File
 
 interface StorageUtilsInterface {
+
     val cacheDir: File
 
-    fun createCacheFile(key: String): File
+    val hashCode: (String) -> String
 
-    fun getCacheFile(key: String): File?
+    suspend fun createCacheFile(key: String): File
 
-    fun getFilesNames(): Array<FileAndName>
+    suspend fun getCacheFile(key: String): File?
 
-    fun deleteCacheFile(key: String): Boolean
+    suspend fun getFilesNames(): Array<FileAndName>
+
+    suspend fun deleteCacheFile(key: String): Boolean
+
 }

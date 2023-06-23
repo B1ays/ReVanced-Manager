@@ -7,21 +7,21 @@ import java.io.File
 class CacheStorageUtils(context: Context): StorageUtilsInterface {
     override val cacheDir: File = context.cacheDir
 
-    val hashCode: (String) -> String
+    override val hashCode: (String) -> String
         get() = { it.hashCode().toString() }
 
-    override fun createCacheFile(key: String): File {
+    override suspend fun createCacheFile(key: String): File {
         val hash = hashCode(key)
         return File(cacheDir, hash)
     }
 
-    override fun getCacheFile(key: String): File? {
+    override suspend fun getCacheFile(key: String): File? {
         val hash = hashCode(key)
         val cacheFile = File(cacheDir, hash)
         return if (cacheFile.exists()) cacheFile else null
     }
 
-    override fun getFilesNames(): Array<FileAndName> {
+    override suspend fun getFilesNames(): Array<FileAndName> {
         val namesArray = mutableListOf<FileAndName>()
         cacheDir.listFiles()?.forEach { file ->
             if (file != null) {
@@ -36,7 +36,7 @@ class CacheStorageUtils(context: Context): StorageUtilsInterface {
         return namesArray.toTypedArray()
     }
 
-    override fun deleteCacheFile(key: String): Boolean {
+    override suspend fun deleteCacheFile(key: String): Boolean {
         val hash = hashCode(key)
         return File(cacheDir, hash).delete()
     }

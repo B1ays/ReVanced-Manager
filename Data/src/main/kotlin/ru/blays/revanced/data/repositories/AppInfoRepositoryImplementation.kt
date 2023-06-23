@@ -25,7 +25,7 @@ class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInte
             json?.let { cacheManager.addToCache(url, it) }
             return@coroutineScope json
         } else {
-            json = cacheManager.getJsonFromCache(url)
+            json = cacheManager.getJsonFromCache(url, cacheLifecycleLong = 6)
             if (json == null) {
                 json = getHtmlBody(url)
             } else {
@@ -65,33 +65,37 @@ class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInte
         }
     }
 
-    private inline fun <reified T> String.serializeJsonFromString() : T = Json.decodeFromString(string = this)
+    private suspend inline fun <reified T> String.serializeJsonFromString() : T = coroutineScope { Json.decodeFromString(string = this@serializeJsonFromString) }
 
-    private fun List<VersionsInfoModel>.mapVersionsInfoModelToDomainClass() : List<VersionsInfoModelDto> = mutableListOf<VersionsInfoModelDto>().apply {
-        this@mapVersionsInfoModelToDomainClass.forEach { item ->
-            this.add(
-                VersionsInfoModelDto(
-                    item.version,
-                    item.patchesVersion,
-                    item.buildDate,
-                    item.changelogLink,
-                    item.versionsListLink
+    private suspend fun List<VersionsInfoModel>.mapVersionsInfoModelToDomainClass() : List<VersionsInfoModelDto> = coroutineScope {
+        mutableListOf<VersionsInfoModelDto>().apply {
+            this@mapVersionsInfoModelToDomainClass.forEach { item ->
+                this.add(
+                    VersionsInfoModelDto(
+                        item.version,
+                        item.patchesVersion,
+                        item.buildDate,
+                        item.changelogLink,
+                        item.versionsListLink
+                    )
                 )
-            )
+            }
         }
     }
 
-    private fun List<ApkInfoModel>.mapApkInfoModelToDomainClass() : List<ApkInfoModelDto> = mutableListOf<ApkInfoModelDto>().apply {
-        this@mapApkInfoModelToDomainClass.forEach { item ->
-            this.add(
-                ApkInfoModelDto(
-                    item.isRootVersion,
-                    item.name,
-                    item.description,
-                    item.url,
-                    item.originalApkLink
+    private suspend fun List<ApkInfoModel>.mapApkInfoModelToDomainClass() : List<ApkInfoModelDto> = coroutineScope {
+        mutableListOf<ApkInfoModelDto>().apply {
+            this@mapApkInfoModelToDomainClass.forEach { item ->
+                this.add(
+                    ApkInfoModelDto(
+                        item.isRootVersion,
+                        item.name,
+                        item.description,
+                        item.url,
+                        item.originalApkLink
+                    )
                 )
-            )
+            }
         }
     }
 
