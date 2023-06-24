@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 
 private const val TAG = "AppRepository"
 
-class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInterface) : AppInfoRepositoryInterface {
+class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInterface, private val cacheLifetimeLong: Long) : AppInfoRepositoryInterface {
 
     private suspend fun router(url: String, recreateCache: Boolean) : String? = coroutineScope {
         var json: String?
@@ -25,7 +25,7 @@ class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInte
             json?.let { cacheManager.addToCache(url, it) }
             return@coroutineScope json
         } else {
-            json = cacheManager.getJsonFromCache(url, cacheLifecycleLong = 6)
+            json = cacheManager.getJsonFromCache(url, cacheLifecycleLong = cacheLifetimeLong)
             if (json == null) {
                 json = getHtmlBody(url)
             } else {

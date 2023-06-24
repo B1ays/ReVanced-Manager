@@ -14,6 +14,8 @@ private const val MANAGED_YOUTUBE = "youtubeManaging"
 private const val MANAGED_MUSIC = "musicManaging"
 private const val MANAGED_MICROG = "microGManaging"
 
+private const val CACHE_LIFETIME_LONG = "CacheLifetimeLong"
+
 class SettingsRepositoryImplementation(context: Context) {
 
     private val preferences: SharedPreferences = context.getSharedPreferences("App", Context.MODE_PRIVATE)
@@ -74,4 +76,8 @@ class SettingsRepositoryImplementation(context: Context) {
     var microGManaged: Boolean
         get() = getSetting(MANAGED_MICROG, false)!!
         set(value) = putSetting(MANAGED_MICROG, value)
+
+    var cacheLifetimeLong: Long
+        get() = getSetting(CACHE_LIFETIME_LONG, 2)!!
+        set(value) = putSetting(CACHE_LIFETIME_LONG, value)
 }

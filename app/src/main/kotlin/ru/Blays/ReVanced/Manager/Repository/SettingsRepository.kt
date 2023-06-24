@@ -5,6 +5,7 @@ package ru.Blays.ReVanced.Manager.Repository
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import ru.blays.revanced.Elements.DataClasses.AccentColorItem
@@ -12,7 +13,7 @@ import ru.blays.revanced.Elements.Util.BuildedTheme
 import ru.blays.revanced.Elements.Util.buildTheme
 import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
 
-class SettingsRepository(private val settingsRepositoryImplementation: SettingsRepositoryImplementation) {
+class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryImplementation) {
 
     private var _appThemeCode by mutableIntStateOf(0)
 
@@ -34,6 +35,8 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
 
     private var _microGManaged by mutableStateOf(false)
 
+    private var _cacheLifetimeLong by mutableLongStateOf(0)
+
     var buildedTheme: MutableState<BuildedTheme>
         private set
 
@@ -41,30 +44,32 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
 
     init {
 
-        _appThemeCode = settingsRepositoryImplementation.theme
+        _appThemeCode = settingsRepositoryImpl.theme
 
-        _appTheme = when(settingsRepositoryImplementation.theme) {
+        _appTheme = when(settingsRepositoryImpl.theme) {
             0 -> isSystemInDarkMode
             1 -> true
             2 -> false
             else -> true
         }
 
-        _monetTheme = settingsRepositoryImplementation.monetTheme
+        _monetTheme = settingsRepositoryImpl.monetTheme
 
-        _accentColorItem = settingsRepositoryImplementation.accentColor
+        _accentColorItem = settingsRepositoryImpl.accentColor
 
-        _isAmoledTheme = settingsRepositoryImplementation.isAmoledTheme
+        _isAmoledTheme = settingsRepositoryImpl.isAmoledTheme
 
-        _isRootMode = settingsRepositoryImplementation.isRootMode
+        _isRootMode = settingsRepositoryImpl.isRootMode
 
-        _installerType = settingsRepositoryImplementation.installerType
+        _installerType = settingsRepositoryImpl.installerType
 
-        _youtubeManaged = settingsRepositoryImplementation.youtubeManaged
+        _youtubeManaged = settingsRepositoryImpl.youtubeManaged
 
-        _musicManaged = settingsRepositoryImplementation.musicManaged
+        _musicManaged = settingsRepositoryImpl.musicManaged
 
-        _microGManaged = settingsRepositoryImplementation.microGManaged
+        _microGManaged = settingsRepositoryImpl.microGManaged
+
+        _cacheLifetimeLong = settingsRepositoryImpl.cacheLifetimeLong
 
         buildedTheme = mutableStateOf(generateTheme(_accentColorItem))
     }
@@ -80,7 +85,7 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
             }
             if (value.themeCode != null) {
                 _appThemeCode = value.themeCode
-                settingsRepositoryImplementation.theme = value.themeCode
+                settingsRepositoryImpl.theme = value.themeCode
             }
         }
 
@@ -88,14 +93,14 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
         get() = _monetTheme
         set(value) {
             _monetTheme = value
-            settingsRepositoryImplementation.monetTheme = value
+            settingsRepositoryImpl.monetTheme = value
         }
 
     var isAmoledTheme: Boolean
         get() = _isAmoledTheme
         set(value) {
             _isAmoledTheme = value
-            settingsRepositoryImplementation.isAmoledTheme = value
+            settingsRepositoryImpl.isAmoledTheme = value
         }
 
 
@@ -104,42 +109,49 @@ class SettingsRepository(private val settingsRepositoryImplementation: SettingsR
         set(value) {
             buildedTheme.value = generateTheme(value)
             _accentColorItem = value
-            settingsRepositoryImplementation.accentColor = value
+            settingsRepositoryImpl.accentColor = value
         }
 
     var isRootMode: Boolean
         get() = _isRootMode
         set(value) {
             _isRootMode = value
-            settingsRepositoryImplementation.isRootMode = value
+            settingsRepositoryImpl.isRootMode = value
         }
 
     var installerType: Int
         get() = _installerType
         set(value) {
             _installerType = value
-            settingsRepositoryImplementation.installerType = value
+            settingsRepositoryImpl.installerType = value
         }
 
     var youtubeManaged: Boolean
         get() = _youtubeManaged
         set(value) {
             _youtubeManaged = value
-            settingsRepositoryImplementation.youtubeManaged = value
+            settingsRepositoryImpl.youtubeManaged = value
         }
 
     var musicManaged: Boolean
         get() = _musicManaged
         set(value) {
             _musicManaged = value
-            settingsRepositoryImplementation.musicManaged = value
+            settingsRepositoryImpl.musicManaged = value
         }
 
     var microGManaged: Boolean
         get() = _microGManaged
         set(value) {
             _microGManaged = value
-            settingsRepositoryImplementation.microGManaged = value
+            settingsRepositoryImpl.microGManaged = value
+        }
+
+    var cacheLifetimeLong: Long
+        get() = _cacheLifetimeLong
+        set(value) {
+            _cacheLifetimeLong = value
+            settingsRepositoryImpl.cacheLifetimeLong = value
         }
 
 

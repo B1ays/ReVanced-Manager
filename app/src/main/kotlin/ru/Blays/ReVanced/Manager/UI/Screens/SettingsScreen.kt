@@ -1,9 +1,14 @@
 package ru.Blays.ReVanced.Manager.UI.Screens
 
+import android.util.Log
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -13,20 +18,27 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.navigate
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
@@ -47,6 +59,9 @@ import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
+import kotlin.math.roundToLong
+
+private const val TAG = "SettingsScreen"
 
 @Destination
 @Composable
@@ -109,6 +124,10 @@ fun SettingsScreen(
             itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
                 InstallerType(repository = settingsRepository)
                 ManagedApps(repository = settingsRepository)
+            }
+
+            itemsGroupWithHeader(title = getStringRes(id = R.string.Settings_title_cache)) {
+                CacheLifetimeSelector(repository = settingsRepository)
             }
         }
     }
@@ -184,13 +203,6 @@ fun InstallerType(repository: SettingsRepository) {
         title = getStringRes(R.string.Settings_card_installer_title),
         subtitle = getStringRes(R.string.Settings_card_installer_description)
     ) {
-        /*SettingsRadioButtonWithTitle(
-            title = "Классический установщик",
-            checkedIndex = repository.installerType,
-            index = 0
-        ) {
-            repository.installerType = 0
-        }*/
         SettingsRadioButtonWithTitle(
             title = getStringRes(R.string.Settings_card_installer_session),
             checkedIndex = repository.installerType,
@@ -232,5 +244,76 @@ fun ManagedApps(repository: SettingsRepository) {
         SettingsCheckboxWithTitle(title = "Vanced MicroG", state = repository.microGManaged) { newValue ->
             repository.microGManaged = newValue
         }
+    }
+}
+
+@Composable
+fun CacheLifetimeSelector(repository: SettingsRepository) {
+    SettingsExpandableCard(title = "Cache Lifetime") {
+
+        val lazyColumnState = rememberLazyListState()
+
+        val scope = rememberCoroutineScope()
+
+        val scrollTo: (Float) -> Unit = {
+            scope.launch {
+                when(it.roundToLong().toFloat()) {
+                    0F -> lazyColumnState.animateScrollToItem(0)
+                    2F -> lazyColumnState.animateScrollToItem(1)
+                    4F -> lazyColumnState.animateScrollToItem(2)
+                    6F -> lazyColumnState.animateScrollToItem(3)
+                    8F -> lazyColumnState.animateScrollToItem(4)
+                    10F -> lazyColumnState.animateScrollToItem(5)
+                }
+            }
+
+        }
+
+        val map  = arrayOf(
+            stringResource(R.string.SeekBar_segment_3_hours),
+            stringResource(R.string.SeekBar_segment_6_hours),
+            stringResource(R.string.SeekBar_segment_12_hours),
+            stringResource(R.string.SeekBar_segment_24_hours),
+            stringResource(R.string.SeekBar_segment_48_hours),
+            stringResource(R.string.SeekBar_segment_infinity)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+                .fillMaxWidth()
+                .height(24.dp),
+            state = lazyColumnState,
+            userScrollEnabled = false
+        ) {
+            items(map) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = it,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+
+        Slider(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp),
+            value = repository.cacheLifetimeLong.toFloat(),
+            valueRange = 0F..10F,
+            steps = 4,
+            onValueChange = {
+                Log.d(TAG, it.toString())
+                scrollTo(it)
+                repository.cacheLifetimeLong = it.roundToLong()
+            }
+        )
+
+        LaunchedEffect(key1 = Unit) {
+            scrollTo(repository.cacheLifetimeLong.toFloat())
+        }
+
     }
 }

@@ -44,6 +44,12 @@
     <string name="Settings_card_installer_shizuku">Shiziku установщик</string>
     <string name="Settings_card_selected_apps_title">Выбранные приложения</string>
     <string name="Settings_card_selected_apps_description">Приложения, которыми управляет менеджер</string>
+    <string name="SeekBar_segment_3_hours">3 часа</string>
+    <string name="SeekBar_segment_6_hours">6 часов</string>
+    <string name="SeekBar_segment_12_hours">12 часов</string>
+    <string name="SeekBar_segment_24_hours">24 часа</string>
+    <string name="SeekBar_segment_48_hours">48 часов</string>
+    <string name="SeekBar_segment_infinity">Бесконечно</string>
     <string name="about_group_information">Основная информация</string>
     <string name="about_group_author">О разработчике</string>
     <string name="about_card_github">Исходный код на GitHub</string>
@@ -61,4 +67,5 @@
     <string name="notification_message_nonRoot">Доступна новая non-Root версия</string>
     <string name="notification_message_root">Доступна новая Root версия для</string>
     <string name="notification_channel_name">Уведомлнения о новых версиях</string>
+    <string name="Settings_title_cache">Кэш</string>
 </resources>

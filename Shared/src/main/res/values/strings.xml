@@ -41,6 +41,7 @@
     <!--  Settings group titles  -->
     <string name="Settings_title_theme">App theme &amp; colors</string>
     <string name="Settings_title_main">Main settings</string>
+    <string name="Settings_title_cache">Cache</string>
 
     <!--  Dark code setting  -->
     <string name="Settings_card_theme_title">Theme</string>
@@ -73,6 +74,14 @@
     <!--  Selected apps setting  -->
     <string name="Settings_card_selected_apps_title">Selected apps</string>
     <string name="Settings_card_selected_apps_description">Apps what managed by manager</string>
+
+    <!--  Cache lifetime SeekBar  -->
+    <string name="SeekBar_segment_3_hours">3 hours</string>
+    <string name="SeekBar_segment_6_hours">6 hours</string>
+    <string name="SeekBar_segment_12_hours">12 hours</string>
+    <string name="SeekBar_segment_24_hours">24 hours</string>
+    <string name="SeekBar_segment_48_hours">48 hours</string>
+    <string name="SeekBar_segment_infinity">Infinity</string>
 
     <!--  About Screen  -->
     <string name="about_group_information">Main information</string>
