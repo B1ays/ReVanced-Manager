@@ -80,4 +80,14 @@ class SettingsRepositoryImplementation(context: Context) {
     var cacheLifetimeLong: Long
         get() = getSetting(CACHE_LIFETIME_LONG, 2)!!
         set(value) = putSetting(CACHE_LIFETIME_LONG, value)
+
+    val cacheLifetimeReal: Long = when(cacheLifetimeLong) {
+        0L -> 3L
+        2L -> 6L
+        4L -> 12L
+        6L -> 24L
+        8L -> 48L
+        10L -> Int.MAX_VALUE.toLong()
+        else -> 6L
+    }
 }

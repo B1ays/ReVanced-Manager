@@ -25,15 +25,7 @@ val dataModule = module {
     factory<StorageUtilsInterface> { CacheStorageUtils(get()) }
     factory<CacheManagerInterface> { CacheManager(get(), get()) }
     single<AppInfoRepositoryInterface> {
-        val cacheLifetimeLong = when(get<SettingsRepositoryImplementation>().cacheLifetimeLong) {
-            0L -> 3L
-            2L -> 6L
-            4L -> 12L
-            6L -> 24L
-            8L -> 48L
-            10L -> Int.MAX_VALUE.toLong()
-            else -> 6L
-        }
+        val cacheLifetimeLong =  get<SettingsRepositoryImplementation>().cacheLifetimeReal
         AppInfoRepositoryImplementation(get(), cacheLifetimeLong)
     }
 }
