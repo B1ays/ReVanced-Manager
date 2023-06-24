@@ -2,9 +2,9 @@ package ru.blays.revanced.data.Downloader.Utils
 
 import java.math.RoundingMode
 
-fun Long.isNotZero(): Boolean = this != 0L
+internal fun Long.isNotZero(): Boolean = this != 0L
 
-fun Long.formatSize(): String {
+internal fun Long.formatSize(): String {
     require(this >= 0) { "Size must larger than 0." }
 
     val byte = this.toDouble()
@@ -22,7 +22,7 @@ fun Long.formatSize(): String {
     }
 }
 
-fun Double.decimal(digits: Int): Double {
+internal fun Double.decimal(digits: Int): Double {
     return toBigDecimal()
         .setScale(digits, RoundingMode.HALF_UP)
         .toDouble()

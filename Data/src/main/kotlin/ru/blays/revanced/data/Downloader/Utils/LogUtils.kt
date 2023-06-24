@@ -17,6 +17,6 @@ internal fun log(message: String, type: LogType = INFO) {
     }
 }
 
-enum class LogType {
+internal enum class LogType {
     DEBUG, INFO, WARN, ERROR
 }

@@ -7,31 +7,31 @@ import java.nio.channels.FileChannel
 
 private val DEFAULT_FILE_FOLDER: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
-fun File.lengthNotZero(): Boolean = length().isNotZero()
+internal fun File.lengthNotZero(): Boolean = length().isNotZero()
 
-fun File.checkFileExists(): Boolean = exists() && lengthNotZero()
+internal fun File.checkFileExists(): Boolean = exists() && lengthNotZero()
 
 
-fun File.createChannel(mode: RWMode): FileChannel {
+internal fun File.createChannel(mode: RWMode): FileChannel {
     val randomAccessFile = RandomAccessFile(this, mode.code)
     return randomAccessFile.channel
 }
 
 @Suppress("RedundantLambdaOrAnonymousFunction")
-var FileChannel.position: Long
+internal var FileChannel.position: Long
     get() = position()
     set(value) = { position(value) }()
 
 @JvmName("createFileExtension")
-fun String.createFile(fileExtension: String): File {
+internal fun String.createFile(fileExtension: String): File {
     return File(DEFAULT_FILE_FOLDER, "${this}${fileExtension}")
 }
 
-fun createFile(fileName: String, fileExtension: String): File {
+internal fun createFile(fileName: String, fileExtension: String): File {
     return File(DEFAULT_FILE_FOLDER, "$fileName$fileExtension")
 }
 
-enum class RWMode(val code: String) {
+internal enum class RWMode(val code: String) {
     READ_ONLY("r"),
     WRITE_ONLY("w"),
     READ_WRITE("rw");
