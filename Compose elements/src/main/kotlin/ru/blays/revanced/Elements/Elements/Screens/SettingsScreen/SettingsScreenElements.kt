@@ -1,9 +1,16 @@
 package ru.blays.revanced.Elements.Elements.Screens.SettingsScreen
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +42,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ru.blays.revanced.Elements.DataClasses.AccentColorItem
 import ru.blays.revanced.Elements.DataClasses.CardShape
@@ -246,3 +254,38 @@ fun ColorPickerItem(
     )
 }
 
+@Suppress("AnimatedContentLabel")
+@Composable
+fun CurrentSegment(
+    currentSegment: Segment,
+    modifier: Modifier,
+    alignment: Alignment
+) {
+    Box(modifier = modifier, contentAlignment = alignment) {
+        AnimatedContent(
+            targetState = currentSegment,
+            transitionSpec = {
+                if (targetState.start > initialState.start) {
+                    (slideInVertically { height -> height } + fadeIn()).togetherWith(
+                        slideOutVertically { height -> -height } + fadeOut())
+                } else {
+                    (slideInVertically { height -> -height } + fadeIn()).togetherWith(
+                        slideOutVertically { height -> height } + fadeOut())
+                }.using(
+                    SizeTransform(clip = false)
+                )
+            }
+        ) { currentSegment ->
+            Text(
+                text = currentSegment.name,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+}
+
+data class Segment(
+    val start: Float,
+    val name: String
+)

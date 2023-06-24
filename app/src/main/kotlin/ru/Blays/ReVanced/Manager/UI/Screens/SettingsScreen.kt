@@ -1,6 +1,5 @@
 package ru.Blays.ReVanced.Manager.UI.Screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -18,7 +16,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -27,18 +24,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.navigate
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
@@ -48,6 +43,8 @@ import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
 import ru.blays.revanced.Elements.DataClasses.AccentColorItem
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerItem
+import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.CurrentSegment
+import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.Segment
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWithSwitch
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCheckboxWithTitle
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
@@ -249,71 +246,56 @@ fun ManagedApps(repository: SettingsRepository) {
 
 @Composable
 fun CacheLifetimeSelector(repository: SettingsRepository) {
-    SettingsExpandableCard(title = "Cache Lifetime") {
 
-        val lazyColumnState = rememberLazyListState()
+    val segments  = arrayOf(
+        Segment(0F, stringResource(R.string.SeekBar_segment_3_hours)),
+        Segment(2F, stringResource(R.string.SeekBar_segment_6_hours)),
+        Segment(4F, stringResource(R.string.SeekBar_segment_12_hours)),
+        Segment(6F, stringResource(R.string.SeekBar_segment_24_hours)),
+        Segment(8F, stringResource(R.string.SeekBar_segment_48_hours)),
+        Segment(10F, stringResource(R.string.SeekBar_segment_infinity))
+    )
 
-        val scope = rememberCoroutineScope()
+    val segmentsRange = remember {
+        segments.first().start..segments.last().start
+    }
 
-        val scrollTo: (Float) -> Unit = {
-            scope.launch {
-                when(it.roundToLong().toFloat()) {
-                    0F -> lazyColumnState.animateScrollToItem(0)
-                    2F -> lazyColumnState.animateScrollToItem(1)
-                    4F -> lazyColumnState.animateScrollToItem(2)
-                    6F -> lazyColumnState.animateScrollToItem(3)
-                    8F -> lazyColumnState.animateScrollToItem(4)
-                    10F -> lazyColumnState.animateScrollToItem(5)
-                }
-            }
+    val steps = segments.size - 2
 
-        }
+    var currentSegment by remember {
+        mutableStateOf(Segment(0F, ""))
+    }
 
-        val map  = arrayOf(
-            stringResource(R.string.SeekBar_segment_3_hours),
-            stringResource(R.string.SeekBar_segment_6_hours),
-            stringResource(R.string.SeekBar_segment_12_hours),
-            stringResource(R.string.SeekBar_segment_24_hours),
-            stringResource(R.string.SeekBar_segment_48_hours),
-            stringResource(R.string.SeekBar_segment_infinity)
-        )
+    LaunchedEffect(Unit) {
+        try {
+            currentSegment = segments.first { it.start == repository.cacheLifetimeLong.toFloat() }
+        } catch (_: Exception) {}
+    }
+
+    SettingsExpandableCard(
+        title = stringResource(id = R.string.Settings_card_cache_lifetime_title),
+        subtitle = stringResource(id = R.string.Settings_card_cache_lifetime_description)
+    ) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        LazyColumn(
+        CurrentSegment(
+            currentSegment = currentSegment,
+            alignment = Alignment.Center,
             modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 2.dp)
-                .fillMaxWidth()
-                .height(24.dp),
-            state = lazyColumnState,
-            userScrollEnabled = false
-        ) {
-            items(map) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = it,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
+                .fillMaxWidth())
 
         Slider(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp),
             value = repository.cacheLifetimeLong.toFloat(),
-            valueRange = 0F..10F,
-            steps = 4,
-            onValueChange = {
-                Log.d(TAG, it.toString())
-                scrollTo(it)
-                repository.cacheLifetimeLong = it.roundToLong()
+            valueRange = segmentsRange,
+            steps = steps,
+            onValueChange = { newValue ->
+                try {
+                    currentSegment = segments.first { it.start == newValue }
+                } catch (_: Exception) {}
+                repository.cacheLifetimeLong = newValue.roundToLong()
             }
         )
-
-        LaunchedEffect(key1 = Unit) {
-            scrollTo(repository.cacheLifetimeLong.toFloat())
-        }
-
     }
 }
