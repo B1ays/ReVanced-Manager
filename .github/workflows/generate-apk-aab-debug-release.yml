@@ -54,6 +54,15 @@ jobs:
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
         run: ./gradlew assembleDebug
 
+      - name: Sign Debug
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: ${{ env.main_project_module }}/build/outputs/apk/debug/
+          signingKeyBase64: ${{ secrets.KEY_BASE64 }}
+          alias: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD  }}
+          keyPassword: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+
       # Upload Artifact Build
       # Noted For Output [main_project_module]/build/outputs/apk/debug/
       - name: Upload APK Debug - ${{ env.repository_name }}
