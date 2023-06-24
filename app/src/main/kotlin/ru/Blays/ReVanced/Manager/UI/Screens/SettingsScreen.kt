@@ -56,6 +56,7 @@ import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
+import kotlin.math.round
 import kotlin.math.roundToLong
 
 private const val TAG = "SettingsScreen"
@@ -90,7 +91,9 @@ fun SettingsScreen(
                 },
                 actions = {
                     DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeExpanded) {
-                        DropdownMenuItem(text = { Text(text = getStringRes(R.string.About_app)) }, onClick = { navController.navigate(AboutScreenDestination) })
+                        DropdownMenuItem(text = { Text(text = getStringRes(R.string.About_app)) }, onClick = { navController.navigate(
+                            AboutScreenDestination
+                        ) })
                         if (BuildConfig.DEBUG) DropdownMenuItem(text = { Text(text = "Crash app", color = Color.Red) }, onClick = { throw RuntimeException("Test crash") })
                     }
                     IconButton(onClick = changeExpanded) {
@@ -282,8 +285,8 @@ fun CacheLifetimeSelector(repository: SettingsRepository) {
         CurrentSegment(
             currentSegment = currentSegment,
             alignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth())
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Slider(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp),
@@ -292,7 +295,7 @@ fun CacheLifetimeSelector(repository: SettingsRepository) {
             steps = steps,
             onValueChange = { newValue ->
                 try {
-                    currentSegment = segments.first { it.start == newValue }
+                    currentSegment = segments.first { it.start == round(newValue) }
                 } catch (_: Exception) {}
                 repository.cacheLifetimeLong = newValue.roundToLong()
             }
