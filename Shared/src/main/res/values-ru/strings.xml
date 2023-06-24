@@ -44,6 +44,8 @@
     <string name="Settings_card_installer_shizuku">Shiziku установщик</string>
     <string name="Settings_card_selected_apps_title">Выбранные приложения</string>
     <string name="Settings_card_selected_apps_description">Приложения, которыми управляет менеджер</string>
+    <string name="Settings_card_cache_lifetime_title">Срок актуальности кэша</string>
+    <string name="Settings_card_cache_lifetime_description">Выбрать, как долго использовать кэшированные данные</string>
     <string name="SeekBar_segment_3_hours">3 часа</string>
     <string name="SeekBar_segment_6_hours">6 часов</string>
     <string name="SeekBar_segment_12_hours">12 часов</string>
