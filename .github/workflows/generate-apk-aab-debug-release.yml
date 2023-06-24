@@ -26,7 +26,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
@@ -51,10 +51,10 @@ jobs:
         run: ./gradlew build
 
       # Create APK Debug
-      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
+      - name: Build debug apk
         run: ./gradlew assembleDebug
 
-      - name: Sign Debug
+      - name: Sign apk
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: ${{ env.main_project_module }}/build/outputs/apk/debug/
@@ -68,5 +68,5 @@ jobs:
       - name: Upload APK Debug - ${{ env.repository_name }}
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.date_today }} - ${{ env.project_name}} - ${{ env.repository_name }} - APK(s) debug generated
-          path: ${{ env.main_project_module }}/build/outputs/apk/debug/
+          name: ${{ env.project_name}}-debug
+          path: ${{ env.main_project_module }}/build/outputs/apk/debug/app-debug-signed.apk
