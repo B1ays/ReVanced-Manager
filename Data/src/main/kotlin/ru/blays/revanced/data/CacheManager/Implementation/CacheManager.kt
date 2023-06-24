@@ -1,6 +1,5 @@
 package ru.blays.revanced.data.CacheManager.Implementation
 
-import android.util.Log
 import kotlinx.coroutines.coroutineScope
 import ru.blays.revanced.data.CacheManager.CacheManagerInterface
 import ru.blays.revanced.data.CacheManager.Room.CacheDAO
@@ -44,16 +43,12 @@ class CacheManager(private val storageUtils: StorageUtilsInterface, private val 
 
     override suspend fun getJsonFromCache(key: String, cacheLifecycleLong: Long): String? = coroutineScope {
         val hash = storageUtils.hashCode(key)
-        val lastUpdateTimeString = cacheDAO.getInfoByName(hash).creationTime
-        val dateObject = formatter.parse(lastUpdateTimeString)
-        val isInRange = dateObject?.let { it.isInRange(cacheLifecycleLong) } ?: false
-        Log.d(TAG,
-"""================================================
-lastUpdateTime: $lastUpdateTimeString;
-last updateTimeObject: $dateObject;
-isInRange: $isInRange
-================================================""".trimIndent()
-        )
+        val isInRange: Boolean = try {
+            val lastUpdateTimeString = cacheDAO.getInfoByName(hash).creationTime
+            val dateObject = formatter.parse(lastUpdateTimeString)
+            dateObject?.let { it.isInRange(cacheLifecycleLong) } ?: false
+        } catch (_: Exception) { false }
+
         if (isInRange) {
             val file = storageUtils.getCacheFile(key)
             return@coroutineScope file?.readText()
