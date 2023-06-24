@@ -89,7 +89,7 @@ class CrashHandlerActivity : ComponentActivity() {
                                 onClick = { share(fullLog) },
                                 shape = CircleShape,
                                 containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
-                                contentColor = MaterialTheme.colorScheme.onBackground
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                             ) {
                                 Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_share_24), contentDescription = null)
                             }
