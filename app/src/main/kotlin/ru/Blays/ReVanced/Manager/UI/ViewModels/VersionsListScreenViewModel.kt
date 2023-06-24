@@ -136,8 +136,7 @@ class VersionsListScreenViewModel(
     }
 
     fun launch(packageName: String) {
-        /*packageManager.launchApp(packageName)*/
-        launch(Dispatchers.Main) { magiskInstallerDialogState = MagiskInstallerAlertDialogState(MagiskInstaller.status, true) }
+        packageManager.launchApp(packageName)
     }
 
     fun reboot() {
