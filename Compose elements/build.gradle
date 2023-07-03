@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.com.android.library)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.com.google.devtools.ksp)
 }
@@ -51,8 +51,8 @@ dependencies {
 
     //Compose
     implementation libs.androidx.activity.activity.compose
-    implementation libs.androidx.compose.animation.asProvider()
-    implementation libs.androidx.compose.foundation.asProvider()
+    implementation libs.androidx.compose.animation
+    implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.runtime.asProvider()
     implementation libs.androidx.compose.ui.asProvider()
