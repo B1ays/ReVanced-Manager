@@ -1,7 +1,9 @@
 package ru.Blays.ReVanced.Manager.UI.Screens
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,10 +29,11 @@ import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
-import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppInfoCard
+import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRedesign
+import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRedesignRoot
 import ru.blays.revanced.Elements.GlobalState.NavBarState
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -88,22 +91,31 @@ fun MainScreen(
                         (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
                         (app == Apps.MICROG && settingsRepository.microGManaged)
                     ) {
-                        AppInfoCard(
-                            icon = app.icon,
-                            appType = app.repository.appType,
-                            appName = app.repository.appName,
-                            availableVersion = app.repository.availableVersion,
-                            rootVersion = app.repository.rootVersion,
-                            version = app.repository.version,
-                            nonRootVersion = app.repository.nonRootVersion,
-                            hasRootVersion = app.repository.hasRootVersion,
-                            isNonRootVersionInstalled = app.repository.isNonRootVersionInstalled,
-                            isModuleInstalled = app.repository.isModuleInstalled,
-                        ) {
-                            navController.navigate(
-                                VersionsListScreenDestination(appType = it)
-                            )
+                        if (app.repository.hasRootVersion) {
+                            AppCardRedesignRoot(
+                                icon = app.icon,
+                                appName = app.repository.appName,
+                                availableVersion = app.repository.availableVersion,
+                                rootVersion = app.repository.rootVersion,
+                                nonRootVersion = app.repository.nonRootVersion
+                            ) {
+                                navController.navigate(
+                                    VersionsListScreenDestination(app.repository.appType)
+                                )
+                            }
+                        } else {
+                            AppCardRedesign(
+                                icon = app.icon,
+                                appName = app.repository.appName,
+                                availableVersion = app.repository.availableVersion,
+                                version = app.repository.version
+                            ) {
+                                navController.navigate(
+                                    VersionsListScreenDestination(app.repository.appType)
+                                )
+                            }
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
