@@ -5,6 +5,7 @@
     <string name="AppBar_Versions">Версии</string>
     <string name="AppBar_Settings">Настройки</string>
     <string name="AppBar_About">О приложении</string>
+    <string name="AppBar_Downloads">Загрузки</string>
     <string name="Installed_version">Устновленная версия</string>
     <string name="Available_version">Доступная версия</string>
     <string name="Action_OK">Ок</string>
@@ -70,4 +71,7 @@
     <string name="notification_message_root">Доступна новая Root версия для</string>
     <string name="notification_channel_name">Уведомлнения о новых версиях</string>
     <string name="Settings_title_cache">Кэш</string>
+    <string name="File_size">Вес файла</string>
+    <string name="File_size_Kb">Кб</string>
+    <string name="File_size_Mb">Мб</string>
 </resources>
