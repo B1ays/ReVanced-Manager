@@ -45,8 +45,6 @@ import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.MagiskInst
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBottomSheet
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
-import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -93,7 +91,7 @@ fun VersionsListScreen(
         topBar = {
             CustomToolbar(
                 collapsingTitle = CollapsingTitle.large(
-                    titleText = getStringRes(R.string.AppBar_Versions)
+                    titleText = viewModel.appName
                 ),
                 navigationIcon = {
                     IconButton(

@@ -98,10 +98,6 @@ fun VersionsListScreenHeader(
             .padding(12.dp)
             .fillMaxWidth()
     ) {
-        Text(
-            text = appInfo.appName ?: "",
-            style = MaterialTheme.typography.titleMedium
-        )
         appInfo.version.collectAsState().value?.let {
             Text(text = "${getStringRes(R.string.Installed_version)}: $it")
         }

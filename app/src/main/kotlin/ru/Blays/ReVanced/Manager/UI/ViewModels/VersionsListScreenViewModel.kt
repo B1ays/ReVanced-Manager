@@ -52,6 +52,8 @@ class VersionsListScreenViewModel(
     // UI states
     var isRefreshing by mutableStateOf(false)
 
+    var appName by mutableStateOf("")
+
     var list by mutableStateOf(emptyList<VersionsInfoModelDto>())
 
     var isApkListBottomSheetExpanded = MutableStateFlow(false)
@@ -87,6 +89,7 @@ class VersionsListScreenViewModel(
     private fun getDataFromRepository(repo: VersionsRepository) {
         repository = repo
         calculatePagesCount(repo)
+        appName = repo.appName
         if (repo.versionsList.isNotEmpty()) {
             list = repo.versionsList
         } else {
