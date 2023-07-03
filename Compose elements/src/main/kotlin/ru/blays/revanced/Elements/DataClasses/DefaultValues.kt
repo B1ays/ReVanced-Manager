@@ -1,5 +1,6 @@
 package ru.blays.revanced.Elements.DataClasses
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 
@@ -13,4 +14,5 @@ object CardShape {
 object DefaultPadding {
     val CardVerticalPadding = 3.dp
     val CardHorizontalPadding = 12.dp
+    val CardDefaultPadding = PaddingValues(horizontal = 12.dp, vertical = 3.dp)
 }
