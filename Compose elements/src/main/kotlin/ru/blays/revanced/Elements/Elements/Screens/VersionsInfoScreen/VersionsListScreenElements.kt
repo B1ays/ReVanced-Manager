@@ -85,6 +85,9 @@ fun VersionsListScreenHeader(
     actionDelete: (String) -> Unit,
     actionOpen: (String) -> Unit
 ) {
+
+    val version by appInfo.version.collectAsState()
+    val patchesVersion by appInfo.patchesVersion.collectAsState()
     
     var isAlertDialogShown by remember {
         mutableStateOf(false)
@@ -92,43 +95,48 @@ fun VersionsListScreenHeader(
     
     val hideAlertDialog = { isAlertDialogShown = false }
     val showAlertDialog = { isAlertDialogShown = true }
-    
-    Column(
+
+    Spacer(modifier = Modifier.height(8.dp))
+    Row(
         modifier = Modifier
-            .padding(12.dp)
             .fillMaxWidth()
     ) {
-        appInfo.version.collectAsState().value?.let {
-            Text(text = "${getStringRes(R.string.Installed_version)}: $it")
-        }
-        appInfo.patchesVersion.collectAsState().value?.let {
-            Text(text = "${getStringRes(R.string.Patches_version)}: $it")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .padding(12.dp)
+                .weight(.5F)
         ) {
-            appInfo.version.collectAsState().value?.let {
-                OutlinedButton(
-                    onClick = showAlertDialog
-                ) {
-                    Text(text = getStringRes(R.string.Action_uninstall))
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Button(
-                    onClick = {
-                        appInfo.packageName?.let { actionOpen(it) }
-                    }
-                ) {
-                    Text(text = getStringRes(R.string.Action_launch))
-                }
+            version?.let {
+                Text(text = "${getStringRes(R.string.Installed_version)}: $it")
+            }
+            patchesVersion?.let {
+                Text(text = "${getStringRes(R.string.Patches_version)}: $it")
             }
         }
-        Divider(
-            modifier = Modifier.padding(top = 6.dp),
-            thickness = 2.dp)
+        version?.let {
+            CustomIconButton(
+                onClick = showAlertDialog,
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+            ) {
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24), contentDescription = "Delete app")
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            CustomIconButton(
+                onClick = {appInfo.packageName?.let { actionOpen(it) }},
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+            ) {
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_launch_24), contentDescription = "Launch app")
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+        }
     }
+    Divider(
+        modifier = Modifier.padding(top = 6.dp),
+        thickness = 2.dp
+    )
+    Spacer(modifier = Modifier.height(8.dp))
 
     if (isAlertDialogShown) AlertDialog(
         onDismissRequest = hideAlertDialog,
