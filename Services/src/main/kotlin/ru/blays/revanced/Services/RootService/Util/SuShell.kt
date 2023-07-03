@@ -12,7 +12,7 @@ internal val Shell.Result.errString
     get() = err.joinToString("\n")
 
 val isRootGranted
-    get() = Shell.cmd("su").exec().isSuccess && Shell.cmd("magisk -v").exec().isSuccess
+    get() = Shell.cmd("su").exec().isSuccess && (Shell.cmd("magisk -v").exec().isSuccess || Shell.cmd("/data/adb/ksud -h").exec().isSuccess)
 
 internal suspend fun Shell.Job.await(): Shell.Result {
     return suspendCoroutine { continuation ->
