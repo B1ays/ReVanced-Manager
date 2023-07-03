@@ -4,12 +4,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.pullrefresh.PullRefreshIndicator
 import androidx.compose.material3.pullrefresh.pullRefresh
 import androidx.compose.material3.pullrefresh.rememberPullRefreshState
@@ -17,7 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
@@ -26,7 +35,9 @@ import com.ramcosta.composedestinations.navigation.navigate
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Data.Apps
+import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DownloadsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRedesign
@@ -38,12 +49,14 @@ import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
 fun MainScreen(
     viewModel: MainScreenViewModel = koinViewModel(),
     settingsRepository: SettingsRepository = koinInject(),
+    downloadsRepository: DownloadsRepository = koinInject(),
     navController: NavController
 ) {
 
@@ -69,7 +82,28 @@ fun MainScreen(
         topBar = {
             CustomToolbar(
                 collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Main)),
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    BadgedBox(
+                        badge = {
+                            Badge(
+                                modifier = Modifier
+                                    .offset(x = (-12).dp, y = 8.dp),
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            ) {
+                                Text(text = downloadsRepository.downloadsCount.intValue.toString())
+                            }
+                        }
+                    ) {
+                        IconButton(onClick = { navController.navigate(DownloadsScreenDestination)}) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.round_download_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
+                    }
+                }
             )
         }
     ) { padding ->
