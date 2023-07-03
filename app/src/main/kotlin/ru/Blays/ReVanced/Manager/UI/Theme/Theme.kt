@@ -36,7 +36,13 @@ fun ReVancedManagerTheme(
         }
         dynamicColor && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) && isAmoledTheme -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context).copy(background = Color.Black) else dynamicLightColorScheme(context)
+            if (darkTheme) dynamicDarkColorScheme(context).copy(
+                background = Color.Black,
+                surface = Color.Black,
+                surfaceVariant = Color.Black,
+                surfaceContainer = Color.Black,
+                surfaceTint = Color.Black
+            ) else dynamicLightColorScheme(context)
         }
         darkTheme && isAmoledTheme -> buildedTheme.darkColorScheme.copy(background = Color.Black)
         darkTheme -> buildedTheme.darkColorScheme
