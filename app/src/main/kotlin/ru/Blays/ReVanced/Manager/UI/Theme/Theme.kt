@@ -44,7 +44,13 @@ fun ReVancedManagerTheme(
                 surfaceTint = Color.Black
             ) else dynamicLightColorScheme(context)
         }
-        darkTheme && isAmoledTheme -> buildedTheme.darkColorScheme.copy(background = Color.Black)
+        darkTheme && isAmoledTheme -> buildedTheme.darkColorScheme.copy(
+            background = Color.Black,
+            surface = Color.Black,
+            surfaceVariant = Color.Black,
+            surfaceContainer = Color.Black,
+            surfaceTint = Color.Black
+        )
         darkTheme -> buildedTheme.darkColorScheme
         else -> buildedTheme.lightColorScheme
     }
