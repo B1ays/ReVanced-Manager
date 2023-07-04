@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -141,7 +142,7 @@ fun VersionsListScreen(
                         PlainTooltipBox(
                             modifier = Modifier.align(Alignment.BottomCenter),
                             tooltipState = tooltipState,
-                            tooltip = { Text(text = "New download") }
+                            tooltip = { Text(text = stringResource(id = R.string.New_download)) }
                         ) {}
                         IconButton(onClick = { navController.navigate(DownloadsScreenDestination)}) {
                             Icon(

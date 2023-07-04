@@ -22,6 +22,7 @@
     <string name="Download">Download</string>
     <string name="Progress">Progress</string>
     <string name="Downloads_not_found">Downloads not found</string>
+    <string name="New_download">New download</string>
     <string name="File_size">File size</string>
     <string name="File_size_Kb">Kb</string>
     <string name="File_size_Mb">Mb</string>
