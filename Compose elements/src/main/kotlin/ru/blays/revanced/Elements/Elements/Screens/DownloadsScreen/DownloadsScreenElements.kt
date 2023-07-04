@@ -1,6 +1,10 @@
 package ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +33,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
@@ -36,8 +41,12 @@ import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.shared.R
 
+@Suppress("AnimateAsStateLabel")
 @Composable
-fun DownloadItem(downloadInfo: DownloadInfo) {
+fun DownloadItem(
+    downloadInfo: DownloadInfo,
+    actionRemove: (DownloadInfo) -> Unit
+) {
 
     val height = 80.dp
 
@@ -50,17 +59,35 @@ fun DownloadItem(downloadInfo: DownloadInfo) {
 
     val isDownloaded = progress == 1F
 
+    var isDeleteButtonVisible by remember { mutableStateOf(false) }
+
     var isPaused by remember { mutableStateOf(false) }
+
+    val animatedPauseButtonSize by animateDpAsState(
+            targetValue = if (isDownloaded) 0.dp else height,
+            animationSpec = spring(stiffness = 300F, dampingRatio = .6F
+        )
+    )
+
+    val animatedDeleteButtonSize by animateDpAsState(
+            targetValue = if (isDeleteButtonVisible) height else 0.dp,
+            animationSpec = spring(stiffness = 300F, dampingRatio = .6F
+        )
+    )
+
+    val changeVisible = { isDeleteButtonVisible = !isDeleteButtonVisible }
 
     Row(
         modifier = Modifier
             .padding(DefaultPadding.CardDefaultPadding)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .animateContentSize(animationSpec = spring(stiffness = 300F, dampingRatio = .6F)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
+                .clickable(enabled = isDownloaded, role = Role.Button, onClick = changeVisible)
                 .weight(.5F)
                 .height(height)
                 .background(
@@ -108,81 +135,70 @@ fun DownloadItem(downloadInfo: DownloadInfo) {
                     Spacer(modifier = Modifier.width(5.dp))
                     Row(
                         modifier = Modifier
-                            .weight(.4F)
                             .background(
                                 color = MaterialTheme.colorScheme.background.copy(alpha = .5F),
                                 shape = CircleShape
                             ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
                         Icon(
                             modifier = Modifier
-                                .scale(1.5F)
-                                .padding(vertical = 8.dp),
+                                .scale(1.2F)
+                                .padding(vertical = 6.dp),
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_two_arrow),
                             contentDescription = null,
                             tint = contentColor
                         )
-                        Spacer(modifier = Modifier.width(3.dp))
-                        Text(text = "$speed ${stringResource(id = R.string.Speed_kbs)}")
                         Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "$speed ${stringResource(id = R.string.Speed_kbs)}",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
                     }
                 }
             }
         }
-        if (!isDownloaded) {
-            Spacer(modifier = Modifier.width(10.dp))
-            CustomIconButton(
-                modifier = Modifier.size(height),
-                onClick = {
-                    isPaused = !isPaused
-                    downloadInfo.actionPauseResume()
-                },
-                shape = MaterialTheme.shapes.large,
-                contentPadding = PaddingValues(6.dp),
-                containerColor = overlayColor,
-                contentColor = contentColor
-            ) {
-                Icon(
-                    imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
-                        id = R.drawable.round_pause_24
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier.scale(2F)
-                )
-            }
+
+        Spacer(modifier = Modifier.width(if (!isDownloaded) 10.dp else 0.dp))
+        CustomIconButton(
+            modifier = Modifier.size(animatedPauseButtonSize),
+            onClick = {
+                isPaused = !isPaused
+                downloadInfo.actionPauseResume()
+            },
+            shape = MaterialTheme.shapes.large,
+            contentPadding = PaddingValues(6.dp),
+            containerColor = overlayColor,
+            contentColor = contentColor
+        ) {
+            Icon(
+                imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
+                    id = R.drawable.round_pause_24
+                ),
+                contentDescription = null,
+                modifier = Modifier.scale(2F)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(if (isDeleteButtonVisible) 10.dp else 0.dp))
+        CustomIconButton(
+            modifier = Modifier.size(animatedDeleteButtonSize),
+            onClick = {
+                downloadInfo.file.delete()
+                actionRemove(downloadInfo)
+            },
+            shape = MaterialTheme.shapes.large,
+            contentPadding = PaddingValues(6.dp),
+            containerColor = overlayColor,
+            contentColor = contentColor
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24),
+                contentDescription = null,
+                modifier = Modifier.scale(2F)
+            )
         }
     }
-
-
-    /*Card(
-        modifier = Modifier
-            .padding(DefaultPadding.CardDefaultPadding)
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column {
-                Text(text = "${getStringRes(R.string.Download)}: ${downloadInfo.fileName}")
-                Spacer(modifier = Modifier.height(10.dp))
-
-            }
-            Row {
-                GradientLinearProgressIndicator(
-                    progress = progress,
-                    strokeCap = StrokeCap.Round,
-                    brush = Brush.linearGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                )
-
-            }
-
-        }
-    }*/
 }
