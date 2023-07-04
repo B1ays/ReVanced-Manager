@@ -21,11 +21,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltipBox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pullrefresh.PullRefreshIndicator
 import androidx.compose.material3.pullrefresh.pullRefresh
 import androidx.compose.material3.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.rememberPlainTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -83,6 +85,8 @@ fun VersionsListScreen(
         onRefresh = viewModel::onRefresh
     )
 
+    val tooltipState = rememberPlainTooltipState()
+
     // AppBar scroll behavior
     val scrollBehavior = rememberToolbarScrollBehavior()
 
@@ -98,6 +102,12 @@ fun VersionsListScreen(
 
     // Is the current page a page with root versions
     val rootVersionsPage = settledPage == 1
+
+    if (downloadsRepository.isDownloadRunning.value) {
+        LaunchedEffect(key1 = true) {
+            launch { tooltipState.show() }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -128,6 +138,11 @@ fun VersionsListScreen(
                             }
                         }
                     ) {
+                        PlainTooltipBox(
+                            modifier = Modifier.align(Alignment.BottomCenter),
+                            tooltipState = tooltipState,
+                            tooltip = { Text(text = "New download") }
+                        ) {}
                         IconButton(onClick = { navController.navigate(DownloadsScreenDestination)}) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.round_download_24),
