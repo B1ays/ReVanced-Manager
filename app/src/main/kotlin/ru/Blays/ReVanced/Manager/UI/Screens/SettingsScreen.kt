@@ -16,6 +16,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -86,7 +87,11 @@ fun SettingsScreen(
                 collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "NavigateBack")
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "NavigateBack",
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                        )
                     }
                 },
                 actions = {
@@ -97,7 +102,11 @@ fun SettingsScreen(
                         if (BuildConfig.DEBUG) DropdownMenuItem(text = { Text(text = "Crash app", color = Color.Red) }, onClick = { throw RuntimeException("Test crash") })
                     }
                     IconButton(onClick = changeExpanded) {
-                        Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                        )
                     }
                 },
                 scrollBehavior = scrollBehavior

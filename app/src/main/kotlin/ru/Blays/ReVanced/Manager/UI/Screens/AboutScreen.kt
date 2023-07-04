@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,8 +25,8 @@ import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.ContactsCards
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.CreditCards
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.HeadItem
 import ru.blays.revanced.Elements.GlobalState.NavBarState
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.blays.revanced.shared.R
+import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -50,7 +51,11 @@ fun AboutScreen(
                 collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_About)),
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "NavigateBack")
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "NavigateBack",
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                        )
                     }
                 },
                 scrollBehavior = scrollBehavior

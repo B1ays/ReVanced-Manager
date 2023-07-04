@@ -111,7 +111,8 @@ fun VersionsListScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
                         )
                     }
                 },
