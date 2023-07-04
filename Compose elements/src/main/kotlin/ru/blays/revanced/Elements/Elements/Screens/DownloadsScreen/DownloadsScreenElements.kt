@@ -3,8 +3,9 @@ package ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
@@ -39,8 +41,10 @@ import androidx.compose.ui.unit.dp
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
+import ru.blays.revanced.shared.Extensions.open
 import ru.blays.revanced.shared.R
 
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("AnimateAsStateLabel")
 @Composable
 fun DownloadItem(
@@ -75,7 +79,11 @@ fun DownloadItem(
         )
     )
 
+    val context = LocalContext.current
+
     val changeVisible = { isDeleteButtonVisible = !isDeleteButtonVisible }
+
+    val actionOpenFile = { downloadInfo.file.open(context) }
 
     Row(
         modifier = Modifier
@@ -87,7 +95,12 @@ fun DownloadItem(
     ) {
         Box(
             modifier = Modifier
-                .clickable(enabled = isDownloaded, role = Role.Button, onClick = changeVisible)
+                .combinedClickable(
+                    enabled = isDownloaded,
+                    role = Role.Button,
+                    onClick = changeVisible,
+                    onLongClick = actionOpenFile
+                )
                 .weight(.5F)
                 .height(height)
                 .background(
