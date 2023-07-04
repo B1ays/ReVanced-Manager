@@ -74,4 +74,5 @@
     <string name="File_size">Вес файла</string>
     <string name="File_size_Kb">Кб</string>
     <string name="File_size_Mb">Мб</string>
+    <string name="Downloads_not_found">Загрузки не найдены</string>
 </resources>
