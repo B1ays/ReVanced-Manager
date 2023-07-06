@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel
 
 private const val DL_FOLDER_NAME = "ReVanced Manager"
 
-private val DEFAULT_FILE_FOLDER: File = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DL_FOLDER_NAME).apply {
+val DEFAULT_DOWNLOADS_FOLDER: File = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DL_FOLDER_NAME).apply {
     if (!exists()) mkdir()
 }
 
@@ -28,11 +28,11 @@ internal var FileChannel.position: Long
 
 @JvmName("createFileExtension")
 internal fun String.createFile(fileExtension: String): File {
-    return File(DEFAULT_FILE_FOLDER, "${this}${fileExtension}")
+    return File(DEFAULT_DOWNLOADS_FOLDER, "${this}${fileExtension}")
 }
 
 internal fun createFile(fileName: String, fileExtension: String): File {
-    return File(DEFAULT_FILE_FOLDER, "$fileName$fileExtension")
+    return File(DEFAULT_DOWNLOADS_FOLDER, "$fileName$fileExtension")
 }
 
 internal enum class RWMode(val code: String) {
