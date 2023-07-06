@@ -5,7 +5,11 @@ import java.io.File
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
 
-private val DEFAULT_FILE_FOLDER: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+private const val DL_FOLDER_NAME = "ReVanced Manager"
+
+private val DEFAULT_FILE_FOLDER: File = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DL_FOLDER_NAME).apply {
+    if (!exists()) mkdir()
+}
 
 internal fun File.lengthNotZero(): Boolean = length().isNotZero()
 
