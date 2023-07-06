@@ -1,8 +1,12 @@
 package ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -43,9 +47,9 @@ import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.shared.Extensions.open
 import ru.blays.revanced.shared.R
+import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
-@Suppress("AnimateAsStateLabel")
 @Composable
 fun DownloadItem(
     downloadInfo: DownloadInfo,
@@ -66,18 +70,6 @@ fun DownloadItem(
     var isDeleteButtonVisible by remember { mutableStateOf(false) }
 
     var isPaused by remember { mutableStateOf(false) }
-
-    val animatedPauseButtonSize by animateDpAsState(
-            targetValue = if (isDownloaded) 0.dp else height,
-            animationSpec = spring(stiffness = 300F, dampingRatio = .6F
-        )
-    )
-
-    val animatedDeleteButtonSize by animateDpAsState(
-            targetValue = if (isDeleteButtonVisible) height else 0.dp,
-            animationSpec = spring(stiffness = 300F, dampingRatio = .6F
-        )
-    )
 
     val context = LocalContext.current
 
@@ -108,15 +100,17 @@ fun DownloadItem(
                     shape = MaterialTheme.shapes.large
                 )
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(progress)
-                    .fillMaxHeight()
-                    .background(
-                        color = overlayColor,
-                        shape = MaterialTheme.shapes.large
-                    )
-            )
+            if (!isDownloaded) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(progress)
+                        .fillMaxHeight()
+                        .background(
+                            color = overlayColor,
+                            shape = MaterialTheme.shapes.large
+                        )
+                )
+            }
             Row(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
@@ -174,44 +168,173 @@ fun DownloadItem(
             }
         }
 
-        Spacer(modifier = Modifier.width(if (!isDownloaded) 10.dp else 0.dp))
-        CustomIconButton(
-            modifier = Modifier.size(animatedPauseButtonSize),
-            onClick = {
-                isPaused = !isPaused
-                downloadInfo.actionPauseResume()
-            },
-            shape = MaterialTheme.shapes.large,
-            contentPadding = PaddingValues(6.dp),
-            containerColor = overlayColor,
-            contentColor = contentColor
+        AnimatedVisibility(
+            visible = !isDownloaded,
+            enter = slideInHorizontally(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                initialOffsetX = { it / 2 }
+            ) + expandIn(),
+            exit = slideOutHorizontally(
+                animationSpec = spring(stiffness = 300F,
+                    dampingRatio = .6F), targetOffsetX = { it / 2 }
+            ) + shrinkOut()
         ) {
-            Icon(
-                imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
-                    id = R.drawable.round_pause_24
-                ),
-                contentDescription = null,
-                modifier = Modifier.scale(2F)
-            )
+            CustomIconButton(
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .size(height),
+                onClick = {
+                    isPaused = !isPaused
+                    downloadInfo.actionPauseResume()
+                },
+                shape = MaterialTheme.shapes.large,
+                contentPadding = PaddingValues(6.dp),
+                containerColor = overlayColor,
+                contentColor = contentColor
+            ) {
+                Icon(
+                    imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
+                        id = R.drawable.round_pause_24
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.scale(2F)
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.width(if (isDeleteButtonVisible) 10.dp else 0.dp))
-        CustomIconButton(
-            modifier = Modifier.size(animatedDeleteButtonSize),
-            onClick = {
-                downloadInfo.file.delete()
-                actionRemove(downloadInfo)
-            },
-            shape = MaterialTheme.shapes.large,
-            contentPadding = PaddingValues(6.dp),
-            containerColor = overlayColor,
-            contentColor = contentColor
+        AnimatedVisibility(
+            visible = isDeleteButtonVisible,
+            enter = slideInHorizontally(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                initialOffsetX = { it / 2 }
+            ) + expandIn(),
+            exit = slideOutHorizontally(
+                animationSpec = spring(stiffness = 300F,
+                    dampingRatio = .6F), targetOffsetX = { it / 2 }
+            ) + shrinkOut()
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24),
-                contentDescription = null,
-                modifier = Modifier.scale(2F)
-            )
+            CustomIconButton(
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .size(height),
+                onClick = {
+                    downloadInfo.file.delete()
+                    actionRemove(downloadInfo)
+                },
+                shape = MaterialTheme.shapes.large,
+                contentPadding = PaddingValues(6.dp),
+                containerColor = overlayColor,
+                contentColor = contentColor
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24),
+                    contentDescription = null,
+                    modifier = Modifier.scale(2F)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FileItem(
+    file: File,
+    actionRemove: (File) -> Unit
+) {
+
+    val height = 80.dp
+
+    val backgroundColor = MaterialTheme.colorScheme.inverseOnSurface
+    val overlayColor = MaterialTheme.colorScheme.primary.copy(alpha = .2F)
+    val contentColor = MaterialTheme.colorScheme.onSurface
+
+    var isDeleteButtonVisible by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
+    val changeVisible = { isDeleteButtonVisible = !isDeleteButtonVisible }
+
+    val actionOpenFile = { file.open(context) }
+
+    Row(
+        modifier = Modifier
+            .padding(DefaultPadding.CardDefaultPadding)
+            .fillMaxWidth()
+            .animateContentSize(animationSpec = spring(stiffness = 300F, dampingRatio = .6F)),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .combinedClickable(
+                    role = Role.Button,
+                    onClick = changeVisible,
+                    onLongClick = actionOpenFile
+                )
+                .weight(.5F)
+                .height(height)
+                .background(
+                    color = backgroundColor,
+                    shape = MaterialTheme.shapes.large
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .align(Alignment.CenterStart),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(.5F)) {
+                    Text(
+                        modifier = Modifier,
+                        text = file.nameWithoutExtension,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = contentColor,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "${stringResource(id = R.string.File_size)}: ${(file.length() / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = contentColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+
+
+        AnimatedVisibility(
+            visible = isDeleteButtonVisible,
+            enter = slideInHorizontally(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                initialOffsetX = { it / 2 }
+            ) + expandIn(),
+            exit = slideOutHorizontally(
+                animationSpec = spring(stiffness = 300F,
+                    dampingRatio = .6F), targetOffsetX = { it / 2 }
+            ) + shrinkOut()
+        ) {
+            CustomIconButton(
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .size(height),
+                onClick = { actionRemove(file) },
+                shape = MaterialTheme.shapes.large,
+                contentPadding = PaddingValues(6.dp),
+                containerColor = overlayColor,
+                contentColor = contentColor
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24),
+                    contentDescription = null,
+                    modifier = Modifier.scale(2F)
+                )
+            }
         }
     }
 }

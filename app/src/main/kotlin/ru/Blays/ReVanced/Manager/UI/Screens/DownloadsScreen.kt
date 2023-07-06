@@ -31,6 +31,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.DownloadItem
+import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.FileItem
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -47,6 +48,8 @@ fun DownloadsScreen(
     val scrollBehavior = rememberToolbarScrollBehavior()
 
     val list = repository.downloadsList
+
+    val existingFilesList = repository.existingFilesList
 
     Scaffold(
         topBar = {
@@ -78,9 +81,13 @@ fun DownloadsScreen(
                 DownloadItem(downloadInfo = it, repository::removeFromList)
                 Spacer(modifier = Modifier.height(8.dp))
             }
+            items(existingFilesList) {
+                FileItem(file = it, actionRemove = repository::removeExistingFile)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
 
-        if (repository.downloadsCount.intValue == 0) {
+        if (repository.downloadsList.isEmpty() && repository.existingFilesList.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
