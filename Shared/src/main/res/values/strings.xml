@@ -6,6 +6,7 @@
     <string name="AppBar_Versions">Versions</string>
     <string name="AppBar_Settings">Settings</string>
     <string name="AppBar_About">About</string>
+    <string name="AppBar_Downloads">Downloads</string>
 
     <!--  App info  -->
     <string name="Installed_version">Installed version</string>
@@ -20,9 +21,17 @@
     <!--  Download  -->
     <string name="Download">Download</string>
     <string name="Progress">Progress</string>
+    <string name="Downloads_not_found">Downloads not found</string>
+    <string name="New_download">New download</string>
+    <string name="File_size">File size</string>
+    <string name="File_size_Kb">Kb</string>
+    <string name="File_size_Mb">Mb</string>
     <string name="Speed">Speed</string>
     <string name="Speed_kbs">Kb/s</string>
     <string name="Speed_mbs">Mb/s</string>
+
+    <!--  Color picker  -->
+    <string name="Pick_color">Pick color</string>
 
     <!--  Actions  -->
     <string name="Action_download">Download</string>

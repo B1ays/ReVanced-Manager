@@ -1,13 +1,17 @@
 package ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen
 
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MarqueeSpacing
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,12 +20,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -45,15 +49,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
+import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
@@ -85,6 +86,9 @@ fun VersionsListScreenHeader(
     actionDelete: (String) -> Unit,
     actionOpen: (String) -> Unit
 ) {
+
+    val version by appInfo.version.collectAsState()
+    val patchesVersion by appInfo.patchesVersion.collectAsState()
     
     var isAlertDialogShown by remember {
         mutableStateOf(false)
@@ -92,47 +96,48 @@ fun VersionsListScreenHeader(
     
     val hideAlertDialog = { isAlertDialogShown = false }
     val showAlertDialog = { isAlertDialogShown = true }
-    
-    Column(
+
+    Spacer(modifier = Modifier.height(8.dp))
+    Row(
         modifier = Modifier
-            .padding(12.dp)
             .fillMaxWidth()
     ) {
-        Text(
-            text = appInfo.appName ?: "",
-            style = MaterialTheme.typography.titleMedium
-        )
-        appInfo.version.collectAsState().value?.let {
-            Text(text = "${getStringRes(R.string.Installed_version)}: $it")
-        }
-        appInfo.patchesVersion.collectAsState().value?.let {
-            Text(text = "${getStringRes(R.string.Patches_version)}: $it")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .padding(12.dp)
+                .weight(.5F)
         ) {
-            appInfo.version.collectAsState().value?.let {
-                OutlinedButton(
-                    onClick = showAlertDialog
-                ) {
-                    Text(text = getStringRes(R.string.Action_uninstall))
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Button(
-                    onClick = {
-                        appInfo.packageName?.let { actionOpen(it) }
-                    }
-                ) {
-                    Text(text = getStringRes(R.string.Action_launch))
-                }
+            version?.let {
+                Text(text = "${getStringRes(R.string.Installed_version)}: $it")
+            }
+            patchesVersion?.let {
+                Text(text = "${getStringRes(R.string.Patches_version)}: $it")
             }
         }
-        Divider(
-            modifier = Modifier.padding(top = 6.dp),
-            thickness = 2.dp)
+        version?.let {
+            CustomIconButton(
+                onClick = showAlertDialog,
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+            ) {
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24), contentDescription = "Delete app")
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            CustomIconButton(
+                onClick = {appInfo.packageName?.let { actionOpen(it) }},
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+            ) {
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_launch_24), contentDescription = "Launch app")
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+        }
     }
+    Divider(
+        modifier = Modifier.padding(top = 6.dp),
+        thickness = 2.dp
+    )
+    Spacer(modifier = Modifier.height(8.dp))
 
     if (isAlertDialogShown) AlertDialog(
         onDismissRequest = hideAlertDialog,
@@ -173,137 +178,70 @@ fun VersionsInfoCard(
         mutableStateOf(false)
     }
 
-    var isExist by remember {
-        mutableStateOf(false)
-    }
-
-    val localDensity = LocalDensity.current
-
-    var mainCardHeight by remember {
-        mutableStateOf(0.dp)
-    }
-
-    var slidedCardHeight by remember {
-        mutableStateOf(0.dp)
-    }
-
-    val animationDuration = Duration.ofMillis(500).toMillisInt()
-
-    val offset by animateDpAsState(
-        targetValue = if (isExpanded) mainCardHeight else 0.dp,
-        animationSpec = tween(durationMillis = animationDuration), label = "slidingCardOffset"
+    Card(
+        modifier = Modifier
+            .padding(DefaultPadding.CardDefaultPadding)
+            .fillMaxWidth(),
+        shape = CardShape.CardStandalone,
+        onClick = {
+            isExpanded = !isExpanded
+        }
     ) {
-        if (!isExpanded) isExist = false
-    }
-
-    val bottomOffset by animateDpAsState(
-        targetValue = if (isExpanded) slidedCardHeight else 0.dp,
-        animationSpec = tween(durationMillis = animationDuration), label = "nextCardOffset"
-    )
-
-    val animatedCorners by animateDpAsState(
-        targetValue = if (isExpanded) 0.dp else 12.dp,
-        animationSpec = tween(durationMillis = animationDuration), label = "cornerAnimation"
-    )
-
-    Box(
-        modifier = Modifier.padding(bottom = bottomOffset)
-    ) {
-
-        if (isExist) {
-            Card(
-                modifier = Modifier
-                    .padding(
-                        vertical = DefaultPadding.CardVerticalPadding,
-                        horizontal = DefaultPadding.CardHorizontalPadding
-                    )
-                    .fillMaxWidth()
-                    .onGloballyPositioned {
-                        slidedCardHeight = with(localDensity) { it.size.height.toDp() }
-                    }
-                    .offset(y = offset)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = animatedCorners,
-                            bottomStart = 12.dp,
-                            bottomEnd = 12.dp,
-                            topEnd = animatedCorners
-                        )
-                    ),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.1f)
-                ),
-                shape = RectangleShape
-            ) {
-
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                item.changelogLink?.let {
-                                    actionShowChangelog(it)
-                                }
-                            }
-                        }
-                    ) {
-                        Text(text = getStringRes(R.string.Action_changelog))
-                    }
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    Button(
-                        onClick = {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                actionShowApkList(item.versionsListLink.orEmpty(), rootVersions)
-                            }
-                        }
-                    ) {
-                        Text(text = getStringRes(R.string.Action_download))
-                    }
-                }
-            }
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+        ) {
+            item.version?.let { Text(text = "${getStringRes(R.string.Version)}: $it") }
+            Spacer(modifier = Modifier.height(4.dp))
+            item.patchesVersion?.let { Text(text = "${getStringRes(R.string.Patches_version)}: $it") }
+            Spacer(modifier = Modifier.height(4.dp))
+            item.buildDate?.let { Text(text = "${getStringRes(R.string.Build_date)}: $it") }
         }
 
-        Card(
-            modifier = Modifier
-                .padding(
-                    vertical = DefaultPadding.CardVerticalPadding,
-                    horizontal = DefaultPadding.CardHorizontalPadding
-                )
-                .fillMaxWidth()
-                .onGloballyPositioned {
-                    mainCardHeight = with(localDensity) { it.size.height.toDp() }
-                }
-                .clip(
-                    shape = RoundedCornerShape(
-                        topEnd = 12.dp,
-                        topStart = 12.dp,
-                        bottomEnd = animatedCorners,
-                        bottomStart = animatedCorners
-                    )
-                ),
-            shape = RectangleShape,
-            onClick = {
-                isExpanded = !isExpanded
-                isExist = true
-            }
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = slideInVertically(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                initialOffsetY = { -it / 2 }
+            ) + expandVertically(),
+            exit = slideOutVertically(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                targetOffsetY = { -it / 2 }
+            ) + shrinkVertically()
         ) {
-
-            Column(
+            Row(
                 modifier = Modifier
-                    .padding(8.dp)
                     .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.1f),
+                        shape = CardShape.CardStandalone
+                    )
+                    .padding(vertical = 5.dp),
+                horizontalArrangement = Arrangement.End
             ) {
-                item.version?.let { Text(text = "${getStringRes(R.string.Version)}: $it") }
-                Spacer(modifier = Modifier.height(4.dp))
-                item.patchesVersion?.let { Text(text = "${getStringRes(R.string.Patches_version)}: $it") }
-                Spacer(modifier = Modifier.height(4.dp))
-                item.buildDate?.let { Text(text = "${getStringRes(R.string.Build_date)}: $it") }
+                OutlinedButton(
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            item.changelogLink?.let {
+                                actionShowChangelog(it)
+                            }
+                        }
+                    }
+                ) {
+                    Text(text = getStringRes(R.string.Action_changelog))
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Button(
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            actionShowApkList(item.versionsListLink.orEmpty(), rootVersions)
+                        }
+                    }
+                ) {
+                    Text(text = getStringRes(R.string.Action_download))
+                }
+                Spacer(modifier = Modifier.width(12.dp))
             }
         }
     }
@@ -363,7 +301,7 @@ fun SubversionsListBottomSheet(
 @Composable
 fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: MutableStateFlow<String>) {
 
-    val state = rememberModalBottomSheetState()
+    val scrollState = rememberScrollState()
 
     val text by changelog.collectAsState()
 
@@ -373,13 +311,13 @@ fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: Mutab
 
     if (isExpanded.collectAsState().value) {
         ModalBottomSheet(
-            onDismissRequest = { hideBottomSheet() },
-            sheetState = state
+            onDismissRequest = { hideBottomSheet() }
         ) {
             MarkdownText(
                 modifier = Modifier
                     .padding(12.dp)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
                 markdown = text,
                 color = MaterialTheme.colorScheme.onBackground
             )

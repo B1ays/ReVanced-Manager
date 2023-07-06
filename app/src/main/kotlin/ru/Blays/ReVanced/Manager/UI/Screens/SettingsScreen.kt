@@ -16,6 +16,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -27,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,12 +39,13 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.navigate
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.BuildConfig
+import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.ThemeModel
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
-import ru.blays.revanced.Elements.DataClasses.AccentColorItem
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
+import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerAlertDialog
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerItem
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.CurrentSegment
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.Segment
@@ -71,8 +75,12 @@ fun SettingsScreen(
     val scrollBehavior = rememberToolbarScrollBehavior()
     
     var isSpinnerExpanded by remember { mutableStateOf(false) }
+
+    var isAlertDialogShown by remember { mutableStateOf(false) }
     
     val changeExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
+
+    val changeAlertDialogVisibility = { isAlertDialogShown = !isAlertDialogShown }
 
     val lazyListState = rememberLazyListState()
 
@@ -86,7 +94,11 @@ fun SettingsScreen(
                 collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "NavigateBack")
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "NavigateBack",
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                        )
                     }
                 },
                 actions = {
@@ -97,7 +109,11 @@ fun SettingsScreen(
                         if (BuildConfig.DEBUG) DropdownMenuItem(text = { Text(text = "Crash app", color = Color.Red) }, onClick = { throw RuntimeException("Test crash") })
                     }
                     IconButton(onClick = changeExpanded) {
-                        Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                        )
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -118,7 +134,7 @@ fun SettingsScreen(
                     MonetColors(repository = settingsRepository)
                 }
                 AmoledTheme(repository = settingsRepository)
-                AccentSelector(settingsRepository)
+                AccentSelector(changeAlertDialogVisibility, settingsRepository.accentColorItem, settingsRepository.isCustomColorSelected, settingsRepository)
             }
 
             itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
@@ -131,6 +147,16 @@ fun SettingsScreen(
             }
         }
     }
+    if (isAlertDialogShown) {
+        ColorPickerAlertDialog(
+            color = settingsRepository.currentAccentColor,
+            onClose = changeAlertDialogVisibility,
+            onPick = {
+                settingsRepository.customAccentColorArgb = it.toArgb()
+            }
+        )
+    }
+
 }
 
 @Composable
@@ -178,19 +204,46 @@ fun AmoledTheme(repository: SettingsRepository) {
 
 @Composable
 private fun AccentSelector(
+    onColorPickerClick: () -> Unit,
+    selectedItemIndex: Int,
+    customColorSelected: Boolean,
     repository: SettingsRepository
 ) {
 
     val callback: (Int) -> Unit = { repository.accentColorItem = it }
+
+    val rainbowBrush = Brush.sweepGradient(
+        listOf(
+            Color.Red,
+            Color.Magenta,
+            Color.Blue,
+            Color.Cyan,
+            Color.Green,
+            Color.Yellow,
+            Color.Red
+        )
+    )
 
     SettingsExpandableCard(
         title = getStringRes(R.string.Settings_card_accent_title),
         subtitle = getStringRes(R.string.Settings_card_accent_description)
     ) {
         LazyRow(modifier = Modifier.padding(12.dp)) {
-            itemsIndexed(AccentColorItem.list)
-            { index, item ->
-                ColorPickerItem(item = item, index = index, callback = callback)
+            itemsIndexed(defaultAccentColorsList) { index, item ->
+                ColorPickerItem(
+                    color = item,
+                    index = index,
+                    selectedItemIndex = if (customColorSelected) null else selectedItemIndex,
+                    actionSelectColor = callback
+                )
+            }
+            item {
+                ColorPickerItem(
+                    brush = rainbowBrush,
+                    customColorSelected = customColorSelected,
+                    actionSelect = { repository.isCustomColorSelected = true },
+                    actionOpenDialog = onColorPickerClick
+                )
             }
         }
     }

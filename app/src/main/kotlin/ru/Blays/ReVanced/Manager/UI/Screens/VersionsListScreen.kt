@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,12 +31,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.navigate
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
+import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DownloadsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundBlue
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundRed
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
@@ -46,17 +56,17 @@ import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.Subversion
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun VersionsListScreen(
     appType: String,
     viewModel: VersionsListScreenViewModel = koinViewModel(),
+    downloadsRepository: DownloadsRepository = koinInject(),
     navController: NavController
 ) {
 
@@ -93,7 +103,7 @@ fun VersionsListScreen(
         topBar = {
             CustomToolbar(
                 collapsingTitle = CollapsingTitle.large(
-                    titleText = getStringRes(R.string.AppBar_Versions)
+                    titleText = viewModel.appName
                 ),
                 navigationIcon = {
                     IconButton(
@@ -101,8 +111,30 @@ fun VersionsListScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
                         )
+                    }
+                },
+                actions = {
+                    BadgedBox(
+                        badge = {
+                            Badge(
+                                modifier = Modifier
+                                    .offset(x = (-12).dp, y = 8.dp),
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            ) {
+                                Text(text = downloadsRepository.downloadsCount.intValue.toString())
+                            }
+                        }
+                    ) {
+                        IconButton(onClick = { navController.navigate(DownloadsScreenDestination)}) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.round_download_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
                     }
                 },
                 scrollBehavior = scrollBehavior
