@@ -82,6 +82,9 @@ dependencies {
     // Rebugger
     implementation libs.rebugger
 
+    // Color picker compose
+    implementation libs.colorpicker.compose
+
     // Koin
     implementation libs.koin.android
     implementation libs.koin.androidx.compose

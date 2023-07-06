@@ -7,10 +7,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import material.util.color.scheme.Scheme
 
-fun buildTheme(colorDark: Color, lightColor: Color): BuildedTheme {
+fun buildTheme(color: Color): BuildedTheme {
     return BuildedTheme(
-        lightColorScheme = Scheme.lightContent(colorDark.toArgb()).toLightThemeColorScheme(),
-        darkColorScheme = Scheme.darkContent(colorDark.toArgb()).toDarkThemeColorScheme()
+        lightColorScheme = Scheme.lightContent(color.toArgb()).toLightThemeColorScheme(),
+        darkColorScheme = Scheme.darkContent(color.toArgb()).toDarkThemeColorScheme()
     )
 }
 

@@ -76,4 +76,5 @@
     <string name="File_size_Mb">Мб</string>
     <string name="Downloads_not_found">Загрузки не найдены</string>
     <string name="New_download">Новая загрузка</string>
+    <string name="Pick_color">Выбрать цвет</string>
 </resources>

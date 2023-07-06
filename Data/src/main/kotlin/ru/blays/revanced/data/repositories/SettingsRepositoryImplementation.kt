@@ -16,6 +16,9 @@ private const val MANAGED_MICROG = "microGManaging"
 
 private const val CACHE_LIFETIME_LONG = "CacheLifetimeLong"
 
+private const val CUSTOM_COLOR_SELECTED = "customColorSelected"
+private const val CUSTOM_COLOR_ARGB = "customColorArgb"
+
 class SettingsRepositoryImplementation(context: Context) {
 
     private val preferences: SharedPreferences = context.getSharedPreferences("App", Context.MODE_PRIVATE)
@@ -90,4 +93,13 @@ class SettingsRepositoryImplementation(context: Context) {
         10L -> Int.MAX_VALUE.toLong()
         else -> 6L
     }
+
+    var isCustomColorSelected: Boolean
+        get() = getSetting(CUSTOM_COLOR_SELECTED, false)!!
+        set(value) = putSetting(CUSTOM_COLOR_SELECTED, value)
+
+    var customAccentColorArgb: Int
+        get() = getSetting(CUSTOM_COLOR_ARGB, 0)!!
+        set(value) = putSetting(CUSTOM_COLOR_ARGB, value)
+
 }

@@ -69,6 +69,9 @@ dependencies {
     // Coil
     implementation libs.coil
 
+    // Color picker compose
+    implementation libs.colorpicker.compose
+
     // Koin
     implementation libs.koin.android
     implementation libs.koin.androidx.compose

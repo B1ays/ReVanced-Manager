@@ -30,6 +30,9 @@
     <string name="Speed_kbs">Kb/s</string>
     <string name="Speed_mbs">Mb/s</string>
 
+    <!--  Color picker  -->
+    <string name="Pick_color">Pick color</string>
+
     <!--  Actions  -->
     <string name="Action_download">Download</string>
     <string name="Action_install">Install</string>
