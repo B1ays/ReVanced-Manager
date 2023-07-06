@@ -49,7 +49,7 @@ import ru.blays.revanced.shared.Util.getStringRes
 
 
 @Composable
-fun AppCardRedesignRoot(
+fun AppCardRoot(
     cornerRadius: Dp = 20.dp,
     icon: ImageVector,
     appName: String,
@@ -70,7 +70,7 @@ fun AppCardRedesignRoot(
             .fillMaxWidth()
     ) {
         Box(modifier = Modifier
-            .height(145.dp)
+            .height(150.dp)
             .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.surfaceTint.copy(.1F),
@@ -127,6 +127,7 @@ fun AppCardRedesignRoot(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(cornerRadius))
             }
         }
         Row(
@@ -172,7 +173,7 @@ fun AppCardRedesignRoot(
 }
 
 @Composable
-fun AppCardRedesign(
+fun AppCard(
     cornerRadius: Dp = 20.dp,
     icon: ImageVector,
     appName: String,
@@ -184,14 +185,13 @@ fun AppCardRedesign(
     val availableVersionState by availableVersion.collectAsState()
     val versionState by version.collectAsState()
 
-
     Column(
         modifier = Modifier
             .padding(horizontal = 12.dp)
             .fillMaxWidth()
     ) {
         Box(modifier = Modifier
-            .height(145.dp)
+            .height(150.dp)
             .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.surfaceTint.copy(.1F),
@@ -237,6 +237,7 @@ fun AppCardRedesign(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(cornerRadius))
             }
         }
         Row(

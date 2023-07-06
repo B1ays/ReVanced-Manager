@@ -40,8 +40,8 @@ import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DownloadsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
-import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRedesign
-import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRedesignRoot
+import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCard
+import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRoot
 import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
@@ -127,7 +127,7 @@ fun MainScreen(
                         (app == Apps.MICROG && settingsRepository.microGManaged)
                     ) {
                         if (app.repository.hasRootVersion) {
-                            AppCardRedesignRoot(
+                            AppCardRoot(
                                 icon = app.icon,
                                 appName = app.repository.appName,
                                 availableVersion = app.repository.availableVersion,
@@ -139,7 +139,7 @@ fun MainScreen(
                                 )
                             }
                         } else {
-                            AppCardRedesign(
+                            AppCard(
                                 icon = app.icon,
                                 appName = app.repository.appName,
                                 availableVersion = app.repository.availableVersion,
