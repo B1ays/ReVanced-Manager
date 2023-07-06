@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -20,17 +19,16 @@ import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
+import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
 import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
-import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DownloadProgressContent
 import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
@@ -71,6 +69,8 @@ class VersionsListScreenViewModel(
     private val packageManager: PackageManagerApi = get(PackageManagerApi::class.java)
 
     private val settingsRepository: SettingsRepository = get(SettingsRepository::class.java)
+
+    private val downloadsRepository: DownloadsRepository = get(DownloadsRepository::class.java)
 
     private var app: Apps? = null
 
@@ -169,7 +169,7 @@ class VersionsListScreenViewModel(
             )
             .build()
 
-        NavBarExpandedContent.setContent { DownloadProgressContent(downloadInfo = task) }
+        downloadsRepository.addToList(task)
     }
 
     fun downloadRootVersion(
@@ -179,10 +179,6 @@ class VersionsListScreenViewModel(
         if (filesModel.origUrl == null) return
 
         val context: Context by inject(Context::class.java)
-
-        val stateList = mutableStateListOf<DownloadInfo>()
-
-        NavBarExpandedContent.setContent { DownloadProgressContent(downloadStateList = stateList) }
 
         val state = MutableStateFlow(MagiskInstallerState())
 
@@ -216,14 +212,7 @@ class VersionsListScreenViewModel(
             )
             .build()
             .also { downloadInfo ->
-                stateList.add(downloadInfo)
-                collect(state) { state ->
-                    if (state.origApkDownloaded && state.modApkDownloaded) {
-                        NavBarExpandedContent.hide()
-                    } else if (state.origApkDownloaded) {
-                        stateList.remove(downloadInfo)
-                    }
-                }
+                downloadsRepository.addToList(downloadInfo)
             }
 
         val modApkDownloadTask = DownloadTask(url = filesModel.modUrl, fileName = filesModel.fileName)
@@ -266,14 +255,7 @@ class VersionsListScreenViewModel(
             )
             .build()
             .also { downloadInfo ->
-                stateList.add(downloadInfo)
-                collect(state) { state ->
-                    if (state.origApkDownloaded && state.modApkDownloaded) {
-                        NavBarExpandedContent.hide()
-                    } else if (state.modApkDownloaded) {
-                        stateList.remove(downloadInfo)
-                    }
-                }
+                downloadsRepository.addToList(downloadInfo)
             }
     }
 }
