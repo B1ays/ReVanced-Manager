@@ -1,13 +1,16 @@
 package ru.blays.revanced.Elements.Elements.Screens.SettingsScreen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -50,12 +53,8 @@ import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.shared.R
 
-private val ModifierWithExpandAnimation = Modifier
-    .animateContentSize(
-        animationSpec = tween(
-            durationMillis = 500
-        )
-    )
+const val ANIMATION_DURATION_MILLIS = 300
+
 
 @Suppress("TransitionPropertiesLabel")
 @Composable
@@ -67,16 +66,12 @@ fun SettingsExpandableCard(
 
     var isMenuExpanded by remember { mutableStateOf(false) }
 
-    val onExpandChange = {
-        isMenuExpanded = !isMenuExpanded
-    }
-
     val transition = updateTransition(targetState = isMenuExpanded, label = null)
 
     val rotateValue by transition.animateFloat(
         transitionSpec = {
             tween(
-                durationMillis = 300
+                durationMillis = ANIMATION_DURATION_MILLIS
             )
         }
     ) { expanded ->
@@ -84,14 +79,11 @@ fun SettingsExpandableCard(
     }
 
     Card(
-        modifier = ModifierWithExpandAnimation
-            .padding(
-                horizontal = DefaultPadding.CardHorizontalPadding,
-                vertical = DefaultPadding.CardVerticalPadding
-            )
+        modifier = Modifier
+            .padding(DefaultPadding.CardDefaultPadding)
             .fillMaxWidth()
-            .toggleable(value = isMenuExpanded) { onExpandChange() },
-        shape = CardShape.CardStandalone,
+            .clip(CardShape.CardStandalone)
+            .toggleable(value = isMenuExpanded) { isMenuExpanded = it },
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(
@@ -124,16 +116,29 @@ fun SettingsExpandableCard(
                     )
                     .rotate(rotateValue),
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down_24dp),
-                contentDescription = "Arrow"
+                contentDescription = null
             )
-
         }
-        if (isMenuExpanded) {
+        AnimatedVisibility(
+            visible = isMenuExpanded,
+            enter = slideInVertically(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                initialOffsetY = { -it / 2 }
+            ) + expandVertically(),
+            exit = slideOutVertically(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                targetOffsetY = { -it / 2 }
+            ) + shrinkVertically()
+        ) {
             Card(
-                modifier = ModifierWithExpandAnimation
+                modifier = Modifier
                     .fillMaxWidth(),
                 shape = CardShape.CardStandalone,
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.15f))
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(
+                        0.15f
+                    )
+                )
             ) {
                 content()
             }
@@ -151,10 +156,8 @@ fun SettingsCardWithSwitch(
 ) {
     Card(
         modifier = Modifier
-            .padding(
-                horizontal = DefaultPadding.CardHorizontalPadding,
-                vertical = DefaultPadding.CardVerticalPadding
-            )
+            .padding(DefaultPadding.CardDefaultPadding)
+            .clip(CardShape.CardStandalone)
     ) {
         Row(
             modifier = Modifier
@@ -248,9 +251,7 @@ fun ColorPickerItem(
             .padding(4.dp)
             .clip(CircleShape)
             .background(color = item.accentDark)
-            .clickable {
-                callback(index)
-            }
+            .clickable { callback(index) }
     )
 }
 
