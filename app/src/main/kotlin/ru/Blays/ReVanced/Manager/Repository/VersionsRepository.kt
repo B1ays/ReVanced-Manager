@@ -10,7 +10,7 @@ import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
-import ru.blays.revanced.shared.LogManager.Data.BLog
+import ru.blays.revanced.shared.LogManager.BLog
 
 private const val TAG = "Versions repository"
 

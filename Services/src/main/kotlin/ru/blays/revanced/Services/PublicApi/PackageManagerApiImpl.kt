@@ -9,7 +9,7 @@ import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterf
 import ru.blays.revanced.Services.NonRootService.PackageManager.NonRootPackageManager
 import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
-import ru.blays.revanced.shared.LogManager.Data.BLog
+import ru.blays.revanced.shared.LogManager.BLog
 import java.io.File
 
 private const val TAG = "PackageManager Api"

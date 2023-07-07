@@ -11,7 +11,7 @@ import ru.blays.revanced.data.DataModels.VersionsInfoModel
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
-import ru.blays.revanced.shared.LogManager.Data.BLog
+import ru.blays.revanced.shared.LogManager.BLog
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "AppRepository"

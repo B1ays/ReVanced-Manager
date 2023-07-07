@@ -15,7 +15,7 @@ import ru.blays.revanced.Elements.Util.BuildedTheme
 import ru.blays.revanced.Elements.Util.buildTheme
 import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
 import ru.blays.revanced.shared.Extensions.collect
-import ru.blays.revanced.shared.LogManager.Data.BLog
+import ru.blays.revanced.shared.LogManager.BLog
 
 private const val TAG = "Settings Repository"
 

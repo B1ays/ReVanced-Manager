@@ -32,7 +32,7 @@ import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.BottomBarItem
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.FloatingBottomBar
 import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent.Companion.bottomNavBarExpandedContent
 import ru.blays.revanced.Elements.GlobalState.NavBarState
-import ru.blays.revanced.shared.LogManager.Data.BLog
+import ru.blays.revanced.shared.LogManager.BLog
 
 private const val TAG = "Navigator"
 

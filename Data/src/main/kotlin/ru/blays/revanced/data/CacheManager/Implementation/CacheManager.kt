@@ -7,7 +7,7 @@ import ru.blays.revanced.data.CacheManager.Room.CacheStorageEntity
 import ru.blays.revanced.data.CacheManager.StorageUtils.StorageUtilsInterface
 import ru.blays.revanced.shared.Extensions.getCurrentFormattedTime
 import ru.blays.revanced.shared.Extensions.isInRange
-import ru.blays.revanced.shared.LogManager.Data.BLog
+import ru.blays.revanced.shared.LogManager.BLog
 import java.text.SimpleDateFormat
 import java.util.Locale
 

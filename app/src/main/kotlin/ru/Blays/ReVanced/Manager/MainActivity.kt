@@ -15,7 +15,7 @@ import org.koin.android.ext.android.inject
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Navigation.Navigator
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
-import ru.blays.revanced.shared.LogManager.Data.BLog
+import ru.blays.revanced.shared.LogManager.BLog
 
 private const val TAG = "MainActivity"
 
