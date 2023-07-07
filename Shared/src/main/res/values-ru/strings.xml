@@ -10,6 +10,7 @@
     <string name="Available_version">Доступная версия</string>
     <string name="Action_OK">Ок</string>
     <string name="Action_Cancel">Отмена</string>
+    <string name="Action_open">Открыть</string>
     <string name="About_app">О приложении</string>
     <string name="Settings_title_theme">Тема и цвета приложения</string>
     <string name="Settings_title_main">Основные настройки</string>

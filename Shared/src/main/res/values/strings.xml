@@ -43,6 +43,7 @@
     <string name="Action_changelog" translatable="false">Changelog</string>
     <string name="Action_OK">Ok</string>
     <string name="Action_Cancel">Cancel</string>
+    <string name="Action_open">Open</string>
 
     <!--  Dropdown menu items  -->
     <string name="About_app">About app</string>

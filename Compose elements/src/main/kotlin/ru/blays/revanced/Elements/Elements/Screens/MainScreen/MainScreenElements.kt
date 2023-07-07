@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -164,7 +165,7 @@ fun AppCardRoot(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             ) {
-                Text(text = "Open")
+                Text(text = stringResource(id = R.string.Action_open))
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(imageVector = Icons.Rounded.ArrowForward, contentDescription = null)
             }
@@ -202,8 +203,7 @@ fun AppCard(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .blur(radius = 6.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
-                    .wrapContentSize(unbounded = true)
-                /*.offset(y = 40.dp)*/,
+                    .wrapContentSize(unbounded = true),
                 imageVector = icon,
                 tint = MaterialTheme.colorScheme.primary.copy(.5F),
                 contentDescription = null,
@@ -264,7 +264,6 @@ fun AppCard(
 
             Button(
                 modifier = Modifier
-                    /*.requiredHeight(48.dp)*/
                     .defaultMinSize(100.dp, 48.dp)
                     .padding(end = 25.dp),
                 onClick = onClick,
@@ -274,7 +273,7 @@ fun AppCard(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             ) {
-                Text(text = "Open")
+                Text(text = stringResource(id = R.string.Action_open))
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(imageVector = Icons.Rounded.ArrowForward, contentDescription = null)
             }
