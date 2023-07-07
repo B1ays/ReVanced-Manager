@@ -12,6 +12,7 @@ import ru.blays.revanced.Elements.Elements.Screens.LogViewScreen.LogView
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import ru.blays.revanced.shared.Extensions.copyToClipBoard
 import ru.blays.revanced.shared.Extensions.share
+import ru.blays.revanced.shared.Extensions.writeTextByUri
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -25,8 +26,7 @@ Supported abi: ${Build.SUPPORTED_ABIS.joinToString()}
 Root granted & Magisk installed: $isRootGranted
 ============""".trimIndent() + "\n"
 
-
-class CrashHandlerActivity : ComponentActivity() {
+class CrashHandlerActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,12 @@ class CrashHandlerActivity : ComponentActivity() {
         setContent {
             ReVancedManagerTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    LogView(log = fullLog, actionCopy = ::copyToClipBoard, actionShare = ::share)
+                    LogView(
+                        log = fullLog,
+                        actionCopy = ::copyToClipBoard,
+                        actionShare = ::share,
+                        actionSaveToFile = ::writeTextByUri
+                    )
                 }
             }
         }

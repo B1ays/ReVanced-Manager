@@ -13,7 +13,6 @@ interface LogManagerInterface {
     fun getFormattedLog(): AnnotatedString
 
     fun getRawLog(): String
-    fun writeToFile()
 
     fun d(tag: String, message: String)
 

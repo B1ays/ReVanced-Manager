@@ -1,4 +1,4 @@
-package ru.blays.revanced.shared.LogManager.Data
+package ru.blays.revanced.shared.LogManager
 
 import android.os.Environment
 import android.util.Log
@@ -7,7 +7,8 @@ import ru.blays.revanced.shared.Extensions.appendColored
 import ru.blays.revanced.shared.Extensions.appendSpacer
 import ru.blays.revanced.shared.Extensions.defaultFormatter
 import ru.blays.revanced.shared.Extensions.getCurrentFormattedTime
-import ru.blays.revanced.shared.LogManager.LogManagerInterface
+import ru.blays.revanced.shared.LogManager.Data.LogData
+import ru.blays.revanced.shared.LogManager.Data.LogType
 import java.io.File
 
 object BLog: LogManagerInterface {
@@ -46,12 +47,6 @@ object BLog: LogManagerInterface {
                 .append("\n")
         }
         return stringBuilder.toString()
-    }
-
-    override fun writeToFile() {
-        val log = getRawLog()
-        val file = File(logDefaultPath, "log_${getCurrentFormattedTime(defaultFormatter)}.log")
-        file.writeText(log)
     }
 
     private fun log(logData: LogData) {

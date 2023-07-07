@@ -12,3 +12,4 @@ fun File.open(context: Context) {
     val intent = Intent(Intent.ACTION_VIEW, uri)
     context.startActivity(intent)
 }
+
