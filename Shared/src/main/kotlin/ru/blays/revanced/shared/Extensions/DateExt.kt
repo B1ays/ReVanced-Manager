@@ -1,12 +1,20 @@
 package ru.blays.revanced.shared.Extensions
 
+import android.annotation.SuppressLint
 import android.util.Log
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.Duration
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 private const val TAG = "DateExt"
+
+private const val format = "yyyy-MM-dd HH:mm"
+
+@SuppressLint("ConstantLocale")
+val defaultFormatter = SimpleDateFormat(format, Locale.getDefault())
 
 val currentTime: Date get() = Calendar.getInstance().time
 
