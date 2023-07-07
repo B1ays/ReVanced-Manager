@@ -47,6 +47,8 @@
 
     <!--  Dropdown menu items  -->
     <string name="About_app">About app</string>
+    <string name="Crash_app" translatable="false">Crash app</string>
+    <string name="App_logs">App logs</string>
 
     <!--  Settings group titles  -->
     <string name="Settings_title_theme">App theme &amp; colors</string>

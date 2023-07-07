@@ -43,6 +43,7 @@ import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.ThemeModel
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.LogViewerScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Theme.rainbowColors
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
@@ -56,6 +57,7 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpand
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
 import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
+import ru.blays.revanced.shared.LogManager.Data.BLog
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -107,7 +109,20 @@ fun SettingsScreen(
                         DropdownMenuItem(text = { Text(text = getStringRes(R.string.About_app)) }, onClick = { navController.navigate(
                             AboutScreenDestination
                         ) })
-                        if (BuildConfig.DEBUG) DropdownMenuItem(text = { Text(text = "Crash app", color = Color.Red) }, onClick = { throw RuntimeException("Test crash") })
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(id = R.string.App_logs)) },
+                            onClick = { navController.navigate(LogViewerScreenDestination) }
+                        )
+                        if (BuildConfig.DEBUG) DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(id = R.string.Crash_app),
+                                    color = Color.Red
+                                )
+                            },
+                            onClick = { throw RuntimeException("Test crash") })
                     }
                     IconButton(onClick = changeExpanded) {
                         Icon(
@@ -158,6 +173,7 @@ fun SettingsScreen(
             color = settingsRepository.currentAccentColor,
             onClose = changeAlertDialogVisibility,
             onPick = { color ->
+                BLog.i(TAG, "selected custom color: $color")
                 settingsRepository.customAccentColorArgb = color.toArgb()
             }
         )
