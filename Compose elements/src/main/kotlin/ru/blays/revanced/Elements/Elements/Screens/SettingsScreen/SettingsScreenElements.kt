@@ -68,6 +68,7 @@ import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
+import ru.blays.revanced.shared.Extensions.invert
 import ru.blays.revanced.shared.R
 
 const val ANIMATION_DURATION_MILLIS = 300
@@ -404,7 +405,7 @@ fun ColorPickerAlertDialog(
                         .wrapContentWidth(),
                     shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
-                        contentColor = with(selectedColor) { Color(red = (1F - red), green = (1F - green), blue = (1F - blue)) },
+                        contentColor = selectedColor.invert(),
                         containerColor = selectedColor
                     ),
                     onClick = {
