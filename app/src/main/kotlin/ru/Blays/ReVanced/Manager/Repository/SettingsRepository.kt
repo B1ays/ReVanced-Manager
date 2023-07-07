@@ -15,8 +15,9 @@ import ru.blays.revanced.Elements.Util.BuildedTheme
 import ru.blays.revanced.Elements.Util.buildTheme
 import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
 import ru.blays.revanced.shared.Extensions.collect
+import ru.blays.revanced.shared.LogManager.Data.BLog
 
-const val TAG = "SettingsRepository"
+private const val TAG = "Settings Repository"
 
 class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryImplementation) {
 
@@ -54,6 +55,8 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
     var isSystemInDarkMode = true
 
     init {
+
+        BLog.i(TAG, "Init settings repository")
 
         _appThemeCode = settingsRepositoryImpl.theme
 
@@ -191,7 +194,10 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
         CoroutineScope(Dispatchers.Default).collect(_currentAccentColor) { color ->
             try {
                 buildedTheme.value = buildTheme(color)
-            } catch (_: Exception) {}
+                BLog.i(TAG, "Build theme for color $color")
+            } catch (e: Exception) {
+                BLog.e(TAG, "Current color collector error: ${e.message}")
+            }
         }
     }
 }

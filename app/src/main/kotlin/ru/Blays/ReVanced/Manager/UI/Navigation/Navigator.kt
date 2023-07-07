@@ -32,6 +32,9 @@ import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.BottomBarItem
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.FloatingBottomBar
 import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent.Companion.bottomNavBarExpandedContent
 import ru.blays.revanced.Elements.GlobalState.NavBarState
+import ru.blays.revanced.shared.LogManager.Data.BLog
+
+private const val TAG = "Navigator"
 
 @Suppress("AnimateAsStateLabel")
 @Composable
@@ -96,6 +99,7 @@ fun Navigator() {
 }
 
 private fun bottomNavNarNavigate(navController: NavController, destination: DirectionDestination) {
+    BLog.i(TAG, "Navigate to: ${destination.route}")
     with(navController) {
         if (isRouteOnBackStack(route = destination)) {
             popBackStack(route = destination.route, inclusive = false)

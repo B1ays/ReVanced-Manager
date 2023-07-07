@@ -1,6 +1,5 @@
 package ru.blays.revanced.data.repositories
 
-import android.util.Log
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -12,6 +11,7 @@ import ru.blays.revanced.data.DataModels.VersionsInfoModel
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
+import ru.blays.revanced.shared.LogManager.Data.BLog
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "AppRepository"
@@ -19,6 +19,7 @@ private const val TAG = "AppRepository"
 class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInterface, private val cacheLifetimeLong: Long) : AppInfoRepositoryInterface {
 
     private suspend fun router(url: String, recreateCache: Boolean) : String? = coroutineScope {
+        BLog.i(TAG, "data request. Url: $url, recreateCache: $recreateCache")
         var json: String?
         if (recreateCache) {
             json = getHtmlBody(url)
@@ -52,15 +53,12 @@ class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInte
         return@coroutineScope try {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    throw IOException(
-                        "Response not successful, errorCode:" +
-                        " ${response.code} ${response.message}"
-                    )
+                    throw IOException()
                 }
                 response.body.string()
             }
         } catch (e: IOException) {
-            Log.w("VersionsInfo:","Response error, exception: $e")
+            BLog.w(TAG, "Response not successful, errorCode: ${e.message}")
             null
         }
     }
@@ -99,21 +97,15 @@ class AppInfoRepositoryImplementation(private val cacheManager: CacheManagerInte
         }
     }
 
-    override suspend fun getVersionsInfo(jsonUrl: String, recreateCache: Boolean): List<VersionsInfoModelDto>? = router(jsonUrl, recreateCache).also {
-        Log.d(TAG, "getVersionsInfo, url: $jsonUrl, recreateCache: $recreateCache")
-    }
+    override suspend fun getVersionsInfo(jsonUrl: String, recreateCache: Boolean): List<VersionsInfoModelDto>? = router(jsonUrl, recreateCache)
         ?.serializeJsonFromString<List<VersionsInfoModel>>()
         ?.mapVersionsInfoModelToDomainClass()
 
 
-    override suspend fun getApkList(jsonUrl: String, recreateCache: Boolean) : List<ApkInfoModelDto>? = router(jsonUrl, recreateCache).also {
-        Log.d(TAG, "getVersionsInfo, url: $jsonUrl, recreateCache: $recreateCache")
-    }
+    override suspend fun getApkList(jsonUrl: String, recreateCache: Boolean) : List<ApkInfoModelDto>? = router(jsonUrl, recreateCache)
         ?.serializeJsonFromString<List<ApkInfoModel>>()
         ?.mapApkInfoModelToDomainClass()
 
-    override suspend fun getChangelog(changelogUrl: String, recreateCache: Boolean): String = router(changelogUrl, recreateCache).also {
-        Log.d(TAG, "getVersionsInfo, url: $changelogUrl, recreateCache: $recreateCache")
-    }.orEmpty()
+    override suspend fun getChangelog(changelogUrl: String, recreateCache: Boolean): String = router(changelogUrl, recreateCache).orEmpty()
 
 }

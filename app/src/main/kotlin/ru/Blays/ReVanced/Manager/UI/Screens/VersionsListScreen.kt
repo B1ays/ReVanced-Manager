@@ -1,6 +1,5 @@
 package ru.Blays.ReVanced.Manager.UI.Screens
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,10 +54,13 @@ import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.MagiskInst
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBottomSheet
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
+import ru.blays.revanced.shared.LogManager.Data.BLog
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
+
+private const val TAG = "VersionsInfoScreen"
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Destination
@@ -252,7 +254,7 @@ fun VersionsListScreen(
     )
 
     if (viewModel.magiskInstallerDialogState.isExpanded) {
-        Log.d("AlertDialog", "show alert dialog")
+        BLog.i(TAG, "Open reboot dialog")
         MagiskInstallInfoDialog(
             state = viewModel.magiskInstallerDialogState,
             actionReboot = viewModel::reboot,
