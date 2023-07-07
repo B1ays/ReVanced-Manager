@@ -43,6 +43,7 @@ import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.ThemeModel
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
+import ru.Blays.ReVanced.Manager.UI.Theme.rainbowColors
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerAlertDialog
@@ -134,7 +135,12 @@ fun SettingsScreen(
                     MonetColors(repository = settingsRepository)
                 }
                 AmoledTheme(repository = settingsRepository)
-                AccentSelector(changeAlertDialogVisibility, settingsRepository.accentColorItem, settingsRepository.isCustomColorSelected, settingsRepository)
+                AccentSelector(
+                    changeAlertDialogVisibility,
+                    settingsRepository.accentColorItem,
+                    settingsRepository.isCustomColorSelected,
+                    settingsRepository)
+
             }
 
             itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
@@ -151,8 +157,8 @@ fun SettingsScreen(
         ColorPickerAlertDialog(
             color = settingsRepository.currentAccentColor,
             onClose = changeAlertDialogVisibility,
-            onPick = {
-                settingsRepository.customAccentColorArgb = it.toArgb()
+            onPick = { color ->
+                settingsRepository.customAccentColorArgb = color.toArgb()
             }
         )
     }
@@ -212,17 +218,7 @@ private fun AccentSelector(
 
     val callback: (Int) -> Unit = { repository.accentColorItem = it }
 
-    val rainbowBrush = Brush.sweepGradient(
-        listOf(
-            Color.Red,
-            Color.Magenta,
-            Color.Blue,
-            Color.Cyan,
-            Color.Green,
-            Color.Yellow,
-            Color.Red
-        )
-    )
+    val rainbowBrush = Brush.sweepGradient(rainbowColors)
 
     SettingsExpandableCard(
         title = getStringRes(R.string.Settings_card_accent_title),
