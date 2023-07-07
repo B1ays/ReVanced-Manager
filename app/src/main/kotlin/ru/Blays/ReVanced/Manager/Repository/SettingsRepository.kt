@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.blays.revanced.Elements.Util.BuildedTheme
 import ru.blays.revanced.Elements.Util.buildTheme
@@ -179,7 +178,7 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
         set(value) {
             _customAccentColorArgb = value
             val color = Color(value)
-            _currentAccentColor.value = color
+            if (isCustomColorSelected) _currentAccentColor.value = color
             settingsRepositoryImpl.customAccentColorArgb = value
         }
 
@@ -189,12 +188,10 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
     private fun getColorByIndex(index: Int): Color = defaultAccentColorsList[index.coerceIn(defaultAccentColorsList.indices)]
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
-            collect(_currentAccentColor) {
-                try {
-                    buildedTheme.value = buildTheme(it)
-                } catch (_: Exception) {}
-            }
+        CoroutineScope(Dispatchers.Default).collect(_currentAccentColor) { color ->
+            try {
+                buildedTheme.value = buildTheme(color)
+            } catch (_: Exception) {}
         }
     }
 }
