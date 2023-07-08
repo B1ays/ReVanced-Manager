@@ -99,7 +99,7 @@ fun AppUpdateScreen(
             )
         }
     ) { padding ->
-        if (model != null) {
+        if (viewModel.isUpdateAvailable) {
             Column(
                 modifier = Modifier
                     .padding(top = padding.calculateTopPadding())
