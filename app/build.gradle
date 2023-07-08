@@ -13,8 +13,8 @@ android {
         applicationId "ru.Blays.ReVanced.Manager"
         minSdk 26
         targetSdk 33
-        versionCode 4
-        versionName "1.0.3 beta"
+        versionCode 5
+        versionName "1.0.4 beta"
 
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
