@@ -1,9 +1,9 @@
 package ru.blays.revanced.domain.UseCases
 
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
-import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
+import ru.blays.revanced.domain.Repositories.NetworkRepositoryInterface
 
-class GetVersionsListUseCase(private val appInfoRepositoryInterface: AppInfoRepositoryInterface) {
+class GetVersionsListUseCase(private val networkRepositoryInterface: NetworkRepositoryInterface) {
 
     companion object {
         const val YOUTUBE = "YouTube"
@@ -17,11 +17,11 @@ class GetVersionsListUseCase(private val appInfoRepositoryInterface: AppInfoRepo
 
     suspend fun execut(appType: String, recreateCache: Boolean = false) : List<VersionsInfoModelDto> = when (appType) {
 
-        YOUTUBE -> appInfoRepositoryInterface.getVersionsInfo(YOUTUBE_JSON_LINK, recreateCache) ?: emptyList()
+        YOUTUBE -> networkRepositoryInterface.getVersionsInfo(YOUTUBE_JSON_LINK, recreateCache) ?: emptyList()
 
-        MUSIC -> appInfoRepositoryInterface.getVersionsInfo(MUSIC_JSON_LINK, recreateCache) ?: emptyList()
+        MUSIC -> networkRepositoryInterface.getVersionsInfo(MUSIC_JSON_LINK, recreateCache) ?: emptyList()
 
-        MICROG -> appInfoRepositoryInterface.getVersionsInfo(MICROG_JSON_LINK, recreateCache) ?: emptyList()
+        MICROG -> networkRepositoryInterface.getVersionsInfo(MICROG_JSON_LINK, recreateCache) ?: emptyList()
 
         else -> emptyList()
     }
