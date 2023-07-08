@@ -24,7 +24,9 @@ import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 import ru.Blays.ReVanced.Manager.UI.Screens.NavGraphs
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AppUpdateScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DirectionDestination
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.LogViewerScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.MainScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.SettingsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
@@ -72,6 +74,8 @@ fun Navigator() {
         SettingsScreenDestination.route -> 1
         VersionsListScreenDestination.route -> 0
         AboutScreenDestination.route -> 1
+        LogViewerScreenDestination.route -> 1
+        AppUpdateScreenDestination.route -> 0
         else -> 0
     }
 
