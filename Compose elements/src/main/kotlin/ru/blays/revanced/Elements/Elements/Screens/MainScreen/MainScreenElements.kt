@@ -99,7 +99,7 @@ fun AppCardRoot(
                         enter = slideInHorizontally(animationSpec = spring(stiffness = 300F, dampingRatio = .6F))
                     ) {
                             TextWithBackground(
-                                text = "${getStringRes(R.string.Available_version)}: ${this@run}",
+                                text = "${getStringRes(R.string.Available_version_name)}: ${this@run}",
                                 textPadding = PaddingValues(5.dp)
                             )
                         }
@@ -220,7 +220,7 @@ fun AppCard(
                         enter = slideInHorizontally(animationSpec = spring(stiffness = 300F, dampingRatio = .6F))
                     ) {
                         TextWithBackground(
-                            text = "${getStringRes(R.string.Available_version)}: ${this@run}",
+                            text = "${getStringRes(R.string.Available_version_name)}: ${this@run}",
                             textPadding = PaddingValues(5.dp)
                         )
                     }

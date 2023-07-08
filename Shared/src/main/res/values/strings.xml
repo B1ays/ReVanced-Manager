@@ -7,10 +7,12 @@
     <string name="AppBar_Settings">Settings</string>
     <string name="AppBar_About">About</string>
     <string name="AppBar_Downloads">Downloads</string>
+    <string name="AppBar_Updates">Updates</string>
 
     <!--  App info  -->
     <string name="Installed_version">Installed version</string>
-    <string name="Available_version">Available version</string>
+    <string name="Available_version_name">Available version</string>
+    <string name="Version_code">Version code</string>
     <string name="Version">Version</string>
     <string name="NonRoot_Version">Non-Root version</string>
     <string name="Root_Version">Root version</string>
@@ -29,6 +31,9 @@
     <string name="Speed">Speed</string>
     <string name="Speed_kbs">Kb/s</string>
     <string name="Speed_mbs">Mb/s</string>
+
+    <!--  Updates  -->
+    <string name="Updates_not_found">Updates not found</string>
 
     <!--  Color picker  -->
     <string name="Pick_color">Pick color</string>

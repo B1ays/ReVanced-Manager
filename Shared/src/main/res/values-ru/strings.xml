@@ -7,7 +7,7 @@
     <string name="AppBar_About">О приложении</string>
     <string name="AppBar_Downloads">Загрузки</string>
     <string name="Installed_version">Устновленная версия</string>
-    <string name="Available_version">Доступная версия</string>
+    <string name="Available_version_name">Доступная версия</string>
     <string name="Action_OK">Ок</string>
     <string name="Action_Cancel">Отмена</string>
     <string name="Action_open">Открыть</string>
@@ -79,4 +79,7 @@
     <string name="New_download">Новая загрузка</string>
     <string name="Pick_color">Выбрать цвет</string>
     <string name="App_logs">Логи приложения</string>
+    <string name="Version_code">Код версии</string>
+    <string name="Updates_not_found">Обновления не найдены</string>
+    <string name="AppBar_Updates">Обновление</string>
 </resources>

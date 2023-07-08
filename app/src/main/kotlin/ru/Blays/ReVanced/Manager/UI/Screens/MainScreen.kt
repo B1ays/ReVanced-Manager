@@ -37,6 +37,7 @@ import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
+import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AppUpdateScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DownloadsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
@@ -85,6 +86,13 @@ fun MainScreen(
                 collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Main)),
                 scrollBehavior = scrollBehavior,
                 actions = {
+                    IconButton(onClick = { navController.navigate(AppUpdateScreenDestination)}) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.round_update_24),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                        )
+                    }
                     BadgedBox(
                         badge = {
                             Badge(
