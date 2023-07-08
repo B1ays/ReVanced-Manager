@@ -55,10 +55,13 @@ fun UpdateInfoHeader(
         }
 
         CustomIconButton(
-            modifier = Modifier.padding(end = 10.dp),
+            modifier = Modifier
+                .padding(end = 10.dp),
             onClick = actionDownload,
             containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            shadowElevation = 12.dp,
+            shadowColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.round_download_24),
