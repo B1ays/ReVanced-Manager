@@ -40,6 +40,7 @@ import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AppUpdateScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DownloadsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
+import ru.Blays.ReVanced.Manager.UI.ViewModels.AppUpdateScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCard
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRoot
@@ -58,6 +59,7 @@ fun MainScreen(
     viewModel: MainScreenViewModel = koinViewModel(),
     settingsRepository: SettingsRepository = koinInject(),
     downloadsRepository: DownloadsRepository = koinInject(),
+    updateScreenViewModel: AppUpdateScreenViewModel = koinInject(),
     navController: NavController
 ) {
 
@@ -86,12 +88,22 @@ fun MainScreen(
                 collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Main)),
                 scrollBehavior = scrollBehavior,
                 actions = {
-                    IconButton(onClick = { navController.navigate(AppUpdateScreenDestination)}) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.round_update_24),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
-                        )
+                    BadgedBox(
+                        badge = {
+                            if (updateScreenViewModel.isUpdateAvailable) Badge(
+                                modifier = Modifier
+                                    .offset(x = (-12).dp, y = 8.dp),
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            ) {}
+                        }
+                    ) {
+                        IconButton(onClick = { navController.navigate(AppUpdateScreenDestination) }) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.round_update_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
                     }
                     BadgedBox(
                         badge = {
