@@ -34,42 +34,6 @@ fun ReVancedManagerTheme(
     content: @Composable () -> Unit
 ) {
 
-    /*val colorScheme = when {
-        dynamicColor && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) -> {
-            val context = LocalContext.current
-            val darkColorScheme = dynamicDarkColorScheme(context)
-            val lightColorScheme = dynamicLightColorScheme(context)
-            val background by animateColorAsState(animationSpec = spring(stiffness = 300F), targetValue = if (isAmoledTheme) Color.Black else darkColorScheme.background)
-            val surface by animateColorAsState(animationSpec = spring(stiffness = 300F),targetValue = if (isAmoledTheme) Color.Black else darkColorScheme.surface)
-            val surfaceVariant by animateColorAsState(animationSpec = spring(stiffness = 300F),targetValue = if (isAmoledTheme) Color.Black else darkColorScheme.surfaceVariant)
-            val surfaceContainer by animateColorAsState(animationSpec = spring(stiffness = 300F),targetValue = if (isAmoledTheme) Color.Black else darkColorScheme.surfaceContainer)
-            val surfaceTint by animateColorAsState(animationSpec = spring(stiffness = 300F),targetValue = if (isAmoledTheme) Color.Black else darkColorScheme.surfaceTint)
-            val newDarkColorScheme = darkColorScheme.copy(
-                background = background,
-                surface = surface,
-                surfaceVariant = surfaceVariant,
-                surfaceContainer = surfaceContainer,
-                surfaceTint = surfaceTint
-            )
-            if (darkTheme) newDarkColorScheme else lightColorScheme
-        }
-        darkTheme -> {
-            val background by animateColorAsState(animationSpec = spring(stiffness = 300F), targetValue = if (isAmoledTheme) Color.Black else buildedTheme.darkColorScheme.background)
-            val surface by animateColorAsState(animationSpec = spring(stiffness = 300F), targetValue = if (isAmoledTheme) Color.Black else buildedTheme.darkColorScheme.surface)
-            val surfaceVariant by animateColorAsState(animationSpec = spring(stiffness = 300F), targetValue = if (isAmoledTheme) Color.Black else buildedTheme.darkColorScheme.surfaceVariant)
-            val surfaceContainer by animateColorAsState(animationSpec = spring(stiffness = 300F), targetValue = if (isAmoledTheme) Color.Black else buildedTheme.darkColorScheme.surfaceContainer)
-            val surfaceTint by animateColorAsState(animationSpec = spring(stiffness = 300F), targetValue = if (isAmoledTheme) Color.Black else buildedTheme.darkColorScheme.surfaceTint)
-            buildedTheme.darkColorScheme.copy(
-                background = background,
-                surface = surface,
-                surfaceVariant = surfaceVariant,
-                surfaceContainer = surfaceContainer,
-                surfaceTint = surfaceTint
-            )
-        }
-        else -> buildedTheme.lightColorScheme
-    }*/
-
     val colorScheme = with(
         when {
             dynamicColor && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) && !isAmoledTheme -> {
