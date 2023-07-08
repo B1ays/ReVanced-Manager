@@ -10,18 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ru.blays.revanced.Elements.Elements.CustomSurface.CustomSurface
 
 @Composable
 fun CustomIconButton(
@@ -32,11 +33,13 @@ fun CustomIconButton(
     minSize: Dp = 50.dp,
     containerColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8F),
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    shadowElevation: Dp = 0.dp,
+    shadowColor: Color = DefaultShadowColor,
     border: BorderStroke? = null,
     contentPadding: PaddingValues = PaddingValues(6.dp),
     content: @Composable RowScope.() -> Unit
 ) {
-    Surface(
+    CustomSurface(
         onClick = onClick,
         modifier = modifier.semantics { role = Role.Button },
         enabled = enabled,
@@ -44,6 +47,8 @@ fun CustomIconButton(
         color = containerColor,
         contentColor = contentColor,
         border = border,
+        shadowElevation = shadowElevation,
+        shadowColor = shadowColor
     ) {
         CompositionLocalProvider(LocalContentColor provides contentColor) {
             Row(
