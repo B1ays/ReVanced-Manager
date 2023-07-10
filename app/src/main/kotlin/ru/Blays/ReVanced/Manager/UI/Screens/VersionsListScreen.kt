@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -41,6 +42,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DownloadsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundBlue
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundRed
@@ -100,6 +102,15 @@ fun VersionsListScreen(
 
     // Is the current page a page with root versions
     val rootVersionsPage = settledPage == 1
+
+    // Lazy list state
+    val lazyListState = rememberLazyListState()
+
+    shouldHideNavigationBar = when {
+        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+        else -> false
+    }
 
     Scaffold(
         topBar = {
@@ -196,7 +207,8 @@ fun VersionsListScreen(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                            .nestedScroll(scrollBehavior.nestedScrollConnection),
+                        state = lazyListState
                     ) {
 
                         if (page == 0) {

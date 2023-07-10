@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
@@ -30,6 +31,7 @@ import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.DownloadItem
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.FileItem
 import ru.blays.revanced.shared.R
@@ -51,6 +53,14 @@ fun DownloadsScreen(
 
     val existingFilesList = repository.existingFilesList
 
+    val lazyListState = rememberLazyListState()
+
+    shouldHideNavigationBar = when {
+        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+        else -> false
+    }
+
     Scaffold(
         topBar = {
             CustomToolbar(
@@ -70,12 +80,12 @@ fun DownloadsScreen(
             )
         }
     ) { padding ->
-
         LazyColumn(
             modifier = Modifier
                 .padding(top = padding.calculateTopPadding())
                 .fillMaxSize()
-                .nestedScroll(connection = scrollBehavior.nestedScrollConnection)
+                .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
+            state = lazyListState
         ) {
             items(list) {
                 DownloadItem(downloadInfo = it, repository::removeFromList)

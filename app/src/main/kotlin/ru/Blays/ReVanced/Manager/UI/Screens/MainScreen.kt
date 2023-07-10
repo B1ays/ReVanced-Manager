@@ -37,6 +37,7 @@ import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
+import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AppUpdateScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.DownloadsScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
@@ -44,7 +45,6 @@ import ru.Blays.ReVanced.Manager.UI.ViewModels.AppUpdateScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCard
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRoot
-import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -77,9 +77,11 @@ fun MainScreen(
 
     val lazyListState = rememberLazyListState()
 
-    if (!lazyListState.canScrollForward && lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = true
-    else if (!lazyListState.canScrollForward && !lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = false
-    else NavBarState.shouldHideNavigationBar = false
+    shouldHideNavigationBar = when {
+        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+        else -> false
+    }
 
 
     Scaffold(

@@ -42,6 +42,7 @@ import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.ThemeModel
+import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.LogViewerScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Theme.rainbowColors
@@ -55,7 +56,6 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWi
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCheckboxWithTitle
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
-import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
@@ -87,9 +87,11 @@ fun SettingsScreen(
 
     val lazyListState = rememberLazyListState()
 
-    if (!lazyListState.canScrollForward && lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = true
-    else if (!lazyListState.canScrollForward && !lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = false
-    else NavBarState.shouldHideNavigationBar = false
+    shouldHideNavigationBar = when {
+        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+        else -> false
+    }
 
     Scaffold(
         topBar = {

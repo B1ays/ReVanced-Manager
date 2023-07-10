@@ -24,7 +24,6 @@ import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
 import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
-import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
@@ -156,15 +155,10 @@ class VersionsListScreenViewModel(
             .setDefaultActions(
                 onSuccess = {
                     packageManager.installApk(file, settingsRepository.installerType)
-                    NavBarExpandedContent.hide()
                     onRefresh()
-                },
-                onError = {
-                    NavBarExpandedContent.hide()
                 },
                 onCancel = {
                     file.delete()
-                    NavBarExpandedContent.hide()
                 }
             )
             .build()
@@ -203,11 +197,9 @@ class VersionsListScreenViewModel(
                 },
                 onError = {
                     file.delete()
-                    NavBarExpandedContent.hide()
                 },
                 onCancel = {
                     file.delete()
-                    NavBarExpandedContent.hide()
                 }
             )
             .build()
@@ -246,11 +238,9 @@ class VersionsListScreenViewModel(
                 onError = {
                     file.delete()
                     origApkDownloadTask.file.delete()
-                    NavBarExpandedContent.hide()
                 },
                 onCancel = {
                     file.delete()
-                    NavBarExpandedContent.hide()
                 }
             )
             .build()

@@ -11,8 +11,9 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -32,21 +33,17 @@ import ru.Blays.ReVanced.Manager.UI.Screens.destinations.SettingsScreenDestinati
 import ru.Blays.ReVanced.Manager.UI.Screens.destinations.VersionsListScreenDestination
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.BottomBarItem
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.FloatingBottomBar
-import ru.blays.revanced.Elements.GlobalState.NavBarExpandedContent.Companion.bottomNavBarExpandedContent
-import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.shared.LogManager.BLog
 
 private const val TAG = "Navigator"
+
+var shouldHideNavigationBar by mutableStateOf(false)
 
 @Suppress("AnimateAsStateLabel")
 @Composable
 fun Navigator() {
 
     val navigationController = rememberNavController()
-
-    val expandedContentState by bottomNavBarExpandedContent.collectAsState()
-
-    val shouldHideNavigationBar = NavBarState.shouldHideNavigationBar
 
     val navBarHeightDp = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
@@ -58,14 +55,14 @@ fun Navigator() {
             description = null,
             id = MainScreenDestination.route
         ) {
-            bottomNavNarNavigate(navigationController, destination = MainScreenDestination)
+            bottomNavbarNavigate(navigationController, destination = MainScreenDestination)
         },
         BottomBarItem.Icon(
             icon = Icons.Rounded.Settings,
             description = null,
             id = SettingsScreenDestination.route
         ) {
-            bottomNavNarNavigate(navigationController, SettingsScreenDestination)
+            bottomNavbarNavigate(navigationController, SettingsScreenDestination)
         }
     )
 
@@ -82,15 +79,14 @@ fun Navigator() {
     Scaffold(
         bottomBar = {
             FloatingBottomBar(
-                expanded = expandedContentState.isExpanded,
+                expanded = false,
                 selectedItem = selectedItem,
                 items = destinationsList,
-                expandedContent = expandedContentState.content,
+                expandedContent = { },
                 modifier = Modifier.offset(y = navOffset)
             )
         }
     ) { padding ->
-
         DestinationsNavHost(
             modifier = Modifier.padding(top = padding.calculateTopPadding()),
             navGraph = NavGraphs.root,
@@ -102,7 +98,7 @@ fun Navigator() {
     }
 }
 
-private fun bottomNavNarNavigate(navController: NavController, destination: DirectionDestination) {
+private fun bottomNavbarNavigate(navController: NavController, destination: DirectionDestination) {
     BLog.i(TAG, "Navigate to: ${destination.route}")
     with(navController) {
         if (isRouteOnBackStack(route = destination)) {

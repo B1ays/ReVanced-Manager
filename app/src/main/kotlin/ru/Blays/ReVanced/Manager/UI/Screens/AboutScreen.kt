@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import ru.Blays.ReVanced.Manager.BuildConfig
+import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
@@ -44,7 +45,6 @@ import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.Contact
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.ContactItem
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.CreditCard
 import ru.blays.revanced.Elements.Elements.Screens.AboutScreen.Credits
-import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -73,9 +73,11 @@ fun AboutScreen(
 
     val lazyListState = rememberLazyListState()
 
-    if (!lazyListState.canScrollForward && lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = true
-    else if (!lazyListState.canScrollForward && !lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = false
-    else NavBarState.shouldHideNavigationBar = false
+    shouldHideNavigationBar = when {
+        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+        else -> false
+    }
 
     Scaffold(
         topBar = {
