@@ -21,7 +21,7 @@ compose-bom = "2023.06.01"
 compose-markdown = "0.3.4"
 core = "5.1.0"
 github-pausing-coroutine-dispatcher = "ee40ae5"
-io-github-raamcosta-compose-destinations = "1.9.42-beta"
+io-github-raamcosta-compose-destinations = "1.9.50"
 koin-androidx-compose = "3.4.5"
 kotlin = "1.8.22"
 org-jetbrains-kotlin = "1.8.22"
@@ -109,8 +109,6 @@ pausing-coroutine-dispatcher = { module = "com.github.Koitharu.pausing-coroutine
 pausing-coroutine-dispatcher-ee40ae5 = { module = "com.github.Koitharu.pausing-coroutine-dispatcher:pausing-coroutine-dispatcher", version.ref = "github-pausing-coroutine-dispatcher" }
 rebugger = { module = "com.github.theapache64:rebugger", version.ref = "rebugger" }
 service = { module = "com.github.topjohnwu.libsu:service", version.ref = "core" }
-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
