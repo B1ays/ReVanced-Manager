@@ -1,6 +1,6 @@
 [versions]
 accompanist-permissions = "0.31.5-beta"
-agp = "8.2.0-alpha11"
+agp = "8.2.0-alpha12"
 androidx-activity = "1.8.0-alpha06"
 androidx-annotation = "1.6.0"
 androidx-arch-core = "2.2.0"
@@ -112,7 +112,7 @@ service = { module = "com.github.topjohnwu.libsu:service", version.ref = "core" 
 
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-com-android-application = "com.android.application:8.2.0-alpha11"
+com-android-application = "com.android.application:8.2.0-alpha12"
 com-github-ben-manes-versions = "com.github.ben-manes.versions:0.47.0"
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "com-google-devtools-ksp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
