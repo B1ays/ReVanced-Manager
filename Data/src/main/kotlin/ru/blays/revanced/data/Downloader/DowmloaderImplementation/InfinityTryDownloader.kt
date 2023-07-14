@@ -9,14 +9,13 @@ import okhttp3.OkHttpClient
 import okio.IOException
 import org.koitharu.pausingcoroutinedispatcher.launchPausing
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
+import ru.blays.revanced.data.Downloader.DataClass.LogType
 import ru.blays.revanced.data.Downloader.DownloadTask
-import ru.blays.revanced.data.Downloader.Utils.LogType
 import ru.blays.revanced.data.Downloader.Utils.RWMode
 import ru.blays.revanced.data.Downloader.Utils.createChannel
 import ru.blays.revanced.data.Downloader.Utils.createFile
 import ru.blays.revanced.data.Downloader.Utils.createResponse
 import ru.blays.revanced.data.Downloader.Utils.isNull
-import ru.blays.revanced.data.Downloader.Utils.log
 import ru.blays.revanced.data.Downloader.Utils.position
 import java.nio.ByteBuffer
 import kotlin.time.Duration.Companion.seconds
@@ -31,6 +30,8 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
     override val speedFlow = MutableStateFlow(0L)
 
     override fun download(task: DownloadTask): DownloadInfo {
+
+        val log = task.logAdapter::log
 
         // Create file from name and extension
         val file = createFile(fileName = task.fileName, fileExtension = task.fileExtension)
@@ -50,7 +51,7 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
             val fileSize = file.length()
 
-            log("file size: $fileSize bytes")
+            log("file size: $fileSize bytes", LogType.INFO)
 
             val originalFileSize = getContentLength(task.url).also {
                 if (it.isNull()) return@mainJob
@@ -75,7 +76,7 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
                 try {
 
-                    log("Create new request")
+                    log("Create new request", LogType.INFO)
 
                     log("total bytes read: $totalBytesRead, channel position: ${channel.position}", LogType.DEBUG)
 
@@ -130,6 +131,7 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
                         inputStream.close()
                         downloadSpeedJob.cancel()
                         resp.close()
+                        log("Download complete", LogType.INFO)
                     }
                 } catch (e: IOException) {
                     log("Response error, exception: $e", LogType.WARN)
