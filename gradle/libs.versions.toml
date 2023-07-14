@@ -24,6 +24,7 @@ github-pausing-coroutine-dispatcher = "ee40ae5"
 io-github-raamcosta-compose-destinations = "1.9.50"
 koin-androidx-compose = "3.4.5"
 kotlin = "1.8.22"
+kotlin-reflect = "1.8.22"
 org-jetbrains-kotlin = "1.8.22"
 pausing-coroutine-dispatcher = "ee40ae5"
 rebugger = "1.0.0-alpha06"
@@ -92,6 +93,7 @@ io-github-raamcosta-compose-destinations-core = { module = "io.github.raamcosta.
 io-github-raamcosta-compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "io-github-raamcosta-compose-destinations" }
 koin-android = "io.insert-koin:koin-android:3.4.2"
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-androidx-compose" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin-reflect" }
 material3 = { module = "androidx.compose.material3:material3" }
 nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "core" }
 org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:3.0.0-alpha1"
