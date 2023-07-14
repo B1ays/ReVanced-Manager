@@ -22,6 +22,7 @@ import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
+import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
@@ -161,6 +162,7 @@ class VersionsListScreenViewModel(
                     file.delete()
                 }
             )
+            .setLogAdapter(LogAdapterBLog::class)
             .build()
 
         downloadsRepository.addToList(task)
@@ -202,6 +204,7 @@ class VersionsListScreenViewModel(
                     file.delete()
                 }
             )
+            .setLogAdapter(LogAdapterBLog::class)
             .build()
             .also { downloadInfo ->
                 downloadsRepository.addToList(downloadInfo)
@@ -243,6 +246,7 @@ class VersionsListScreenViewModel(
                     file.delete()
                 }
             )
+            .setLogAdapter(LogAdapterBLog::class)
             .build()
             .also { downloadInfo ->
                 downloadsRepository.addToList(downloadInfo)

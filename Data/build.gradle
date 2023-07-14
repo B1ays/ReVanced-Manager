@@ -41,6 +41,9 @@ dependencies {
     // KotlinX Serialization
     implementation libs.org.jetbrains.kotlinx.kotlinx.serialization.json.asProvider()
 
+    // Kotlin reflection
+    implementation libs.kotlin.reflect
+
     // OkHttp
     implementation libs.com.squareup.okhttp3.okhttp.asProvider()
 
@@ -55,6 +58,7 @@ dependencies {
 
     // Pausing coroutines
     implementation libs.pausing.coroutine.dispatcher.asProvider()
+
 
     // Modules
     implementation project(path: ':Domain')
