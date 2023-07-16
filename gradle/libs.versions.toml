@@ -25,6 +25,7 @@ io-github-raamcosta-compose-destinations = "1.9.50"
 koin-androidx-compose = "3.4.5"
 kotlin = "1.8.22"
 kotlin-reflect = "1.8.22"
+material = "1.4.3"
 org-jetbrains-kotlin = "1.8.22"
 pausing-coroutine-dispatcher = "ee40ae5"
 rebugger = "1.0.0-alpha06"
@@ -70,6 +71,8 @@ androidx-lifecycle-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycl
 androidx-lifecycle-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-room-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }

@@ -50,6 +50,6 @@ class App: Application() {
         NotificationManagerCompat.from(this@App).createNotificationChannel(channel)
 
         // Crash handler
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
+        if (!BuildConfig.DEBUG) Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
     }
 }

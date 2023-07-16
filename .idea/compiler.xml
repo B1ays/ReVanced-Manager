@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="18">
+      <module name="AndroidStudioProjects.ReVancedManager.helios.test" target="18" />
+      <module name="ReVancedManager.helios" target="18" />
+      <module name="ReVancedManager.helios.main" target="18" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
