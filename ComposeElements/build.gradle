@@ -46,6 +46,7 @@ android {
 
 dependencies {
 
+    // AndroidX
     implementation libs.androidx.core.asProvider()
 
     //Compose
@@ -55,8 +56,6 @@ dependencies {
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.runtime.asProvider()
     implementation libs.androidx.compose.ui.asProvider()
-    implementation libs.androidx.compose.ui.ui.tooling.preview
-    debugImplementation libs.androidx.compose.ui.ui.tooling.asProvider()
 
     // Compose Markdown
     implementation libs.compose.markdown

@@ -1,5 +1,6 @@
 package ru.blays.helios.navigator
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -95,7 +96,7 @@ fun Navigator(
     }
 }
 
-class Navigator constructor(
+class Navigator(
     screens: List<Screen>,
     val key: String,
     private val stateHolder: SaveableStateHolder,
@@ -103,8 +104,7 @@ class Navigator constructor(
     val parent: Navigator? = null
 ) : Stack<Screen> by screens.toMutableStateStack(minSize = 1) {
 
-    val level: Int =
-        parent?.level?.inc() ?: 0
+    val level: Int = parent?.level?.inc() ?: 0
 
     val lastItem: Screen by derivedStateOf {
         lastItemOrNull ?: error("Navigator has no screen")
@@ -114,14 +114,7 @@ class Navigator constructor(
 
     internal val children = ThreadSafeMap<NavigatorKey, Navigator>()
 
-    @Deprecated(
-        message = "Use 'lastItem' instead. Will be removed in 1.0.0.",
-        replaceWith = ReplaceWith("lastItem")
-    )
-    val last: Screen by derivedStateOf {
-        lastItem
-    }
-
+    @SuppressLint("ComposableNaming")
     @Composable
     fun saveableState(
         key: String,
@@ -188,4 +181,4 @@ data class NavigatorDisposeBehavior(
 @Composable
 fun compositionUniqueId(): String = currentCompositeKeyHash.toString(MaxSupportedRadix)
 
-private val MaxSupportedRadix = 36
+private const val MaxSupportedRadix = 36

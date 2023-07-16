@@ -6,7 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.blays.helios.navigator.Navigator
@@ -23,6 +23,6 @@ fun FadeTransition(
         navigator = navigator,
         modifier = modifier,
         content = content,
-        transition = { fadeIn(animationSpec = animationSpec) with fadeOut(animationSpec = animationSpec) }
+        transition = { fadeIn(animationSpec = animationSpec) togetherWith fadeOut(animationSpec = animationSpec) }
     )
 }

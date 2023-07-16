@@ -7,7 +7,6 @@ import ru.blays.helios.core.ScreenLifecycleOwner
 import ru.blays.helios.core.ScreenLifecycleProvider
 import ru.blays.helios.core.uniqueScreenKey
 
-
 abstract class AndroidScreen : Screen, ScreenLifecycleProvider {
 
     override val key: ScreenKey = uniqueScreenKey

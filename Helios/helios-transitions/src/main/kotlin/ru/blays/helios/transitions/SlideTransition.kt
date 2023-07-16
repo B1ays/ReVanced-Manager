@@ -9,13 +9,12 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import ru.blays.helios.core.StackEvent
 import ru.blays.helios.navigator.Navigator
-
 
 @ExperimentalAnimationApi
 @Composable
@@ -35,17 +34,17 @@ fun SlideTransition(
         content = content,
         transition = {
             val (initialOffset, targetOffset) = when (navigator.lastEvent) {
-                StackEvent.Pop -> ({ size: Int -> -size }) to ({ size: Int -> size })
-                else -> ({ size: Int -> size }) to ({ size: Int -> -size })
+                StackEvent.Pop -> ({ size: Int -> -size } to { size: Int -> size })
+                else -> ({ size: Int -> size } to { size: Int -> -size })
             }
 
             when (orientation) {
                 SlideOrientation.Horizontal ->
-                    slideInHorizontally(animationSpec, initialOffset) with
-                            slideOutHorizontally(animationSpec, targetOffset)
+                    slideInHorizontally(animationSpec, initialOffset) togetherWith
+                        slideOutHorizontally(animationSpec, targetOffset)
                 SlideOrientation.Vertical ->
-                    slideInVertically(animationSpec, initialOffset) with
-                            slideOutVertically(animationSpec, targetOffset)
+                    slideInVertically(animationSpec, initialOffset) togetherWith
+                        slideOutVertically(animationSpec, targetOffset)
             }
         }
     )

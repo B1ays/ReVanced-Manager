@@ -13,7 +13,7 @@ internal fun NavigatorBackHandler(
             enabled = navigator.canPop || navigator.parent?.canPop ?: false,
             onBack = {
                 if (onBackPressed(navigator.lastItem)) {
-                    if (navigator.pop().not()) {
+                    if (!navigator.pop()) {
                         navigator.parent?.pop()
                     }
                 }

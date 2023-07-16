@@ -20,8 +20,19 @@ internal fun rememberNavigator(
 ): Navigator {
     val stateHolder = LocalNavigatorStateHolder.current
     val navigatorSaver = LocalNavigatorSaver.current
-    val saver = remember(navigatorSaver, stateHolder, parent, disposeBehavior) {
-        navigatorSaver.saver(screens, key, stateHolder, disposeBehavior, parent)
+    val saver = remember(
+        navigatorSaver,
+        stateHolder,
+        parent,
+        disposeBehavior
+    ) {
+        navigatorSaver.saver(
+            screens,
+            key,
+            stateHolder,
+            disposeBehavior,
+            parent
+        )
     }
 
     return rememberSaveable(saver = saver, key = key) {

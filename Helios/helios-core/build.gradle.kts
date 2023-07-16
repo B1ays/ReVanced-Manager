@@ -42,7 +42,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.activity.activity.compose)
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.material)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.compose.ui.ui.tooling)
 

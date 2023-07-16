@@ -66,11 +66,8 @@ dependencies {
     implementation libs.androidx.compose.animation
     implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.material3
-    implementation libs.androidx.material
     implementation libs.androidx.compose.runtime.asProvider()
     implementation libs.androidx.compose.ui.asProvider()
-    implementation libs.androidx.compose.ui.ui.tooling.asProvider()
-    implementation platform(libs.compose.bom)
 
     // Accompanist
     implementation libs.accompanist.permissions
@@ -94,11 +91,6 @@ dependencies {
     implementation libs.com.squareup.okhttp3.okhttp.asProvider()
 
     // Helios
-    /*implementation projects.heliosCore*/
-    /*implementation projects.heliosNavigator*/
-    /*implementation projects.heliosBottomSheetNavigator*/
-    /*implementation projects.heliosAndroidx*/
-    /*implementation projects.heliosTransitions*/
     implementation project (path: ':Helios:helios-core')
     implementation project (path: ':Helios:helios-navigator')
     implementation project (path: ':Helios:helios-bottom-sheet-navigator')

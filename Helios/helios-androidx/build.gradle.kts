@@ -43,12 +43,6 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
 
     // Helios
-    /*implementation(projects.heliosCore)*/
     implementation(project(":Helios:helios-core"))
 
-    /*implementation(Dependencies.ktx)
-    implementation(Dependencies.stdLib)
-    implementation(Dependencies.composeRuntime)
-
-    api(project(":core"))*/
 }

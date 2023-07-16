@@ -42,7 +42,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.activity.activity.compose)
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.material)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.compose.ui.ui.tooling)
 
@@ -50,26 +50,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.lifecycle.viewmodel.compose)
 
     // Helios
-    /*implementation(projects.heliosCore)
-    implementation(projects.heliosNavigator)*/
     implementation(project(":Helios:helios-core"))
     implementation(project(":Helios:helios-navigator"))
 
-
-   /* implementation(Dependencies.ktx)
-    implementation(Dependencies.stdLib)
-    implementation(Dependencies.composeRuntime)
-
-    implementation(Dependencies.composeActivity)
-    implementation(Dependencies.composeUi)
-    implementation(Dependencies.composeMaterial)
-    implementation(Dependencies.composeFoundation)
-    implementation(Dependencies.composeLifecycleRuntime)
-    implementation(Dependencies.composeTooling)
-
-    implementation(Dependencies.lifecycleKtx)
-    implementation(Dependencies.lifecycleCompose)
-
-    implementation(project(":core"))
-    implementation(project(":navigator"))*/
 }
