@@ -34,21 +34,21 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.navigate
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.ThemeModel
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
-import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
-import ru.Blays.ReVanced.Manager.UI.Screens.destinations.LogViewerScreenDestination
 import ru.Blays.ReVanced.Manager.UI.Theme.rainbowColors
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
+import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.core.Screen
+import ru.blays.helios.dialogs.LocalDialogNavigator
+import ru.blays.helios.navigator.LocalNavigator
+import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
-import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerAlertDialog
+import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerDialogContent
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerItem
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.CurrentSegment
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.Segment
@@ -68,119 +68,120 @@ import kotlin.math.roundToLong
 
 private const val TAG = "SettingsScreen"
 
-@Destination
-@Composable
-fun SettingsScreen(
-    settingsRepository: SettingsRepository = koinInject(),
-    navController: NavController
-) {
 
-    val scrollBehavior = rememberToolbarScrollBehavior()
-    
-    var isSpinnerExpanded by remember { mutableStateOf(false) }
+class SettingsScreen: AndroidScreen() {
 
-    var isAlertDialogShown by remember { mutableStateOf(false) }
-    
-    val changeExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
+    @Composable
+    override fun Content() {
 
-    val changeAlertDialogVisibility = { isAlertDialogShown = !isAlertDialogShown }
+        val navigator = LocalNavigator.currentOrThrow
 
-    val lazyListState = rememberLazyListState()
+        val dialogNavigator = LocalDialogNavigator.current
 
-    shouldHideNavigationBar = when {
-        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
-        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
-        else -> false
-    }
+        val settingsRepository: SettingsRepository = koinInject()
+        val scrollBehavior = rememberToolbarScrollBehavior()
 
-    Scaffold(
-        topBar = {
-            CustomToolbar(
-                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = "NavigateBack",
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
-                        )
+        var isSpinnerExpanded by remember { mutableStateOf(false) }
+
+        val changeSpinnerExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
+
+        val lazyListState = rememberLazyListState()
+
+        shouldHideNavigationBar = when {
+            !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+            !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+            else -> false
+        }
+
+        Scaffold(
+            topBar = {
+                CustomToolbar(
+                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
+                    navigationIcon = {
+                        IconButton(onClick = navigator::pop) {
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowBack,
+                                contentDescription = "NavigateBack",
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
+                    },
+                    actions = {
+                        DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeSpinnerExpanded) {
+                            DropdownMenuItem(
+                                text = { Text(text = getStringRes(R.string.About_app)) },
+                                onClick = { navigator.push(AboutScreen()) }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(id = R.string.App_logs)) },
+                                onClick = { navigator.push(LogViewerScreen()) }
+                            )
+                            if (BuildConfig.DEBUG) DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(id = R.string.Crash_app),
+                                        color = Color.Red
+                                    )
+                                },
+                                onClick = { throw RuntimeException("Test crash") }
+                            )
+                        }
+                        IconButton(onClick = changeSpinnerExpanded) {
+                            Icon(
+                                imageVector = Icons.Rounded.MoreVert,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior
+                )
+            }
+        ) { padding ->
+
+            LazyColumn(
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .padding(top = padding.calculateTopPadding())
+                    .fillMaxSize(),
+                state = lazyListState
+            ) {
+                itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_theme)) {
+                    ThemeSelector(repository = settingsRepository)
+                    isSAndAboveCompose {
+                        MonetColors(repository = settingsRepository)
                     }
-                },
-                actions = {
-                    DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeExpanded) {
-                        DropdownMenuItem(text = { Text(text = getStringRes(R.string.About_app)) }, onClick = { navController.navigate(
-                            AboutScreenDestination
-                        ) })
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(id = R.string.App_logs)) },
-                            onClick = { navController.navigate(LogViewerScreenDestination) }
-                        )
-                        if (BuildConfig.DEBUG) DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(id = R.string.Crash_app),
-                                    color = Color.Red
+                    AmoledTheme(repository = settingsRepository)
+                    AccentSelector(
+                        openAlertDialog = {
+                            dialogNavigator.showNonDismissible(
+                                ColorPickerDialog(
+                                    color = settingsRepository.currentAccentColor,
+                                    onClose = dialogNavigator::hide,
+                                    onPick = { color ->
+                                        BLog.i(TAG, "selected custom color: $color")
+                                        settingsRepository.customAccentColorArgb = color.toArgb()
+                                    }
                                 )
-                            },
-                            onClick = { throw RuntimeException("Test crash") })
-                    }
-                    IconButton(onClick = changeExpanded) {
-                        Icon(
-                            imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
-        }
-    ) { padding ->
+                            )
+                        },
+                        settingsRepository.accentColorItem,
+                        settingsRepository.isCustomColorSelected,
+                        settingsRepository)
 
-        LazyColumn(
-            modifier = Modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .padding(top = padding.calculateTopPadding())
-                .fillMaxSize(),
-            state = lazyListState
-        ) {
-            itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_theme)) {
-                ThemeSelector(repository = settingsRepository)
-                isSAndAboveCompose {
-                    MonetColors(repository = settingsRepository)
                 }
-                AmoledTheme(repository = settingsRepository)
-                AccentSelector(
-                    changeAlertDialogVisibility,
-                    settingsRepository.accentColorItem,
-                    settingsRepository.isCustomColorSelected,
-                    settingsRepository)
 
-            }
+                itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
+                    InstallerType(repository = settingsRepository)
+                    ManagedApps(repository = settingsRepository)
+                }
 
-            itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
-                InstallerType(repository = settingsRepository)
-                ManagedApps(repository = settingsRepository)
-            }
-
-            itemsGroupWithHeader(title = getStringRes(id = R.string.Settings_title_cache)) {
-                CacheLifetimeSelector(repository = settingsRepository)
+                itemsGroupWithHeader(title = getStringRes(id = R.string.Settings_title_cache)) {
+                    CacheLifetimeSelector(repository = settingsRepository)
+                }
             }
         }
     }
-    if (isAlertDialogShown) {
-        ColorPickerAlertDialog(
-            color = settingsRepository.currentAccentColor,
-            onClose = changeAlertDialogVisibility,
-            onPick = { color ->
-                BLog.i(TAG, "selected custom color: $color")
-                settingsRepository.customAccentColorArgb = color.toArgb()
-            }
-        )
-    }
-
 }
 
 @Composable
@@ -228,7 +229,7 @@ fun AmoledTheme(repository: SettingsRepository) {
 
 @Composable
 private fun AccentSelector(
-    onColorPickerClick: () -> Unit,
+    openAlertDialog: () -> Unit,
     selectedItemIndex: Int,
     customColorSelected: Boolean,
     repository: SettingsRepository
@@ -256,7 +257,7 @@ private fun AccentSelector(
                     brush = rainbowBrush,
                     customColorSelected = customColorSelected,
                     actionSelect = { repository.isCustomColorSelected = true },
-                    actionOpenDialog = onColorPickerClick
+                    actionOpenDialog = openAlertDialog
                 )
             }
         }
@@ -366,6 +367,21 @@ fun CacheLifetimeSelector(repository: SettingsRepository) {
                 } catch (_: Exception) {}
                 repository.cacheLifetimeLong = newValue.roundToLong()
             }
+        )
+    }
+}
+
+class ColorPickerDialog(
+    private val color: Color,
+    private val onClose: () -> Unit,
+    private val onPick: (color: Color) -> Unit
+): Screen {
+    @Composable
+    override fun Content() {
+        ColorPickerDialogContent(
+            color = color,
+            onClose = onClose,
+            onPick = onPick
         )
     }
 }

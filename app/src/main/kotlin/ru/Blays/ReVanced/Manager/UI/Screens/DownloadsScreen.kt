@@ -27,11 +27,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
+import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.navigator.LocalNavigator
+import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.DownloadItem
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.FileItem
 import ru.blays.revanced.shared.R
@@ -40,86 +41,89 @@ import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
 
-@Destination
-@Composable
-fun DownloadsScreen(
-    repository: DownloadsRepository = koinInject(),
-    navController: NavController
-) {
+class DownloadsScreen: AndroidScreen(){
 
-    val scrollBehavior = rememberToolbarScrollBehavior()
+    @Composable
+    override fun Content() {
 
-    val list = repository.downloadsList
+        val navigator = LocalNavigator.currentOrThrow
 
-    val existingFilesList = repository.existingFilesList
+        val repository: DownloadsRepository = koinInject()
 
-    val lazyListState = rememberLazyListState()
+        val scrollBehavior = rememberToolbarScrollBehavior()
 
-    shouldHideNavigationBar = when {
-        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
-        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
-        else -> false
-    }
+        val list = repository.downloadsList
 
-    Scaffold(
-        topBar = {
-            CustomToolbar(
-                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Downloads)),
-                scrollBehavior = scrollBehavior,
-                navigationIcon = {
-                    IconButton(
-                        onClick = navController::navigateUp
+        val existingFilesList = repository.existingFilesList
+
+        val lazyListState = rememberLazyListState()
+
+        shouldHideNavigationBar = when {
+            !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+            !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+            else -> false
+        }
+
+        Scaffold(
+            topBar = {
+                CustomToolbar(
+                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Downloads)),
+                    scrollBehavior = scrollBehavior,
+                    navigationIcon = {
+                        IconButton(
+                            onClick = navigator::pop
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowBack,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
+                    }
+                )
+            }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = padding.calculateTopPadding())
+                    .fillMaxSize()
+                    .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
+                state = lazyListState
+            ) {
+                items(list) {
+                    DownloadItem(downloadInfo = it, repository::removeFromList)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                items(existingFilesList) {
+                    FileItem(file = it, actionRemove = repository::removeExistingFile)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+
+            if (repository.downloadsList.isEmpty() && repository.existingFilesList.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7F),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
+                            modifier = Modifier
+                                .size(200.dp),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.round_file_download_off_24),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
                         )
+                        Spacer(modifier = Modifier.height(15.dp))
+                        Text(
+                            text = stringResource(id = R.string.Downloads_not_found),
+                            style = MaterialTheme.typography.displayMedium,
+                            textAlign = TextAlign.Center
+                        )
                     }
-                }
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(top = padding.calculateTopPadding())
-                .fillMaxSize()
-                .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
-            state = lazyListState
-        ) {
-            items(list) {
-                DownloadItem(downloadInfo = it, repository::removeFromList)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            items(existingFilesList) {
-                FileItem(file = it, actionRemove = repository::removeExistingFile)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-
-        if (repository.downloadsList.isEmpty() && repository.existingFilesList.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    modifier = Modifier
-                    .fillMaxWidth(0.7F),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(200.dp),
-                        imageVector = ImageVector.vectorResource(id = R.drawable.round_file_download_off_24),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
-                    )
-                    Spacer(modifier = Modifier.height(15.dp))
-                    Text(
-                        text = stringResource(id = R.string.Downloads_not_found),
-                        style = MaterialTheme.typography.displayMedium,
-                        textAlign = TextAlign.Center
-                    )
                 }
             }
         }

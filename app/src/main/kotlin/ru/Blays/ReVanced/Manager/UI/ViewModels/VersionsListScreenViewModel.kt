@@ -1,14 +1,11 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -23,7 +20,6 @@ import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
-import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
@@ -42,27 +38,14 @@ class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
     private val getApkListUseCase: GetApkListUseCase,
     private val getChangelogUseCase: GetChangelogUseCase
-) : ViewModel(), CoroutineScope {
-
-    // Coroutine scope for launch suspend functions
-    override val coroutineContext = Dispatchers.IO
+) : BaseViewModel() {
 
     // UI states
     var isRefreshing by mutableStateOf(false)
 
     var appName by mutableStateOf("")
 
-    var list by mutableStateOf(emptyList<VersionsInfoModelDto>())
-
-    var isApkListBottomSheetExpanded = MutableStateFlow(false)
-
-    var isChangelogBottomSheetExpanded = MutableStateFlow(false)
-
-    var magiskInstallerDialogState by mutableStateOf(MagiskInstallerAlertDialogState())
-
-    var bottomSheetList = MutableStateFlow(emptyList<ApkInfoModelDto>())
-
-    var changelog = MutableStateFlow("")
+    var versionsList by mutableStateOf(emptyList<VersionsInfoModelDto>())
 
     var pagesCount by mutableIntStateOf(0)
 
@@ -72,28 +55,21 @@ class VersionsListScreenViewModel(
 
     private val downloadsRepository: DownloadsRepository = get(DownloadsRepository::class.java)
 
-    private var app: Apps? = null
-
     var repository: VersionsRepository? = null
+        private set
 
-    fun getAppsEnumByAppType(appType: String) {
-        app = when(appType) {
-            Apps.YOUTUBE.repository.appType -> Apps.YOUTUBE
-            Apps.YOUTUBE_MUSIC.repository.appType -> Apps.YOUTUBE_MUSIC
-            Apps.MICROG.repository.appType -> Apps.MICROG
-            else -> null
-        }
-        app?.let { app -> getDataFromRepository(app.repository)}
-    }
+    fun getDataForApp(app: Apps) {
+        isRefreshing = true
+        val repository = app.repository
+        this.repository = repository
 
-    private fun getDataFromRepository(repo: VersionsRepository) {
-        repository = repo
-        calculatePagesCount(repo)
-        appName = repo.appName
-        if (repo.versionsList.isNotEmpty()) {
-            list = repo.versionsList
+        calculatePagesCount(repository)
+        appName = repository.appName
+        if (repository.versionsList.isNotEmpty()) {
+            versionsList = repository.versionsList
+            isRefreshing = false
         } else {
-            launch { getList(repo.appType) }
+            launch { getList(repository.appType) }
         }
     }
 
@@ -103,7 +79,7 @@ class VersionsListScreenViewModel(
 
     private suspend fun getList(appType: String) = withContext(Dispatchers.IO) {
         isRefreshing = true
-        list = getVersionsListUseCase.execut(appType)
+        versionsList = getVersionsListUseCase.execut(appType)
         isRefreshing = false
     }
 
@@ -111,19 +87,14 @@ class VersionsListScreenViewModel(
         launch { repository?.updateInfo(recreateCache = true) }
     }
 
-    val hideRebootAlertDialog = { magiskInstallerDialogState = MagiskInstallerAlertDialogState() }
-    val showRebootAlertDialog = { magiskInstallerDialogState = magiskInstallerDialogState.copy(isExpanded = true) }
-
-    suspend fun showApkListBottomSheet(url: String, rootVersion: Boolean) {
-        bottomSheetList.value = getApkListUseCase.execute(url)?.filter {
-            it.isRootVersion == rootVersion
-        } ?: emptyList()
-        isApkListBottomSheetExpanded.emit(true)
+    suspend fun getApkList(url: String, rootVersion: Boolean): List<ApkInfoModelDto> {
+         return getApkListUseCase.execute(url)
+            ?.filter { it.isRootVersion == rootVersion }
+            ?: emptyList()
     }
 
-    suspend fun showChangelogBottomSheet(url: String) {
-        changelog.emit(getChangelogUseCase.execut(url))
-        isChangelogBottomSheetExpanded.emit(true)
+    suspend fun getChangelog(url: String): String {
+        return getChangelogUseCase.execut(url)
     }
 
     fun delete(packageName: String) {
@@ -181,8 +152,6 @@ class VersionsListScreenViewModel(
         val origApkDownloadTask = DownloadTask(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
             .setDefaultActions(
                 onSuccess = {
-                    Log.d("DownloadCallback", "orig apk download success")
-
                     launch {
                         with(state) { emit(value.copy(origApkDownloaded = true)) }
 
@@ -213,16 +182,12 @@ class VersionsListScreenViewModel(
         val modApkDownloadTask = DownloadTask(url = filesModel.modUrl, fileName = filesModel.fileName)
             .setDefaultActions(
                 onSuccess = {
-
-                    Log.d("DownloadCallback", "mod apk download success")
-
                     launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
 
                     collect(state) {
 
                         if (it.origApkInstalled) {
                             launch {
-                                Log.d("ViewModel", "start installer")
                                 repository?.moduleType?.let { module ->
                                     MagiskInstaller.install(
                                         module,
@@ -234,7 +199,6 @@ class VersionsListScreenViewModel(
                                     onRefresh()
                                 }
                             }
-                            magiskInstallerDialogState = MagiskInstallerAlertDialogState(MagiskInstaller.status, true)
                         }
                     }
                 },

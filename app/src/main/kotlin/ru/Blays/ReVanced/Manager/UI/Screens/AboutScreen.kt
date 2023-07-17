@@ -33,10 +33,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.ramcosta.composedestinations.annotation.Destination
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
+import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.navigator.LocalNavigator
+import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
@@ -51,79 +52,80 @@ import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
 
-@Destination
-@Composable
-fun AboutScreen(
-    navController: NavController
-) {
+class AboutScreen: AndroidScreen() {
 
-    val contactsList = listOf(
-        Contact(iconID = R.drawable.ic_telegram, getStringRes(R.string.about_social_telegram), "https://t.me/B1ays"),
-        Contact(iconID = R.drawable.ic_4pda, getStringRes(R.string.about_social_4pda), "https://4pda.to/forum/index.php?showuser=7576426")
-    )
+    @Composable
+    override fun Content() {
+        val contactsList = listOf(
+            Contact(iconID = R.drawable.ic_telegram, getStringRes(R.string.about_social_telegram), "https://t.me/B1ays"),
+            Contact(iconID = R.drawable.ic_4pda, getStringRes(R.string.about_social_4pda), "https://4pda.to/forum/index.php?showuser=7576426")
+        )
 
-    val creditsList = listOf(
-        Credits(name = "hh.ru", reason = getStringRes(R.string.about_credits_reason_hh), linkUri = Uri.parse("https://github.com/hhru/hh-histories-compose-custom-toolbar")),
-        Credits(name = "iTaysonLab", reason = getStringRes(R.string.about_credits_reason_iTaysonLab), linkUri = Uri.parse("https://github.com/iTaysonLab/jetisteam")),
-        Credits(name = "Material Foundation", reason = getStringRes(R.string.about_credits_reason_material_foundation), linkUri = Uri.parse("https://github.com/material-foundation/material-color-utilities")),
-        Credits(name = "Vanced Team", reason = getStringRes(R.string.about_credits_reason_teamVanced), linkUri = Uri.parse("https://github.com/TeamVanced/VancedManager")),
-    )
+        val creditsList = listOf(
+            Credits(name = "hh.ru", reason = getStringRes(R.string.about_credits_reason_hh), linkUri = Uri.parse("https://github.com/hhru/hh-histories-compose-custom-toolbar")),
+            Credits(name = "iTaysonLab", reason = getStringRes(R.string.about_credits_reason_iTaysonLab), linkUri = Uri.parse("https://github.com/iTaysonLab/jetisteam")),
+            Credits(name = "Material Foundation", reason = getStringRes(R.string.about_credits_reason_material_foundation), linkUri = Uri.parse("https://github.com/material-foundation/material-color-utilities")),
+            Credits(name = "Vanced Team", reason = getStringRes(R.string.about_credits_reason_teamVanced), linkUri = Uri.parse("https://github.com/TeamVanced/VancedManager")),
+        )
 
-    val scrollBehavior = rememberToolbarScrollBehavior()
+        val scrollBehavior = rememberToolbarScrollBehavior()
 
-    val lazyListState = rememberLazyListState()
+        val lazyListState = rememberLazyListState()
 
-    shouldHideNavigationBar = when {
-        !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
-        !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
-        else -> false
-    }
+        val navigator = LocalNavigator.currentOrThrow
 
-    Scaffold(
-        topBar = {
-            CustomToolbar(
-                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_About)),
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = "NavigateBack",
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
+        shouldHideNavigationBar = when {
+            !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+            !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+            else -> false
         }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .nestedScroll(
-                    scrollBehavior.nestedScrollConnection
-                )
-                .padding(
-                    top = padding.calculateTopPadding()
-                )
-                .fillMaxSize(),
-            state = lazyListState
-        ) {
 
-            itemsGroupWithHeader(title = getStringRes(R.string.about_group_information)) {
-                HeadItem(
-                    appIco = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
-                    appName = stringResource(R.string.app_name),
-                    versionName = BuildConfig.VERSION_NAME,
-                    buildType = BuildConfig.BUILD_TYPE
+        Scaffold(
+            topBar = {
+                CustomToolbar(
+                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_About)),
+                    navigationIcon = {
+                        IconButton(onClick = navigator::pop) {
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowBack,
+                                contentDescription = "NavigateBack",
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior
                 )
             }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .nestedScroll(
+                        scrollBehavior.nestedScrollConnection
+                    )
+                    .padding(
+                        top = padding.calculateTopPadding()
+                    )
+                    .fillMaxSize(),
+                state = lazyListState
+            ) {
 
-            itemsGroupWithHeader(title = getStringRes(R.string.about_group_author)) {
-                AuthorCard()
-                ContactsCards(contactsList)
-            }
+                itemsGroupWithHeader(title = getStringRes(R.string.about_group_information)) {
+                    HeadItem(
+                        appIco = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
+                        appName = stringResource(R.string.app_name),
+                        versionName = BuildConfig.VERSION_NAME,
+                        buildType = BuildConfig.BUILD_TYPE
+                    )
+                }
 
-            itemsGroupWithHeader(title = getStringRes(R.string.about_group_credits)) {
-                CreditCards(creditsList)
+                itemsGroupWithHeader(title = getStringRes(R.string.about_group_author)) {
+                    AuthorCard()
+                    ContactsCards(contactsList)
+                }
+
+                itemsGroupWithHeader(title = getStringRes(R.string.about_group_credits)) {
+                    CreditCards(creditsList)
+                }
             }
         }
     }
@@ -248,4 +250,3 @@ fun CreditCards(list: List<Credits>) {
         }
     }
 }
-
