@@ -8,7 +8,6 @@ ReVanced Manager is an application designed to manage ReVanced Team mods on your
 |:--------------:|:--------------:|
 | <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_3.png" width="290" height="620"> | <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_4.png" width="290" height="620"> |
 | <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_5.png" width="290" height="620"> | <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_6.png" width="290" height="620"> | 
-| <img src="https://github.com/B1ays/ReVanced-Manager/blob/52677b87c521f3891b1212ef6b96af2b01d6ed53/Screenshots/Screenshot_7.png" width="290" height="620"> |
 
 ## Functions
 - Download and install mods of apps like YouTube Revanced, YouTube Music Revanced and other (in future)
