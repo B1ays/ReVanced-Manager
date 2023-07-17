@@ -112,7 +112,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
         // Is the current page a page with root versions
         val rootVersionsPage = settledPage == 1
 
-        // Lazy list state
+        // Lazy versionsList state
         val lazyListState = rememberLazyListState()
 
         shouldHideNavigationBar = when {
@@ -251,7 +251,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                                         appInfo = viewModel.repository
                                                             ?.generateAppInfo(true)
                                                             ?: AppInfo(),
-                                                        actionDelete = viewModel::delete
+                                                        actionDelete = viewModel::deleteModule
                                                     )
                                                 )
                                             },
@@ -260,7 +260,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                     }
                                 }
 
-                                items(viewModel.list) { item ->
+                                items(viewModel.versionsList) { item ->
                                     VersionsInfoCard(
                                         item = item,
                                         actionShowChangelog = { url ->
