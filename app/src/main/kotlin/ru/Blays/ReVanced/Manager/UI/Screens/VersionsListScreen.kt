@@ -45,11 +45,11 @@ import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundBlue
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundRed
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
-import ru.Blays.ReVanced.Manager.Utils.showSuspend
 import ru.blays.helios.androidx.AndroidScreen
 import ru.blays.helios.core.Screen
 import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.bottomSheet.LocalBottomSheetNavigator
+import ru.blays.helios.navigator.bottomSheet.showSuspend
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
