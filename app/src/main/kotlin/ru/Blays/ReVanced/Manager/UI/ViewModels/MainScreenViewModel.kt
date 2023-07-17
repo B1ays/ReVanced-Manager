@@ -25,4 +25,8 @@ class MainScreenViewModel(private val getVersionsListUseCase: GetVersionsListUse
             isRefreshing = false
         }
     }
+
+    init {
+        onRefresh()
+    }
 }

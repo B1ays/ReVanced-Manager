@@ -1,6 +1,5 @@
 package ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen
 
-
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
@@ -35,12 +34,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,10 +55,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
@@ -77,8 +69,6 @@ import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
 import java.time.Duration
-import kotlin.reflect.KSuspendFunction1
-import kotlin.reflect.KSuspendFunction2
 
 @Composable
 fun VersionsListScreenHeader(
@@ -169,8 +159,8 @@ fun VersionsListScreenHeader(
 @Composable
 fun VersionsInfoCard(
     item: VersionsInfoModelDto,
-    actionShowChangelog: KSuspendFunction1<String, Unit>,
-    actionShowApkList: KSuspendFunction2<String, Boolean, Unit>,
+    actionShowChangelog: (String) -> Unit,
+    actionShowApkList: (String, Boolean) -> Unit,
     rootVersions: Boolean
 ) {
 
@@ -222,10 +212,8 @@ fun VersionsInfoCard(
             ) {
                 OutlinedButton(
                     onClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            item.changelogLink?.let {
-                                actionShowChangelog(it)
-                            }
+                        item.changelogLink?.let {
+                            actionShowChangelog(it)
                         }
                     }
                 ) {
@@ -234,9 +222,7 @@ fun VersionsInfoCard(
                 Spacer(modifier = Modifier.width(10.dp))
                 Button(
                     onClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            actionShowApkList(item.versionsListLink.orEmpty(), rootVersions)
-                        }
+                        actionShowApkList(item.versionsListLink.orEmpty(), rootVersions)
                     }
                 ) {
                     Text(text = getStringRes(R.string.Action_download))
@@ -247,83 +233,50 @@ fun VersionsInfoCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun SubversionsListBottomSheet(
-    isExpanded: MutableStateFlow<Boolean>,
-    list: MutableStateFlow<List<ApkInfoModelDto>>,
+fun SubversionsListBSContent(
+    list: List<ApkInfoModelDto>,
+    actionHide: () -> Unit,
     actionDownloadNonRootVersion: (String, String) -> Unit,
     actionDownloadRootVersion: (RootVersionDownloadModel) -> Unit,
     rootItemBackground: Color,
     nonRootItemBackground: Color
 ) {
 
-    val state = rememberModalBottomSheetState()
-
-    LaunchedEffect(key1 = Unit) {
-        state.expand()
-    }
-
-    val listState = list.collectAsState().value
-
-    val hideBottomSheet = {
-        isExpanded.tryEmit(false)
-    }
-
-    if (isExpanded.collectAsState().value) {
-        ModalBottomSheet(
-            onDismissRequest = { hideBottomSheet() },
-            sheetState = state,
-
-            ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                items(listState) { item ->
-                    ApkListItem(
-                        item = item,
-                        actionDownloadNonRootVersion = actionDownloadNonRootVersion,
-                        actionDownloadRootVersion = actionDownloadRootVersion,
-                        hideBottomSheet = hideBottomSheet,
-                        rootItemBackground = rootItemBackground,
-                        nonRootItemBackground = nonRootItemBackground
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                }
-            }
-            Spacer(Modifier.fillMaxHeight(0.1F))
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        items(list) { item ->
+            ApkListItem(
+                item = item,
+                hideBottomSheet = actionHide,
+                actionDownloadNonRootVersion = actionDownloadNonRootVersion,
+                actionDownloadRootVersion = actionDownloadRootVersion,
+                rootItemBackground = rootItemBackground,
+                nonRootItemBackground = nonRootItemBackground
+            )
+            Spacer(modifier = Modifier.height(6.dp))
         }
     }
+    Spacer(Modifier.fillMaxHeight(0.1F))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChangelogBottomSheet(isExpanded: MutableStateFlow<Boolean>, changelog: MutableStateFlow<String>) {
+fun ChangelogBSContent(markdown: String) {
 
     val scrollState = rememberScrollState()
 
-    val text by changelog.collectAsState()
-
-    val hideBottomSheet = {
-        isExpanded.tryEmit(false)
-    }
-
-    if (isExpanded.collectAsState().value) {
-        ModalBottomSheet(
-            onDismissRequest = { hideBottomSheet() }
-        ) {
-            MarkdownText(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
-                markdown = text,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(Modifier.fillMaxHeight(0.1F))
-        }
-    }
+    MarkdownText(
+        modifier = Modifier
+            .padding(12.dp)
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+        markdown = markdown,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+    Spacer(Modifier.fillMaxHeight(0.1F))
 }
 
 @Composable
@@ -350,11 +303,10 @@ fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot
     )
 }
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable fun ApkListItem(
     item: ApkInfoModelDto,
-    hideBottomSheet: () -> Boolean,
+    hideBottomSheet: () -> Unit,
     actionDownloadNonRootVersion: (String, String) -> Unit,
     actionDownloadRootVersion: (RootVersionDownloadModel) -> Unit,
     rootItemBackground: Color,
@@ -363,10 +315,7 @@ fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot
 
     Card(
         modifier = Modifier
-            .padding(
-                horizontal = DefaultPadding.CardHorizontalPadding,
-                vertical = DefaultPadding.CardVerticalPadding
-            ),
+            .padding(DefaultPadding.CardDefaultPadding),
         colors = CardDefaults.cardColors(containerColor = if (item.isRootVersion) rootItemBackground else nonRootItemBackground)
     ) {
         Row(
@@ -501,85 +450,6 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) 
                         modifier = Modifier.scale(1.3F)
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun DownloadProgressContent(downloadInfo: DownloadInfo) {
-
-    val progress by downloadInfo.progressFlow.collectAsState()
-
-    val speed by downloadInfo.speedFlow.collectAsState()
-
-    val fileName = downloadInfo.fileName
-
-    var isPaused by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Text(text = "${getStringRes(R.string.Download)}: $fileName")
-        Spacer(modifier = Modifier.height(10.dp))
-        GradientLinearProgressIndicator(
-            progress = progress,
-            strokeCap = StrokeCap.Round,
-            brush = Brush.linearGradient(
-                listOf(
-                    MaterialTheme.colorScheme.primary,
-                    MaterialTheme.colorScheme.secondary
-                )
-            )
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "${stringResource(R.string.Progress)}: ${(progress * 100).toInt()}%"
-        )
-        Text(
-            text = "${stringResource(R.string.Speed)}: $speed ${stringResource(R.string.Speed_kbs)}"
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row {
-
-            CustomIconButton(
-                onClick = {
-                    isPaused = !isPaused
-                    downloadInfo.actionPauseResume()
-                },
-                shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(6.dp)
-            ) {
-                Icon(
-                    imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else ImageVector.vectorResource(
-                        id = R.drawable.round_pause_24
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier.scale(1.3F)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            CustomIconButton(
-                onClick = {
-                    downloadInfo.actionCancel()
-                },
-                shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(6.dp)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
-                    contentDescription = null,
-                    modifier = Modifier.scale(1.3F)
-                )
             }
         }
     }

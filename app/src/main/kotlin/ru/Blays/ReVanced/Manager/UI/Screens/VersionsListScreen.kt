@@ -31,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.vectorResource
@@ -44,18 +45,23 @@ import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundBlue
 import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundRed
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
+import ru.Blays.ReVanced.Manager.Utils.showSuspend
 import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.core.Screen
 import ru.blays.helios.navigator.LocalNavigator
+import ru.blays.helios.navigator.bottomSheet.LocalBottomSheetNavigator
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.DataClasses.AppInfo
+import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTab
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabIndicator
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabRow
-import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ChangelogBottomSheet
+import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ChangelogBSContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.MagiskInstallInfoDialog
-import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBottomSheet
+import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBSContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
+import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -67,12 +73,11 @@ private const val TAG = "VersionsInfoScreen"
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 class VersionsListScreen(private val appType: Apps): AndroidScreen() {
 
-
-
     @Composable
     override fun Content() {
 
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
 
         val viewModel: VersionsListScreenViewModel = koinViewModel()
         val downloadsRepository: DownloadsRepository = koinInject()
@@ -82,7 +87,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
 
         // Get info about app on screen launch
         LaunchedEffect(key1 = appType) {
-            /*viewModel.getAppsEnumByAppType(appType)*/
+            viewModel.getDataForApp(appType)
         }
 
         val pullRefreshState = rememberPullRefreshState(
@@ -164,81 +169,98 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                     .fillMaxSize()
             ) {
 
-                Column {
+                // Hide content while data refreshing
+                if (!viewModel.isRefreshing) {
+                    Column {
 
-                    // If pages > 1 then show tabs
-                    if (viewModel.pagesCount > 1) {
-                        CustomTabRow(
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                                .fillMaxWidth(),
-                            selectedTabIndex = currentPage,
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = CircleShape,
-                            indicator = {
-                                CustomTabIndicator(
-                                    currentPagePosition = it[currentPage],
-                                    shape = CircleShape,
-                                    padding = 4.dp
-                                )
-                            }
-                        ) {
-                            CustomTab(
-                                selected = currentPage == 0,
-                                selectedContentColor = MaterialTheme.colorScheme.surface,
-                                unselectedContentColor = MaterialTheme.colorScheme.primary,
-                                minHeight = 45.dp,
-                                onClick = { scope.launch { pagerState.animateScrollToPage(0) } }
+                        // If pages > 1 then show tabs
+                        if (viewModel.pagesCount > 1) {
+                            CustomTabRow(
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    .fillMaxWidth(),
+                                selectedTabIndex = currentPage,
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = CircleShape,
+                                indicator = {
+                                    CustomTabIndicator(
+                                        currentPagePosition = it[currentPage],
+                                        shape = CircleShape,
+                                        padding = 4.dp
+                                    )
+                                }
                             ) {
-                                Text(text = "Non-Root")
-                            }
+                                CustomTab(
+                                    selected = currentPage == 0,
+                                    selectedContentColor = MaterialTheme.colorScheme.surface,
+                                    unselectedContentColor = MaterialTheme.colorScheme.primary,
+                                    minHeight = 45.dp,
+                                    onClick = { scope.launch { pagerState.animateScrollToPage(0) } }
+                                ) {
+                                    Text(text = "Non-Root")
+                                }
 
-                            CustomTab(
-                                selected = currentPage == 1,
-                                selectedContentColor = MaterialTheme.colorScheme.surface,
-                                unselectedContentColor = MaterialTheme.colorScheme.primary,
-                                minHeight = 45.dp,
-                                onClick = { scope.launch { pagerState.animateScrollToPage(1) } }
-                            ) {
-                                Text(text = "Root")
+                                CustomTab(
+                                    selected = currentPage == 1,
+                                    selectedContentColor = MaterialTheme.colorScheme.surface,
+                                    unselectedContentColor = MaterialTheme.colorScheme.primary,
+                                    minHeight = 45.dp,
+                                    onClick = { scope.launch { pagerState.animateScrollToPage(1) } }
+                                ) {
+                                    Text(text = "Root")
+                                }
                             }
                         }
-                    }
 
-                    HorizontalPager(state = pagerState) { page ->
+                        HorizontalPager(state = pagerState) { page ->
 
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(scrollBehavior.nestedScrollConnection),
-                            state = lazyListState
-                        ) {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                                state = lazyListState
+                            ) {
 
-                            if (page == 0) {
-                                stickyHeader {
-                                    VersionsListScreenHeader(
-                                        appInfo = viewModel.repository?.generateAppInfo() ?: AppInfo(),
-                                        actionDelete = viewModel::delete,
-                                        actionOpen = viewModel::launch
+                                if (page == 0) {
+                                    stickyHeader {
+                                        VersionsListScreenHeader(
+                                            appInfo = viewModel.repository?.generateAppInfo() ?: AppInfo(),
+                                            actionDelete = viewModel::delete,
+                                            actionOpen = viewModel::launch
+                                        )
+                                    }
+                                } else if (page == 1) {
+                                    stickyHeader {
+                                        VersionsListScreenHeader(
+                                            appInfo = viewModel.repository?.generateAppInfo(true) ?: AppInfo(),
+                                            actionDelete = viewModel::deleteModule,
+                                            actionOpen = viewModel::launch
+                                        )
+                                    }
+                                }
+
+                                items(viewModel.list) { item ->
+                                    VersionsInfoCard(
+                                        item = item,
+                                        actionShowChangelog = { url ->
+                                            bottomSheetNavigator.showSuspend(scope = viewModel) {
+                                                ChangelogBS(
+                                                    markdown = viewModel.getChangelog(url)
+                                                )
+                                            }
+                                        },
+                                        actionShowApkList = { url, isRoot ->
+                                            bottomSheetNavigator.showSuspend(scope = viewModel) {
+                                                VersionsListBS(
+                                                    list = viewModel.getApkList(url, isRoot),
+                                                    actionDownloadRootVersion = viewModel::downloadRootVersion,
+                                                    actionDownloadNonRootVersion = viewModel::downloadNonRootVersion
+                                                )
+                                            }
+                                        },
+                                        rootVersions = rootVersionsPage
                                     )
                                 }
-                            } else if (page == 1) {
-                                stickyHeader {
-                                    VersionsListScreenHeader(
-                                        appInfo = viewModel.repository?.generateAppInfo(true) ?: AppInfo(),
-                                        actionDelete = viewModel::deleteModule,
-                                        actionOpen = viewModel::launch
-                                    )
-                                }
-                            }
-
-                            items(viewModel.list) { item ->
-                                VersionsInfoCard(
-                                    item = item,
-                                    actionShowChangelog = viewModel::showChangelogBottomSheet,
-                                    actionShowApkList = viewModel::showApkListBottomSheet,
-                                    rootVersions = rootVersionsPage
-                                )
                             }
                         }
                     }
@@ -254,20 +276,6 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
             }
         }
 
-        SubversionsListBottomSheet(
-            isExpanded = viewModel.isApkListBottomSheetExpanded,
-            list = viewModel.bottomSheetList,
-            actionDownloadNonRootVersion = viewModel::downloadNonRootVersion,
-            actionDownloadRootVersion = viewModel::downloadRootVersion,
-            rootItemBackground = cardBackgroundRed,
-            nonRootItemBackground = cardBackgroundBlue
-        )
-
-        ChangelogBottomSheet(
-            isExpanded = viewModel.isChangelogBottomSheetExpanded,
-            changelog = viewModel.changelog
-        )
-
         if (viewModel.magiskInstallerDialogState.isExpanded) {
             BLog.i(TAG, "Open reboot dialog")
             MagiskInstallInfoDialog(
@@ -276,5 +284,33 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                 actionHide = viewModel.hideRebootAlertDialog
             )
         }
+    }
+}
+
+private class VersionsListBS(
+    private val list: List<ApkInfoModelDto>,
+    private val actionDownloadNonRootVersion: (String, String) -> Unit,
+    private val actionDownloadRootVersion: (RootVersionDownloadModel) -> Unit,
+    private val rootItemBackground: Color = cardBackgroundRed,
+    private val nonRootItemBackground: Color = cardBackgroundBlue
+): Screen {
+    @Composable
+    override fun Content() {
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
+        SubversionsListBSContent(
+            list = list,
+            actionHide = bottomSheetNavigator::hide,
+            actionDownloadNonRootVersion = actionDownloadNonRootVersion,
+            actionDownloadRootVersion = actionDownloadRootVersion,
+            rootItemBackground = rootItemBackground,
+            nonRootItemBackground = nonRootItemBackground
+        )
+    }
+}
+
+private class ChangelogBS(private val markdown: String): Screen {
+    @Composable
+    override fun Content() {
+        ChangelogBSContent(markdown = markdown)
     }
 }

@@ -21,7 +21,6 @@ import androidx.compose.material3.pullrefresh.PullRefreshIndicator
 import androidx.compose.material3.pullrefresh.pullRefresh
 import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -55,14 +54,9 @@ class MainScreen: AndroidScreen() {
         val navigator = LocalNavigator.currentOrThrow
 
         val viewModel: MainScreenViewModel = koinViewModel()
+        val updateScreenViewModel: AppUpdateScreenViewModel = koinViewModel()
         val settingsRepository: SettingsRepository = koinInject()
         val downloadsRepository: DownloadsRepository = koinInject()
-        val updateScreenViewModel: AppUpdateScreenViewModel = koinInject()
-
-        LaunchedEffect(key1 = Unit) {
-            viewModel.onRefresh()
-        }
-
 
         val pullRefreshState = rememberPullRefreshState(
             refreshing = viewModel.isRefreshing,
@@ -78,7 +72,6 @@ class MainScreen: AndroidScreen() {
             !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
             else -> false
         }
-
 
         Scaffold(
             topBar = {

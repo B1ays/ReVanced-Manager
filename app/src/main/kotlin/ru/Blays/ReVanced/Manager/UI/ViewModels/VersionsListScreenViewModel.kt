@@ -72,28 +72,21 @@ class VersionsListScreenViewModel(
 
     private val downloadsRepository: DownloadsRepository = get(DownloadsRepository::class.java)
 
-    private var app: Apps? = null
-
     var repository: VersionsRepository? = null
+        private set
 
-    fun getAppsEnumByAppType(appType: String) {
-        app = when(appType) {
-            Apps.YOUTUBE.repository.appType -> Apps.YOUTUBE
-            Apps.YOUTUBE_MUSIC.repository.appType -> Apps.YOUTUBE_MUSIC
-            Apps.MICROG.repository.appType -> Apps.MICROG
-            else -> null
-        }
-        app?.let { app -> getDataFromRepository(app.repository)}
-    }
+    fun getDataForApp(app: Apps) {
+        isRefreshing = true
+        val repository = app.repository
+        this.repository = repository
 
-    private fun getDataFromRepository(repo: VersionsRepository) {
-        repository = repo
-        calculatePagesCount(repo)
-        appName = repo.appName
-        if (repo.versionsList.isNotEmpty()) {
-            list = repo.versionsList
+        calculatePagesCount(repository)
+        appName = repository.appName
+        if (repository.versionsList.isNotEmpty()) {
+            list = repository.versionsList
+            isRefreshing = false
         } else {
-            launch { getList(repo.appType) }
+            launch { getList(repository.appType) }
         }
     }
 
@@ -114,16 +107,14 @@ class VersionsListScreenViewModel(
     val hideRebootAlertDialog = { magiskInstallerDialogState = MagiskInstallerAlertDialogState() }
     val showRebootAlertDialog = { magiskInstallerDialogState = magiskInstallerDialogState.copy(isExpanded = true) }
 
-    suspend fun showApkListBottomSheet(url: String, rootVersion: Boolean) {
-        bottomSheetList.value = getApkListUseCase.execute(url)?.filter {
+    suspend fun getApkList(url: String, rootVersion: Boolean): List<ApkInfoModelDto> {
+         return getApkListUseCase.execute(url)?.filter {
             it.isRootVersion == rootVersion
         } ?: emptyList()
-        isApkListBottomSheetExpanded.emit(true)
     }
 
-    suspend fun showChangelogBottomSheet(url: String) {
-        changelog.emit(getChangelogUseCase.execut(url))
-        isChangelogBottomSheetExpanded.emit(true)
+    suspend fun getChangelog(url: String): String {
+        return getChangelogUseCase.execut(url)
     }
 
     fun delete(packageName: String) {

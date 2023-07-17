@@ -45,27 +45,26 @@ fun BottomSheetNavigator(
     sheetElevation: Dp = BottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = MaterialTheme.colorScheme.surface,
     sheetContentColor: Color = contentColorFor(sheetBackgroundColor),
-    skipHalfExpanded: Boolean = true,
+    skipHalfExpanded: Boolean = false,
     key: String = compositionUniqueId(),
     sheetContent: BottomSheetNavigatorContent = { CurrentScreen() },
     content: BottomSheetNavigatorContent
 ) {
 
-    val hideBottomSheet: (() -> Unit)? = null
+    lateinit var hideBottomSheet: () -> Unit
 
     val coroutineScope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = skipHalfExpanded
-    ) { state ->
+
+    val sheetState = rememberModalBottomSheetState(skipHalfExpanded) { state ->
         when (state) {
             SheetValue.Hidden -> {
-                hideBottomSheet?.invoke()
+                hideBottomSheet()
                 false
             }
-
             else -> true
         }
     }
+
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = sheetState
     )
@@ -87,6 +86,8 @@ fun BottomSheetNavigator(
             )
         }
 
+        hideBottomSheet = bottomSheetNavigator::hide
+
         CompositionLocalProvider(LocalBottomSheetNavigator provides bottomSheetNavigator) {
             BottomSheetScaffold(
                 modifier = modifier,
@@ -95,10 +96,11 @@ fun BottomSheetNavigator(
                 sheetTonalElevation = sheetElevation,
                 containerColor = sheetBackgroundColor,
                 sheetContentColor = sheetContentColor,
+                sheetPeekHeight = 0.dp,
                 sheetContent = {
-                    BackHandler(enabled = sheetState.isVisible) {
-                        if (bottomSheetNavigator.pop().not() && hideOnBackPress) {
-                            bottomSheetNavigator.hide()
+                    BackHandler(enabled = scaffoldState.bottomSheetState.isVisible) {
+                        if (bottomSheetNavigator.canPop && hideOnBackPress) {
+                            hideBottomSheet()
                         }
                     }
                     sheetContent(bottomSheetNavigator)
@@ -123,6 +125,7 @@ class BottomSheetNavigator internal constructor(
         coroutineScope.launch {
             replaceAll(screen)
             sheetState.show()
+            sheetState.expand()
         }
     }
 
