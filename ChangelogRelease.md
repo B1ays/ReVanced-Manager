@@ -1,13 +1,8 @@
 ## Added
-- Added a true Amoled theme
-- Added the ability to scroll through the changelog text
-- Added detailed logging of all application activities
-- Implemented app self-updating feature
+- Animated theme / accent color change
+- Ability to manually select an accent color
+- Add logger for Downloader
 ## Changed
-- Redesigned multiple interface elements
-- Introduced a download manager. All download information is now located there, and previously downloaded files are also displayed.
-- Improved various animations
-- Rewritten the application's accent color selection. Added the ability to manually choose a color using ColorPicker
-- Changed the downloads folder to downloads/ReVanced manager
+- Replace Compose-destinations with [Voyager](https://github.com/adrielcafe/voyager) fork (Helios)
 ## Fixed
-- Fixed the statusbar color in light and dark themes
+- Fix bugs
