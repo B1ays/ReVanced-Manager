@@ -1,7 +1,6 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,15 +53,7 @@ class VersionsListScreenViewModel(
 
     var list by mutableStateOf(emptyList<VersionsInfoModelDto>())
 
-    var isApkListBottomSheetExpanded = MutableStateFlow(false)
-
-    var isChangelogBottomSheetExpanded = MutableStateFlow(false)
-
     var magiskInstallerDialogState by mutableStateOf(MagiskInstallerAlertDialogState())
-
-    var bottomSheetList = MutableStateFlow(emptyList<ApkInfoModelDto>())
-
-    var changelog = MutableStateFlow("")
 
     var pagesCount by mutableIntStateOf(0)
 
@@ -108,9 +99,9 @@ class VersionsListScreenViewModel(
     val showRebootAlertDialog = { magiskInstallerDialogState = magiskInstallerDialogState.copy(isExpanded = true) }
 
     suspend fun getApkList(url: String, rootVersion: Boolean): List<ApkInfoModelDto> {
-         return getApkListUseCase.execute(url)?.filter {
-            it.isRootVersion == rootVersion
-        } ?: emptyList()
+         return getApkListUseCase.execute(url)
+            ?.filter { it.isRootVersion == rootVersion }
+            ?: emptyList()
     }
 
     suspend fun getChangelog(url: String): String {
@@ -172,8 +163,6 @@ class VersionsListScreenViewModel(
         val origApkDownloadTask = DownloadTask(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
             .setDefaultActions(
                 onSuccess = {
-                    Log.d("DownloadCallback", "orig apk download success")
-
                     launch {
                         with(state) { emit(value.copy(origApkDownloaded = true)) }
 
@@ -204,16 +193,12 @@ class VersionsListScreenViewModel(
         val modApkDownloadTask = DownloadTask(url = filesModel.modUrl, fileName = filesModel.fileName)
             .setDefaultActions(
                 onSuccess = {
-
-                    Log.d("DownloadCallback", "mod apk download success")
-
                     launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
 
                     collect(state) {
 
                         if (it.origApkInstalled) {
                             launch {
-                                Log.d("ViewModel", "start installer")
                                 repository?.moduleType?.let { module ->
                                     MagiskInstaller.install(
                                         module,
