@@ -16,6 +16,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -27,21 +28,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.navigate
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.BuildConfig
+import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Repository.ThemeModel
-import ru.Blays.ReVanced.Manager.UI.Screens.destinations.AboutScreenDestination
+import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
+import ru.Blays.ReVanced.Manager.UI.Theme.rainbowColors
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
-import ru.blays.revanced.Elements.DataClasses.AccentColorItem
+import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.core.Screen
+import ru.blays.helios.dialogs.LocalDialogNavigator
+import ru.blays.helios.navigator.LocalNavigator
+import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
+import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerDialogContent
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerItem
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.CurrentSegment
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.Segment
@@ -49,8 +56,8 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWi
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCheckboxWithTitle
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
-import ru.blays.revanced.Elements.GlobalState.NavBarState
 import ru.blays.revanced.Services.RootService.Util.isRootGranted
+import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -61,73 +68,117 @@ import kotlin.math.roundToLong
 
 private const val TAG = "SettingsScreen"
 
-@Destination
-@Composable
-fun SettingsScreen(
-    settingsRepository: SettingsRepository = koinInject(),
-    navController: NavController
-) {
 
-    val scrollBehavior = rememberToolbarScrollBehavior()
-    
-    var isSpinnerExpanded by remember { mutableStateOf(false) }
-    
-    val changeExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
+class SettingsScreen: AndroidScreen() {
 
-    val lazyListState = rememberLazyListState()
+    @Composable
+    override fun Content() {
 
-    if (!lazyListState.canScrollForward && lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = true
-    else if (!lazyListState.canScrollForward && !lazyListState.canScrollBackward) NavBarState.shouldHideNavigationBar = false
-    else NavBarState.shouldHideNavigationBar = false
+        val navigator = LocalNavigator.currentOrThrow
 
-    Scaffold(
-        topBar = {
-            CustomToolbar(
-                collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "NavigateBack")
-                    }
-                },
-                actions = {
-                    DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeExpanded) {
-                        DropdownMenuItem(text = { Text(text = getStringRes(R.string.About_app)) }, onClick = { navController.navigate(
-                            AboutScreenDestination
-                        ) })
-                        if (BuildConfig.DEBUG) DropdownMenuItem(text = { Text(text = "Crash app", color = Color.Red) }, onClick = { throw RuntimeException("Test crash") })
-                    }
-                    IconButton(onClick = changeExpanded) {
-                        Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
+        val dialogNavigator = LocalDialogNavigator.current
+
+        val settingsRepository: SettingsRepository = koinInject()
+        val scrollBehavior = rememberToolbarScrollBehavior()
+
+        var isSpinnerExpanded by remember { mutableStateOf(false) }
+
+        val changeSpinnerExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
+
+        val lazyListState = rememberLazyListState()
+
+        shouldHideNavigationBar = when {
+            !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
+            !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
+            else -> false
         }
-    ) { padding ->
 
-        LazyColumn(
-            modifier = Modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .padding(top = padding.calculateTopPadding())
-                .fillMaxSize(),
-            state = lazyListState
-        ) {
-            itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_theme)) {
-                ThemeSelector(repository = settingsRepository)
-                isSAndAboveCompose {
-                    MonetColors(repository = settingsRepository)
+        Scaffold(
+            topBar = {
+                CustomToolbar(
+                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
+                    navigationIcon = {
+                        IconButton(onClick = navigator::pop) {
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowBack,
+                                contentDescription = "NavigateBack",
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
+                    },
+                    actions = {
+                        DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeSpinnerExpanded) {
+                            DropdownMenuItem(
+                                text = { Text(text = getStringRes(R.string.About_app)) },
+                                onClick = { navigator.push(AboutScreen()) }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(id = R.string.App_logs)) },
+                                onClick = { navigator.push(LogViewerScreen()) }
+                            )
+                            if (BuildConfig.DEBUG) DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(id = R.string.Crash_app),
+                                        color = Color.Red
+                                    )
+                                },
+                                onClick = { throw RuntimeException("Test crash") }
+                            )
+                        }
+                        IconButton(onClick = changeSpinnerExpanded) {
+                            Icon(
+                                imageVector = Icons.Rounded.MoreVert,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior
+                )
+            }
+        ) { padding ->
+
+            LazyColumn(
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .padding(top = padding.calculateTopPadding())
+                    .fillMaxSize(),
+                state = lazyListState
+            ) {
+                itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_theme)) {
+                    ThemeSelector(repository = settingsRepository)
+                    isSAndAboveCompose {
+                        MonetColors(repository = settingsRepository)
+                    }
+                    AmoledTheme(repository = settingsRepository)
+                    AccentSelector(
+                        openAlertDialog = {
+                            dialogNavigator.showNonDismissible(
+                                ColorPickerDialog(
+                                    color = settingsRepository.currentAccentColor,
+                                    onClose = dialogNavigator::hide,
+                                    onPick = { color ->
+                                        BLog.i(TAG, "selected custom color: $color")
+                                        settingsRepository.customAccentColorArgb = color.toArgb()
+                                    }
+                                )
+                            )
+                        },
+                        settingsRepository.accentColorItem,
+                        settingsRepository.isCustomColorSelected,
+                        settingsRepository)
+
                 }
-                AmoledTheme(repository = settingsRepository)
-                AccentSelector(settingsRepository)
-            }
 
-            itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
-                InstallerType(repository = settingsRepository)
-                ManagedApps(repository = settingsRepository)
-            }
+                itemsGroupWithHeader(title = getStringRes(R.string.Settings_title_main)) {
+                    InstallerType(repository = settingsRepository)
+                    ManagedApps(repository = settingsRepository)
+                }
 
-            itemsGroupWithHeader(title = getStringRes(id = R.string.Settings_title_cache)) {
-                CacheLifetimeSelector(repository = settingsRepository)
+                itemsGroupWithHeader(title = getStringRes(id = R.string.Settings_title_cache)) {
+                    CacheLifetimeSelector(repository = settingsRepository)
+                }
             }
         }
     }
@@ -178,19 +229,36 @@ fun AmoledTheme(repository: SettingsRepository) {
 
 @Composable
 private fun AccentSelector(
+    openAlertDialog: () -> Unit,
+    selectedItemIndex: Int,
+    customColorSelected: Boolean,
     repository: SettingsRepository
 ) {
 
     val callback: (Int) -> Unit = { repository.accentColorItem = it }
+
+    val rainbowBrush = Brush.sweepGradient(rainbowColors)
 
     SettingsExpandableCard(
         title = getStringRes(R.string.Settings_card_accent_title),
         subtitle = getStringRes(R.string.Settings_card_accent_description)
     ) {
         LazyRow(modifier = Modifier.padding(12.dp)) {
-            itemsIndexed(AccentColorItem.list)
-            { index, item ->
-                ColorPickerItem(item = item, index = index, callback = callback)
+            itemsIndexed(defaultAccentColorsList) { index, item ->
+                ColorPickerItem(
+                    color = item,
+                    index = index,
+                    selectedItemIndex = if (customColorSelected) null else selectedItemIndex,
+                    actionSelectColor = callback
+                )
+            }
+            item {
+                ColorPickerItem(
+                    brush = rainbowBrush,
+                    customColorSelected = customColorSelected,
+                    actionSelect = { repository.isCustomColorSelected = true },
+                    actionOpenDialog = openAlertDialog
+                )
             }
         }
     }
@@ -299,6 +367,21 @@ fun CacheLifetimeSelector(repository: SettingsRepository) {
                 } catch (_: Exception) {}
                 repository.cacheLifetimeLong = newValue.roundToLong()
             }
+        )
+    }
+}
+
+class ColorPickerDialog(
+    private val color: Color,
+    private val onClose: () -> Unit,
+    private val onPick: (color: Color) -> Unit
+): Screen {
+    @Composable
+    override fun Content() {
+        ColorPickerDialogContent(
+            color = color,
+            onClose = onClose,
+            onPick = onPick
         )
     }
 }

@@ -3,10 +3,12 @@ package ru.blays.revanced.Services.NonRootService.InstallService
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageInstaller
+import android.os.Build
 import android.os.IBinder
 
 internal class AppUninstallService : Service() {
 
+    @Suppress("DEPRECATION")
     override fun onStartCommand(
         intent: Intent,
         flags: Int,
@@ -15,8 +17,14 @@ internal class AppUninstallService : Service() {
         when (intent.getIntExtra(PackageInstaller.EXTRA_STATUS, -999)) {
             PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                 startActivity(
-                    intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT).apply {
-                        this?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(Intent.EXTRA_INTENT, Intent::class.java).apply {
+                            this?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                    } else {
+                        intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT).apply {
+                            this?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
                     }
                 )
             }

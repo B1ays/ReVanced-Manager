@@ -7,6 +7,7 @@ import ru.blays.revanced.data.CacheManager.Room.CacheStorageEntity
 import ru.blays.revanced.data.CacheManager.StorageUtils.StorageUtilsInterface
 import ru.blays.revanced.shared.Extensions.getCurrentFormattedTime
 import ru.blays.revanced.shared.Extensions.isInRange
+import ru.blays.revanced.shared.LogManager.BLog
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -32,8 +33,12 @@ class CacheManager(private val storageUtils: StorageUtilsInterface, private val 
                     CacheStorageEntity(id = 0, fileHashCode = hash, creationTime = time)
                 )
             }
-            /*return*/ true
-        } catch (_: Exception) { /*return*/ false }
+            BLog.i(TAG, "Successful add info to DB for hash: $hash")
+            true
+        } catch (e: Exception) {
+            BLog.e(TAG, "Add to DB not successful. Error: ${e.message}")
+            false
+        }
     }
 
     override suspend fun <T> addToCache(key: T, json: String): Boolean = coroutineScope {
@@ -47,7 +52,10 @@ class CacheManager(private val storageUtils: StorageUtilsInterface, private val 
             val lastUpdateTimeString = cacheDAO.getInfoByName(hash).creationTime
             val dateObject = formatter.parse(lastUpdateTimeString)
             dateObject?.let { it.isInRange(cacheLifecycleLong) } ?: false
-        } catch (_: Exception) { false }
+        } catch (e: Exception) {
+            BLog.e(TAG, "Read from db failed. Error: ${e.message}")
+            false
+        }
 
         if (isInRange) {
             val file = storageUtils.getCacheFile(key)
@@ -57,11 +65,12 @@ class CacheManager(private val storageUtils: StorageUtilsInterface, private val 
         }
     }
 
-    override suspend fun <KEY, OUT> getJsonFromCache(key: KEY): OUT? = coroutineScope {
+    override suspend fun <KEY, OUT> getJsonFromCache(key: KEY): OUT = coroutineScope {
         TODO("Not yet implemented")
     }
 
     override suspend fun removeFromCache(key: String): Boolean = coroutineScope {
+        BLog.i(TAG, "Remove from cache by key: $key")
         val hash = storageUtils.hashCode(key)
         cacheDAO.removeFromTableByHash(hash)
         return@coroutineScope storageUtils.deleteCacheFile(key)

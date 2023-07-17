@@ -16,3 +16,12 @@ local.properties
 /app/release/
 /app/debug/app-debug.apk
 /app/debug/output-metadata.json
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/appInsightsSettings.xml
+/.idea/compiler.xml
+/.idea/deploymentTargetDropDown.xml
+/.idea/kotlinc.xml
+/.idea/misc.xml
+/.idea/vcs.xml

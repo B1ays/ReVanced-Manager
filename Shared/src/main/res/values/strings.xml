@@ -6,10 +6,13 @@
     <string name="AppBar_Versions">Versions</string>
     <string name="AppBar_Settings">Settings</string>
     <string name="AppBar_About">About</string>
+    <string name="AppBar_Downloads">Downloads</string>
+    <string name="AppBar_Updates">Updates</string>
 
     <!--  App info  -->
     <string name="Installed_version">Installed version</string>
-    <string name="Available_version">Available version</string>
+    <string name="Available_version_name">Available version</string>
+    <string name="Version_code">Version code</string>
     <string name="Version">Version</string>
     <string name="NonRoot_Version">Non-Root version</string>
     <string name="Root_Version">Root version</string>
@@ -20,9 +23,20 @@
     <!--  Download  -->
     <string name="Download">Download</string>
     <string name="Progress">Progress</string>
+    <string name="Downloads_not_found">Downloads not found</string>
+    <string name="New_download">New download</string>
+    <string name="File_size">File size</string>
+    <string name="File_size_Kb">Kb</string>
+    <string name="File_size_Mb">Mb</string>
     <string name="Speed">Speed</string>
     <string name="Speed_kbs">Kb/s</string>
     <string name="Speed_mbs">Mb/s</string>
+
+    <!--  Updates  -->
+    <string name="Updates_not_found">Updates not found</string>
+
+    <!--  Color picker  -->
+    <string name="Pick_color">Pick color</string>
 
     <!--  Actions  -->
     <string name="Action_download">Download</string>
@@ -34,9 +48,12 @@
     <string name="Action_changelog" translatable="false">Changelog</string>
     <string name="Action_OK">Ok</string>
     <string name="Action_Cancel">Cancel</string>
+    <string name="Action_open">Open</string>
 
     <!--  Dropdown menu items  -->
     <string name="About_app">About app</string>
+    <string name="Crash_app" translatable="false">Crash app</string>
+    <string name="App_logs">App logs</string>
 
     <!--  Settings group titles  -->
     <string name="Settings_title_theme">App theme &amp; colors</string>

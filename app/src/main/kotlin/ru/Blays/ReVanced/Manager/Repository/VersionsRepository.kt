@@ -10,6 +10,9 @@ import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
+import ru.blays.revanced.shared.LogManager.BLog
+
+private const val TAG = "Versions repository"
 
 abstract class VersionsRepository : CoroutineScope {
 
@@ -122,6 +125,7 @@ class YoutubeVersionsRepository(private val getVersionsListUseCase: GetVersionsL
     }
 
     init {
+        BLog.i(TAG, "Create repository for $appName")
         launch {
             isModuleInstalled.value = MagiskInstaller.checkModuleExist(moduleType)
             isNonRootVersionInstalled.value = checkNonRootVersionExist(nonRootPackageName)
@@ -149,6 +153,7 @@ class YoutubeMusicVersionsRepository(private val getVersionsListUseCase: GetVers
 
     init {
         launch {
+            BLog.i(TAG, "Create repository for $appName")
             isModuleInstalled.value = MagiskInstaller.checkModuleExist(moduleType)
             isNonRootVersionInstalled.value = checkNonRootVersionExist(nonRootPackageName)
         }
@@ -166,5 +171,9 @@ class MicroGVersionsRepository(private val getVersionsListUseCase: GetVersionsLi
     override suspend fun updateInfo(recreateCache: Boolean) {
         getAvailableVersions(getVersionsListUseCase, recreateCache)
         getLocalVersions()
+    }
+
+    init {
+        BLog.i(TAG, "Create repository for $appName")
     }
 }

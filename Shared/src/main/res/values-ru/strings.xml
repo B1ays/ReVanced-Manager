@@ -5,10 +5,12 @@
     <string name="AppBar_Versions">Версии</string>
     <string name="AppBar_Settings">Настройки</string>
     <string name="AppBar_About">О приложении</string>
+    <string name="AppBar_Downloads">Загрузки</string>
     <string name="Installed_version">Устновленная версия</string>
-    <string name="Available_version">Доступная версия</string>
+    <string name="Available_version_name">Доступная версия</string>
     <string name="Action_OK">Ок</string>
     <string name="Action_Cancel">Отмена</string>
+    <string name="Action_open">Открыть</string>
     <string name="About_app">О приложении</string>
     <string name="Settings_title_theme">Тема и цвета приложения</string>
     <string name="Settings_title_main">Основные настройки</string>
@@ -70,4 +72,14 @@
     <string name="notification_message_root">Доступна новая Root версия для</string>
     <string name="notification_channel_name">Уведомлнения о новых версиях</string>
     <string name="Settings_title_cache">Кэш</string>
+    <string name="File_size">Вес файла</string>
+    <string name="File_size_Kb">Кб</string>
+    <string name="File_size_Mb">Мб</string>
+    <string name="Downloads_not_found">Загрузки не найдены</string>
+    <string name="New_download">Новая загрузка</string>
+    <string name="Pick_color">Выбрать цвет</string>
+    <string name="App_logs">Логи приложения</string>
+    <string name="Version_code">Код версии</string>
+    <string name="Updates_not_found">Обновления не найдены</string>
+    <string name="AppBar_Updates">Обновление</string>
 </resources>

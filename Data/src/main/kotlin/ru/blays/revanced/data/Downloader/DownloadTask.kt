@@ -8,6 +8,10 @@ import ru.blays.revanced.data.Downloader.DataClass.FileMode
 import ru.blays.revanced.data.Downloader.DowmloaderImplementation.BaseDownloader
 import ru.blays.revanced.data.Downloader.DowmloaderImplementation.InfinityTryDownloader
 import ru.blays.revanced.data.Downloader.DowmloaderImplementation.NormalDownloader
+import ru.blays.revanced.data.Downloader.LogAdapter.LogAdapterAbstract
+import ru.blays.revanced.data.Downloader.LogAdapter.LogAdapterDefault
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
 private val DEFAULT_DOWNLOAD_MODE = DownloadMode.InfinityTry()
 private val DEFAULT_FILE_MODE = FileMode.ContinueIfExists
@@ -27,6 +31,9 @@ data class DownloadTask(
     var request: Request = Request.Builder()
         .url(url)
         .build()
+
+    var logAdapter: LogAdapterAbstract = LogAdapterDefault()
+        private set
 
     var onSuccess: BaseDownloader.() -> Unit = {}
         private set
@@ -50,6 +57,10 @@ data class DownloadTask(
 
     fun setCustomRequest(request: Request): DownloadTask = this.apply {
         this.request = request
+    }
+
+    fun setLogAdapter(clazz: KClass<out LogAdapterAbstract>): DownloadTask = this.apply {
+        this.logAdapter = clazz.createInstance()
     }
 
     fun setDefaultActions(

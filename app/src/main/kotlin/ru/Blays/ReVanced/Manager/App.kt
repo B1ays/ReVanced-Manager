@@ -10,13 +10,18 @@ import org.koin.core.context.startKoin
 import ru.Blays.ReVanced.Manager.BackgroundService.CrashHandlerService
 import ru.Blays.ReVanced.Manager.DI.appModule
 import ru.blays.revanced.data.DI.dataModule
+import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
+
+private const val TAG = "Application"
 
 class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        BLog.i(TAG, "onCreate app")
 
         // Create LibSu Shell
         Shell.setDefaultBuilder(
@@ -24,6 +29,8 @@ class App: Application() {
                 .setFlags(Shell.FLAG_REDIRECT_STDERR)
                 .setTimeout(20)
         )
+
+        BLog.i(TAG, "Start koin")
 
         // Start koin DI
         startKoin {
@@ -43,15 +50,6 @@ class App: Application() {
         NotificationManagerCompat.from(this@App).createNotificationChannel(channel)
 
         // Crash handler
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
-
-        // Launch update check service
-        /*val service = Executors.newSingleThreadScheduledExecutor()
-        val handler = Handler(Looper.getMainLooper())
-        service.scheduleAtFixedRate({
-            handler.run {
-                CoroutineScope(Dispatchers.Default).launch { updateCheckService(this@App) }
-            }
-        }, 1, 6, TimeUnit.HOURS)*/
+        if (!BuildConfig.DEBUG) Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
     }
 }

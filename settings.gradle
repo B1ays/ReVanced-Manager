@@ -13,10 +13,22 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "ReVanced Manager"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+rootProject.name = "ReVancedManager"
 include ':app'
-include ':Compose elements'
+include ':ComposeElements'
 include ':Domain'
 include ':Data'
 include ':Services'
 include ':Shared'
+
+// Helios
+include ':Helios'
+include ':Helios:helios-core'
+include ':Helios:helios-navigator'
+include ':Helios:helios-bottom-sheet-navigator'
+include ':Helios:helios-androidx'
+include ':Helios:helios-transitions'
+include ':Helios:helios-dialogs'

@@ -1,17 +1,23 @@
 package ru.Blays.ReVanced.Manager.Repository
 
-
-
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import ru.blays.revanced.Elements.DataClasses.AccentColorItem
+import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.blays.revanced.Elements.Util.BuildedTheme
 import ru.blays.revanced.Elements.Util.buildTheme
 import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
+import ru.blays.revanced.shared.Extensions.collect
+import ru.blays.revanced.shared.LogManager.BLog
+
+private const val TAG = "Settings Repository"
 
 class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryImplementation) {
 
@@ -37,12 +43,20 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
 
     private var _cacheLifetimeLong by mutableLongStateOf(0)
 
+    private var _isCustomColorSelected by mutableStateOf(false)
+
+    private var _customAccentColorArgb by mutableIntStateOf(0)
+
+    private var _currentAccentColor: MutableStateFlow<Color>
+
     var buildedTheme: MutableState<BuildedTheme>
         private set
 
     var isSystemInDarkMode = true
 
     init {
+
+        BLog.i(TAG, "Init settings repository")
 
         _appThemeCode = settingsRepositoryImpl.theme
 
@@ -71,7 +85,13 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
 
         _cacheLifetimeLong = settingsRepositoryImpl.cacheLifetimeLong
 
-        buildedTheme = mutableStateOf(generateTheme(_accentColorItem))
+        _isCustomColorSelected = settingsRepositoryImpl.isCustomColorSelected
+
+        _customAccentColorArgb = settingsRepositoryImpl.customAccentColorArgb
+
+        _currentAccentColor = MutableStateFlow(if (_isCustomColorSelected) Color(_customAccentColorArgb) else getColorByIndex(_accentColorItem))
+
+        buildedTheme = mutableStateOf(buildTheme(_currentAccentColor.value))
     }
 
     var appTheme: ThemeModel
@@ -107,16 +127,10 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
     var accentColorItem: Int
         get() = _accentColorItem
         set(value) {
-            buildedTheme.value = generateTheme(value)
+            _currentAccentColor.value = getColorByIndex(value)
             _accentColorItem = value
+            isCustomColorSelected = false
             settingsRepositoryImpl.accentColor = value
-        }
-
-    var isRootMode: Boolean
-        get() = _isRootMode
-        set(value) {
-            _isRootMode = value
-            settingsRepositoryImpl.isRootMode = value
         }
 
     var installerType: Int
@@ -154,13 +168,38 @@ class SettingsRepository(private val settingsRepositoryImpl: SettingsRepositoryI
             settingsRepositoryImpl.cacheLifetimeLong = value
         }
 
+    var isCustomColorSelected: Boolean
+        get() = _isCustomColorSelected
+        set(value) {
+            _isCustomColorSelected = value
+            if (value) _currentAccentColor.value = Color(customAccentColorArgb)
+            settingsRepositoryImpl.isCustomColorSelected = value
+        }
 
-    private fun generateTheme(index: Int) : BuildedTheme =  with(
-        AccentColorItem.list[if (index in AccentColorItem.list.indices) index else 1]
-    ) {
-        buildTheme(accentDark, accentLight)
+    var customAccentColorArgb: Int
+        get() = _customAccentColorArgb
+        set(value) {
+            _customAccentColorArgb = value
+            val color = Color(value)
+            if (isCustomColorSelected) _currentAccentColor.value = color
+            settingsRepositoryImpl.customAccentColorArgb = value
+        }
+
+    val currentAccentColor: Color
+        get() = _currentAccentColor.value
+
+    private fun getColorByIndex(index: Int): Color = defaultAccentColorsList[index.coerceIn(defaultAccentColorsList.indices)]
+
+    init {
+        CoroutineScope(Dispatchers.Default).collect(_currentAccentColor) { color ->
+            try {
+                buildedTheme.value = buildTheme(color)
+                BLog.i(TAG, "Build theme for color $color")
+            } catch (e: Exception) {
+                BLog.e(TAG, "Current color collector error: ${e.message}")
+            }
+        }
     }
-
 }
 
 data class ThemeModel(

@@ -11,15 +11,14 @@ import okio.IOException
 import org.koitharu.pausingcoroutinedispatcher.launchPausing
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.data.Downloader.DataClass.FileMode
+import ru.blays.revanced.data.Downloader.DataClass.LogType
 import ru.blays.revanced.data.Downloader.DownloadTask
-import ru.blays.revanced.data.Downloader.Utils.LogType
 import ru.blays.revanced.data.Downloader.Utils.RWMode
 import ru.blays.revanced.data.Downloader.Utils.checkFileExists
 import ru.blays.revanced.data.Downloader.Utils.createChannel
 import ru.blays.revanced.data.Downloader.Utils.createFile
 import ru.blays.revanced.data.Downloader.Utils.createResponse
 import ru.blays.revanced.data.Downloader.Utils.isNull
-import ru.blays.revanced.data.Downloader.Utils.log
 import java.nio.ByteBuffer
 
 @Suppress("KotlinConstantConditions")
@@ -32,6 +31,8 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
     override val speedFlow = MutableStateFlow(0L)
 
     override fun download(task: DownloadTask): DownloadInfo {
+
+        val log = task.logAdapter::log
 
         val file = createFile(fileName = task.fileName, fileExtension = task.fileExtension)
 
@@ -99,8 +100,6 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
                         yield()
 
-                        log("Read from stream")
-
                         val byteBuffer = ByteBuffer.wrap(buffer, 0, bytesRead)
 
                         channel.write(byteBuffer)
@@ -115,9 +114,10 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
                     downloadSpeedJob.cancel()
                     resp.close()
                     task.onSuccess(this@NormalDownloader)
+                    log("Download complete", LogType.INFO)
                 }
             } catch (e: IOException) {
-                log("Response error, exception: $e")
+                log("Response error, exception: $e", LogType.ERROR)
                 task.onError(this@NormalDownloader)
                 downloadSpeedJob.cancel()
                 this.cancel()

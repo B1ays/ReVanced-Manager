@@ -8,9 +8,9 @@ import ru.blays.revanced.data.CacheManager.Room.CacheDAO
 import ru.blays.revanced.data.CacheManager.Room.CacheDatabase
 import ru.blays.revanced.data.CacheManager.StorageUtils.CacheStorageUtils
 import ru.blays.revanced.data.CacheManager.StorageUtils.StorageUtilsInterface
-import ru.blays.revanced.data.repositories.AppInfoRepositoryImplementation
+import ru.blays.revanced.data.repositories.NetworkRepositoryImplementation
 import ru.blays.revanced.data.repositories.SettingsRepositoryImplementation
-import ru.blays.revanced.domain.Repositories.AppInfoRepositoryInterface
+import ru.blays.revanced.domain.Repositories.NetworkRepositoryInterface
 
 val dataModule = module {
     single<CacheDatabase> {
@@ -24,8 +24,8 @@ val dataModule = module {
     factory<CacheDAO> { get<CacheDatabase>().getCacheDao() }
     factory<StorageUtilsInterface> { CacheStorageUtils(get()) }
     factory<CacheManagerInterface> { CacheManager(get(), get()) }
-    single<AppInfoRepositoryInterface> {
+    single<NetworkRepositoryInterface> {
         val cacheLifetimeLong =  get<SettingsRepositoryImplementation>().cacheLifetimeReal
-        AppInfoRepositoryImplementation(get(), cacheLifetimeLong)
+        NetworkRepositoryImplementation(get(), cacheLifetimeLong)
     }
 }
