@@ -27,6 +27,7 @@ import ru.Blays.ReVanced.Manager.UI.Screens.MainScreen
 import ru.Blays.ReVanced.Manager.UI.Screens.SettingsScreen
 import ru.Blays.ReVanced.Manager.UI.Screens.VersionsListScreen
 import ru.blays.helios.core.Screen
+import ru.blays.helios.dialogs.DialogNavigator
 import ru.blays.helios.navigator.Navigator
 import ru.blays.helios.navigator.bottomSheet.BottomSheetNavigator
 import ru.blays.helios.transitions.SlideTransition
@@ -48,36 +49,37 @@ fun Navigator() {
 
     val navOffset by animateDpAsState(if (shouldHideNavigationBar) 80.dp + navBarHeightDp else 0.dp)
 
-    BottomSheetNavigator { bottomSheetNavigator ->
+    DialogNavigator { _ ->
+        BottomSheetNavigator { _ ->
+            Navigator(
+                screen = MainScreen()
+            ) { navigator ->
 
-        Navigator(
-            screen = MainScreen()
-        ) { navigator ->
+                val destinationsList = rememberDestinationsList(destinationsList(navigator))
 
-            val destinationsList = rememberDestinationsList(destinationsList(navigator))
-
-            val selectedItem = when (navigator.lastItem) {
-                is MainScreen -> 0
-                is VersionsListScreen -> 0
-                is AppUpdateScreen -> 0
-                is SettingsScreen -> 1
-                is AboutScreen -> 1
-                is LogViewerScreen -> 1
-                else -> 0
-            }
-
-            Scaffold(
-                bottomBar = {
-                    FloatingBottomBar(
-                        expanded = false,
-                        selectedItem = selectedItem,
-                        items = destinationsList,
-                        expandedContent = { },
-                        modifier = Modifier.offset(y = navOffset)
-                    )
+                val selectedItem = when (navigator.lastItem) {
+                    is MainScreen -> 0
+                    is VersionsListScreen -> 0
+                    is AppUpdateScreen -> 0
+                    is SettingsScreen -> 1
+                    is AboutScreen -> 1
+                    is LogViewerScreen -> 1
+                    else -> 0
                 }
-            ) {
-                SlideTransition(navigator)
+
+                Scaffold(
+                    bottomBar = {
+                        FloatingBottomBar(
+                            expanded = false,
+                            selectedItem = selectedItem,
+                            items = destinationsList,
+                            expandedContent = { },
+                            modifier = Modifier.offset(y = navOffset)
+                        )
+                    }
+                ) {
+                    SlideTransition(navigator)
+                }
             }
         }
     }

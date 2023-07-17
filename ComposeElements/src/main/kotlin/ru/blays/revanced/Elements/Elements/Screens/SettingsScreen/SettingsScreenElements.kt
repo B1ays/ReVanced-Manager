@@ -31,13 +31,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -345,9 +343,8 @@ fun CurrentSegment(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ColorPickerAlertDialog(
+fun ColorPickerDialogContent(
     color: Color,
     onClose: () -> Unit,
     onPick: (color: Color) -> Unit
@@ -356,73 +353,69 @@ fun ColorPickerAlertDialog(
 
     val selectedColor by controller.selectedColor
 
-    AlertDialog(onDismissRequest = onClose) {
-        Card {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                CustomIconButton(
-                    onClick = onClose,
-                    minSize = 30.dp,
-                    containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
-                        contentDescription = null
-                    )
-                }
-            }
-            HsvColorPicker(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .padding(10.dp),
-                controller = controller,
-                initialColor = color
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        CustomIconButton(
+            onClick = onClose,
+            minSize = 30.dp,
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
+                contentDescription = null
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            BrightnessSlider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .height(35.dp),
-                controller = controller,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                Button(
-                    modifier = Modifier
-                        .height(65.dp)
-                        .wrapContentWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = selectedColor.invert(),
-                        containerColor = selectedColor
-                    ),
-                    onClick = {
-                        onPick(selectedColor)
-                        onClose()
-                    },
-
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.Pick_color),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
+    HsvColorPicker(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(10.dp),
+        controller = controller,
+        initialColor = color
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    BrightnessSlider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .height(35.dp),
+        controller = controller,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Button(
+            modifier = Modifier
+                .height(65.dp)
+                .wrapContentWidth(),
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(
+                contentColor = selectedColor.invert(),
+                containerColor = selectedColor
+            ),
+            onClick = {
+                onPick(selectedColor)
+                onClose()
+            },
+
+            ) {
+            Text(
+                text = stringResource(id = R.string.Pick_color),
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
 }
 
 data class Segment(

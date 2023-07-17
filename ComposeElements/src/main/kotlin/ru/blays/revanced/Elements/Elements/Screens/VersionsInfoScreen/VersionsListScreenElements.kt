@@ -73,19 +73,12 @@ import java.time.Duration
 @Composable
 fun VersionsListScreenHeader(
     appInfo: AppInfo,
-    actionDelete: (String) -> Unit,
+    actionOpenDialog: () -> Unit,
     actionOpen: (String) -> Unit
 ) {
 
     val version by appInfo.version.collectAsState()
     val patchesVersion by appInfo.patchesVersion.collectAsState()
-    
-    var isAlertDialogShown by remember {
-        mutableStateOf(false)
-    } 
-    
-    val hideAlertDialog = { isAlertDialogShown = false }
-    val showAlertDialog = { isAlertDialogShown = true }
 
     Spacer(modifier = Modifier.height(8.dp))
     Row(
@@ -106,7 +99,7 @@ fun VersionsListScreenHeader(
         }
         version?.let {
             CustomIconButton(
-                onClick = showAlertDialog,
+                onClick = actionOpenDialog,
                 containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
                 contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
             ) {
@@ -128,30 +121,46 @@ fun VersionsListScreenHeader(
         thickness = 2.dp
     )
     Spacer(modifier = Modifier.height(8.dp))
+}
 
-    if (isAlertDialogShown) AlertDialog(
-        onDismissRequest = hideAlertDialog,
-        title = {
-            Text(text = getStringRes(R.string.Action_uninstall_confirm))
-        },
-        confirmButton = {
+@Composable
+fun DeleteConfirmDialogContent(
+    appInfo: AppInfo,
+    actionDelete: (String) -> Unit,
+    actionHideDialog: () -> Unit
+) {
+
+
+    Column(modifier = Modifier
+        .padding(DefaultPadding.CardDefaultPadding)
+        .fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(R.string.Action_uninstall_confirm),
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedButton(
+                onClick = actionHideDialog
+            ) {
+                Text(text = stringResource(R.string.Action_Cancel))
+            }
+            Spacer(modifier = Modifier.width(16.dp))
             Button(
                 onClick = {
                     appInfo.packageName?.let { actionDelete(it) }
-                    hideAlertDialog()
+                    actionHideDialog()
                 }
             ) {
-                Text(text = getStringRes(R.string.Action_OK))
-            }
-        },
-        dismissButton = {
-            OutlinedButton(
-                onClick = hideAlertDialog
-            ) {
-                Text(text = getStringRes(R.string.Action_Cancel))
+                Text(text = stringResource(R.string.Action_OK))
             }
         }
-    )
+    }
 }
 
 

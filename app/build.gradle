@@ -94,6 +94,7 @@ dependencies {
     implementation project (path: ':Helios:helios-core')
     implementation project (path: ':Helios:helios-navigator')
     implementation project (path: ':Helios:helios-bottom-sheet-navigator')
+    implementation project (path: ':Helios:helios-dialogs')
     implementation project (path: ':Helios:helios-androidx')
     implementation project (path: ':Helios:helios-transitions')
 

@@ -47,6 +47,7 @@ import ru.Blays.ReVanced.Manager.UI.Theme.cardBackgroundRed
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
 import ru.blays.helios.androidx.AndroidScreen
 import ru.blays.helios.core.Screen
+import ru.blays.helios.dialogs.LocalDialogNavigator
 import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.bottomSheet.LocalBottomSheetNavigator
 import ru.blays.helios.navigator.bottomSheet.showSuspend
@@ -57,12 +58,11 @@ import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTab
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabIndicator
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabRow
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ChangelogBSContent
-import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.MagiskInstallInfoDialog
+import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DeleteConfirmDialogContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBSContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
-import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
@@ -78,6 +78,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
 
         val navigator = LocalNavigator.currentOrThrow
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
+        val dialogNavigator = LocalDialogNavigator.current
 
         val viewModel: VersionsListScreenViewModel = koinViewModel()
         val downloadsRepository: DownloadsRepository = koinInject()
@@ -225,15 +226,35 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                     stickyHeader {
                                         VersionsListScreenHeader(
                                             appInfo = viewModel.repository?.generateAppInfo() ?: AppInfo(),
-                                            actionDelete = viewModel::delete,
+                                            actionOpenDialog = {
+                                                dialogNavigator.show(
+                                                    DeleteConfirmDialog(
+                                                        appInfo = viewModel.repository
+                                                            ?.generateAppInfo(false)
+                                                            ?:AppInfo(),
+                                                        actionDelete = viewModel::delete
+                                                    )
+                                                )
+                                            },
                                             actionOpen = viewModel::launch
                                         )
                                     }
                                 } else if (page == 1) {
                                     stickyHeader {
                                         VersionsListScreenHeader(
-                                            appInfo = viewModel.repository?.generateAppInfo(true) ?: AppInfo(),
-                                            actionDelete = viewModel::deleteModule,
+                                            appInfo = viewModel.repository
+                                                ?.generateAppInfo(true)
+                                                ?:AppInfo(),
+                                            actionOpenDialog = {
+                                                dialogNavigator.show(
+                                                    DeleteConfirmDialog(
+                                                        appInfo = viewModel.repository
+                                                            ?.generateAppInfo(true)
+                                                            ?: AppInfo(),
+                                                        actionDelete = viewModel::delete
+                                                    )
+                                                )
+                                            },
                                             actionOpen = viewModel::launch
                                         )
                                     }
@@ -275,15 +296,6 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                 )
             }
         }
-
-        if (viewModel.magiskInstallerDialogState.isExpanded) {
-            BLog.i(TAG, "Open reboot dialog")
-            MagiskInstallInfoDialog(
-                state = viewModel.magiskInstallerDialogState,
-                actionReboot = viewModel::reboot,
-                actionHide = viewModel.hideRebootAlertDialog
-            )
-        }
     }
 }
 
@@ -312,5 +324,20 @@ private class ChangelogBS(private val markdown: String): Screen {
     @Composable
     override fun Content() {
         ChangelogBSContent(markdown = markdown)
+    }
+}
+
+class DeleteConfirmDialog(
+    private val appInfo: AppInfo,
+    private val actionDelete: (String) -> Unit
+): Screen {
+    @Composable
+    override fun Content() {
+        val dialogNavigator = LocalDialogNavigator.current
+        DeleteConfirmDialogContent(
+            appInfo = appInfo,
+            actionDelete = actionDelete,
+            actionHideDialog = dialogNavigator::hide
+        )
     }
 }

@@ -41,9 +41,6 @@ class VersionsListScreenViewModel(
     private val getChangelogUseCase: GetChangelogUseCase
 ) : BaseViewModel() {
 
-    // Coroutine scope for launch suspend functions
-    override val coroutineContext = Dispatchers.IO
-
     // UI states
     var isRefreshing by mutableStateOf(false)
 

@@ -43,10 +43,12 @@ import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.Theme.rainbowColors
 import ru.Blays.ReVanced.Manager.Utils.isSAndAboveCompose
 import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.core.Screen
+import ru.blays.helios.dialogs.LocalDialogNavigator
 import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
-import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerAlertDialog
+import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerDialogContent
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerItem
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.CurrentSegment
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.Segment
@@ -74,16 +76,14 @@ class SettingsScreen: AndroidScreen() {
 
         val navigator = LocalNavigator.currentOrThrow
 
+        val dialogNavigator = LocalDialogNavigator.current
+
         val settingsRepository: SettingsRepository = koinInject()
         val scrollBehavior = rememberToolbarScrollBehavior()
 
         var isSpinnerExpanded by remember { mutableStateOf(false) }
 
-        var isAlertDialogShown by remember { mutableStateOf(false) }
-
-        val changeExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
-
-        val changeAlertDialogVisibility = { isAlertDialogShown = !isAlertDialogShown }
+        val changeSpinnerExpanded = { isSpinnerExpanded = !isSpinnerExpanded }
 
         val lazyListState = rememberLazyListState()
 
@@ -107,7 +107,7 @@ class SettingsScreen: AndroidScreen() {
                         }
                     },
                     actions = {
-                        DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeExpanded) {
+                        DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeSpinnerExpanded) {
                             DropdownMenuItem(
                                 text = { Text(text = getStringRes(R.string.About_app)) },
                                 onClick = { navigator.push(AboutScreen()) }
@@ -126,7 +126,7 @@ class SettingsScreen: AndroidScreen() {
                                 onClick = { throw RuntimeException("Test crash") }
                             )
                         }
-                        IconButton(onClick = changeExpanded) {
+                        IconButton(onClick = changeSpinnerExpanded) {
                             Icon(
                                 imageVector = Icons.Rounded.MoreVert,
                                 contentDescription = null,
@@ -153,7 +153,18 @@ class SettingsScreen: AndroidScreen() {
                     }
                     AmoledTheme(repository = settingsRepository)
                     AccentSelector(
-                        changeAlertDialogVisibility,
+                        openAlertDialog = {
+                            dialogNavigator.showNonDismissible(
+                                ColorPickerDialog(
+                                    color = settingsRepository.currentAccentColor,
+                                    onClose = dialogNavigator::hide,
+                                    onPick = { color ->
+                                        BLog.i(TAG, "selected custom color: $color")
+                                        settingsRepository.customAccentColorArgb = color.toArgb()
+                                    }
+                                )
+                            )
+                        },
                         settingsRepository.accentColorItem,
                         settingsRepository.isCustomColorSelected,
                         settingsRepository)
@@ -169,16 +180,6 @@ class SettingsScreen: AndroidScreen() {
                     CacheLifetimeSelector(repository = settingsRepository)
                 }
             }
-        }
-        if (isAlertDialogShown) {
-            ColorPickerAlertDialog(
-                color = settingsRepository.currentAccentColor,
-                onClose = changeAlertDialogVisibility,
-                onPick = { color ->
-                    BLog.i(TAG, "selected custom color: $color")
-                    settingsRepository.customAccentColorArgb = color.toArgb()
-                }
-            )
         }
     }
 }
@@ -228,7 +229,7 @@ fun AmoledTheme(repository: SettingsRepository) {
 
 @Composable
 private fun AccentSelector(
-    onColorPickerClick: () -> Unit,
+    openAlertDialog: () -> Unit,
     selectedItemIndex: Int,
     customColorSelected: Boolean,
     repository: SettingsRepository
@@ -256,7 +257,7 @@ private fun AccentSelector(
                     brush = rainbowBrush,
                     customColorSelected = customColorSelected,
                     actionSelect = { repository.isCustomColorSelected = true },
-                    actionOpenDialog = onColorPickerClick
+                    actionOpenDialog = openAlertDialog
                 )
             }
         }
@@ -366,6 +367,21 @@ fun CacheLifetimeSelector(repository: SettingsRepository) {
                 } catch (_: Exception) {}
                 repository.cacheLifetimeLong = newValue.roundToLong()
             }
+        )
+    }
+}
+
+class ColorPickerDialog(
+    private val color: Color,
+    private val onClose: () -> Unit,
+    private val onPick: (color: Color) -> Unit
+): Screen {
+    @Composable
+    override fun Content() {
+        ColorPickerDialogContent(
+            color = color,
+            onClose = onClose,
+            onPick = onPick
         )
     }
 }
