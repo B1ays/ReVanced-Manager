@@ -2,7 +2,6 @@ package ru.blays.helios.transitions
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,7 +15,7 @@ import ru.blays.helios.navigator.Navigator
 fun FadeTransition(
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    animationSpec: FiniteAnimationSpec<Float> = spring(stiffness = Spring.StiffnessMediumLow),
+    animationSpec: FiniteAnimationSpec<Float> = spring(stiffness = 300F),
     content: ScreenTransitionContent = { it.Content() }
 ) {
     ScreenTransition(

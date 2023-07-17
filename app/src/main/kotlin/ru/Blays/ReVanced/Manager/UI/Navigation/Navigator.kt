@@ -30,7 +30,7 @@ import ru.blays.helios.core.Screen
 import ru.blays.helios.dialogs.DialogNavigator
 import ru.blays.helios.navigator.Navigator
 import ru.blays.helios.navigator.bottomSheet.BottomSheetNavigator
-import ru.blays.helios.transitions.SlideTransition
+import ru.blays.helios.transitions.FadeTransition
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.BottomBarItem
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.FloatingBottomBar
 import ru.blays.revanced.shared.LogManager.BLog
@@ -78,7 +78,7 @@ fun Navigator() {
                         )
                     }
                 ) {
-                    SlideTransition(navigator)
+                    FadeTransition(navigator)
                 }
             }
         }
