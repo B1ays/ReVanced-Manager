@@ -5,9 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -41,7 +39,7 @@ class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
     private val getApkListUseCase: GetApkListUseCase,
     private val getChangelogUseCase: GetChangelogUseCase
-) : ViewModel(), CoroutineScope {
+) : BaseViewModel() {
 
     // Coroutine scope for launch suspend functions
     override val coroutineContext = Dispatchers.IO

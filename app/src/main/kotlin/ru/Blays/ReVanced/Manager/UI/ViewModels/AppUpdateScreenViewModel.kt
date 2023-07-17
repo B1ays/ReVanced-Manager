@@ -3,9 +3,6 @@ package ru.Blays.ReVanced.Manager.UI.ViewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +16,6 @@ import ru.blays.revanced.domain.DataClasses.AppUpdateModelDto
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase
 import ru.blays.revanced.shared.LogManager.BLog
-import kotlin.coroutines.CoroutineContext
 
 private const val TAG = "appUpdateViewModel"
 
@@ -31,9 +27,7 @@ class AppUpdateScreenViewModel(
     private val packageManagerApi: PackageManagerApi,
     private val settingsRepository: SettingsRepository,
     private val downloadsRepository: DownloadsRepository
-): ViewModel(), CoroutineScope {
-
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
+): BaseViewModel() {
 
     var updateInfo: MutableStateFlow<AppUpdateModelDto?> = MutableStateFlow(null)
 
