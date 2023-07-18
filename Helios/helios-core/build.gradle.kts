@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
 }
 
-val composeCompiler: String by extra { "ComposeCompiler" }
-
 android {
     namespace = "ru.blays.helios.core"
     compileSdk = 33
@@ -31,7 +29,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = composeCompiler
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 }
 

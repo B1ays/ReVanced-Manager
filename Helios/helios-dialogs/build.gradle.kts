@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
 }
 
-val composeCompiler: String by extra { "ComposeCompiler" }
-
 android {
     namespace = "ru.blays.helios.dialogs"
     compileSdk = 33
@@ -32,7 +30,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = composeCompiler
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 }
 
@@ -53,6 +51,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.lifecycle.viewmodel.compose)
 
     // Helios
-    implementation(project(":Helios:helios-core"))
-    implementation(project(":Helios:helios-navigator"))
+    implementation(projects.helios.heliosCore)
+    implementation(projects.helios.heliosNavigator)
 }

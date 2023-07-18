@@ -67,10 +67,10 @@ dependencies {
     implementation libs.rebugger
 
     // Modules
-    implementation project(path: ':Domain')
-    implementation project(path: ':Data')
-    implementation project(path: ':Services')
-    implementation project(path: ':Shared')
+    implementation projects.domain
+    implementation projects.data
+    implementation projects.services
+    implementation projects.shared
 
     // material-color-utilities
     implementation(files("libs/material-color-util.jar"))

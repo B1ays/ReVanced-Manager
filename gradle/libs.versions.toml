@@ -34,7 +34,6 @@ androidx-arch-core-core-common = { module = "androidx.arch.core:core-common", ve
 androidx-arch-core-core-runtime = { module = "androidx.arch.core:core-runtime", version.ref = "androidx-arch-core" }
 androidx-collection = { module = "androidx.collection:collection", version.ref = "androidx-collection" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "androidx-compose" }
-androidx-compose-compiler = "androidx.compose.compiler:compiler:1.5.0"
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
 androidx-compose-material3 = "androidx.compose.material3:material3:1.2.0-alpha03"
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidx-compose" }

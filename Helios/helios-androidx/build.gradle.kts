@@ -32,7 +32,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = composeCompiler
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 }
 
@@ -45,6 +45,6 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
 
     // Helios
-    implementation(project(":Helios:helios-core"))
+    implementation(projects.helios.heliosCore)
 
 }

@@ -61,6 +61,6 @@ dependencies {
 
 
     // Modules
-    implementation project(path: ':Domain')
-    implementation project(path: ':Shared')
+    implementation projects.domain
+    implementation projects.shared
 }
