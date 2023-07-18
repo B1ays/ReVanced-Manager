@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.com.google.devtools.ksp)
-    alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
+    alias(libs.plugins.kotlin.plugin.serialization)
 }
 
 android {
@@ -36,10 +36,10 @@ dependencies {
 
     //AndroidX
     implementation libs.androidx.core.core.ktx
-    implementation libs.org.jetbrains.kotlinx.kotlinx.coroutines.core.jvm
 
     // KotlinX Serialization
-    implementation libs.org.jetbrains.kotlinx.kotlinx.serialization.json.asProvider()
+    implementation libs.kotlinx.kotlinx.serialization.core.jvm
+    implementation libs.kotlinx.kotlinx.serialization.json.jvm
 
     // Kotlin reflection
     implementation libs.kotlin.reflect

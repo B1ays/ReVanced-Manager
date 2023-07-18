@@ -4,25 +4,18 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        Release {
-        }
-    }
     namespace 'ru.blays.revanced.Presentation'
     compileSdk 33
 
     defaultConfig {
         minSdk 26
         targetSdk 33
-
-        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.Release
         }
     }
 
@@ -40,7 +33,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.8'
+        kotlinCompilerExtensionVersion project.ComposeCompiler
     }
 }
 

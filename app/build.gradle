@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
 }
 
+
 android {
     namespace 'ru.Blays.ReVanced.Manager'
     compileSdk 33
@@ -19,7 +20,6 @@ android {
 
         resourceConfigurations += ["en", "ru"]
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -43,7 +43,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.8'
+        kotlinCompilerExtensionVersion project.ComposeCompiler
     }
     packagingOptions {
         resources {
