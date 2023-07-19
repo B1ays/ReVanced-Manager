@@ -11,8 +11,14 @@ internal val Shell.Result.outString
 internal val Shell.Result.errString
     get() = err.joinToString("\n")
 
-val isRootGranted
-    get() = Shell.cmd("su").exec().isSuccess && (Shell.cmd("magisk -v").exec().isSuccess || Shell.cmd("/data/adb/ksud -h").exec().isSuccess)
+val isRootGranted: Boolean
+    get() = Shell.cmd("su").exec().isSuccess && (isMagiskInstalled || isKSUInstalled)
+
+val isMagiskInstalled: Boolean
+    get() = Shell.cmd("magisk -v").exec().isSuccess
+
+val isKSUInstalled: Boolean
+    get() = Shell.cmd("/data/adb/ksud -h").exec().isSuccess
 
 internal suspend fun Shell.Job.await(): Shell.Result {
     return suspendCoroutine { continuation ->
