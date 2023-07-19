@@ -36,9 +36,9 @@ class AppUpdateScreenViewModel(
     var isUpdateAvailable by mutableStateOf(false)
 
     private suspend fun checkUpdate() = coroutineScope {
-        val installedVersionName = packageManagerApi.getVersionName(BuildConfig.APPLICATION_ID).await().getValueOrNull()
-        updateInfo.value?.let {
-            isUpdateAvailable = installedVersionName != it.availableVersion
+        val installedVersionCode = packageManagerApi.getVersionCode(BuildConfig.APPLICATION_ID).await().getValueOrNull()
+        updateInfo.value?.let { dataModel ->
+            isUpdateAvailable = (installedVersionCode ?: Int.MAX_VALUE) < dataModel.versionCode
         }
     }
 
