@@ -131,7 +131,7 @@ class MainScreen: AndroidScreen() {
                         .nestedScroll(scrollBehavior.nestedScrollConnection),
                     state = lazyListState
                 ) {
-                    items(Apps.values()) { app ->
+                    items(Apps.entries) { app ->
                         if (
                             (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
                             (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
