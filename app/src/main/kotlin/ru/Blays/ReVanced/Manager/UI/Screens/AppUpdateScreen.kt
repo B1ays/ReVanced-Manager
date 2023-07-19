@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Badge
@@ -20,8 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -57,11 +57,17 @@ class AppUpdateScreen: AndroidScreen() {
 
         val downloadsRepository: DownloadsRepository = koinInject()
 
-        val model by viewModel.updateInfo.collectAsState()
+        val model = viewModel.updateInfo
+
+        val changelog = viewModel.changelog
 
         val scrollBehavior = rememberToolbarScrollBehavior()
 
+        val scrollState = rememberScrollState()
+
         Scaffold(
+            modifier = Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 CustomToolbar(
                     collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Updates)),
@@ -106,7 +112,6 @@ class AppUpdateScreen: AndroidScreen() {
                     modifier = Modifier
                         .padding(top = padding.calculateTopPadding())
                         .fillMaxSize()
-                        .nestedScroll(connection = scrollBehavior.nestedScrollConnection)
                 ) {
                     UpdateInfoHeader(
                         availableVersion = model?.availableVersion,
@@ -114,13 +119,15 @@ class AppUpdateScreen: AndroidScreen() {
                         buildDate = model?.buildDate,
                         actionDownload = viewModel::downloadAndInstall
                     )
-                    if (viewModel.changelog.isNotEmpty()) {
-                        ChangelogView(changelog = viewModel.changelog)
+                    if (changelog.isNotEmpty()) {
+                        ChangelogView(changelog = changelog)
                     }
                 }
             } else {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(

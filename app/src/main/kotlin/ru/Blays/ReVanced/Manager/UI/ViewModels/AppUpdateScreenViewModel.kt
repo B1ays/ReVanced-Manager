@@ -1,5 +1,7 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,22 +31,28 @@ class AppUpdateScreenViewModel(
     private val downloadsRepository: DownloadsRepository
 ): BaseViewModel() {
 
-    var updateInfo: MutableStateFlow<AppUpdateModelDto?> = MutableStateFlow(null)
+    private var _updateInfo: MutableStateFlow<AppUpdateModelDto?> = MutableStateFlow(null)
 
-    var changelog by mutableStateOf("")
+    private var _changelog: MutableStateFlow<String> = MutableStateFlow("")
+
+    val updateInfo: AppUpdateModelDto?
+        @Composable get() = _updateInfo.collectAsState().value
+
+    val changelog: String
+        @Composable get() = _changelog.collectAsState().value
 
     var isUpdateAvailable by mutableStateOf(false)
 
-    private suspend fun checkUpdate() = coroutineScope {
+    private suspend fun compareVersionCodes() = coroutineScope {
         val installedVersionCode = packageManagerApi.getVersionCode(BuildConfig.APPLICATION_ID).await().getValueOrNull()
-        updateInfo.value?.let { dataModel ->
+        _updateInfo.value?.let { dataModel ->
             isUpdateAvailable = (installedVersionCode ?: Int.MAX_VALUE) < dataModel.versionCode
         }
     }
 
     @Suppress("DeferredResultUnused")
     fun downloadAndInstall() {
-        val model = updateInfo.value
+        val model = _updateInfo.value
         model?.let { infoModel ->
             val task = DownloadTask(
                 url = infoModel.apkLink,
@@ -61,10 +69,11 @@ class AppUpdateScreenViewModel(
     init {
         BLog.i(TAG, "Init App update view model")
         launch {
-            val model = getUpdateInfoUseCase.execute(RELEASE_CHANNEL_JSON_LINK)
-            updateInfo.value = model
-            changelog = model?.let { getChangelogUseCase.execut(it.changelogLink) } ?: ""
-            checkUpdate()
+            val model = getUpdateInfoUseCase.execute(RELEASE_CHANNEL_JSON_LINK, recreateCache = true)
+            _updateInfo.emit(model)
+            val changelog = model?.let { getChangelogUseCase.execut(it.changelogLink, recreateCache = true) } ?: ""
+            _changelog.emit(changelog)
+            compareVersionCodes()
         }
     }
 }

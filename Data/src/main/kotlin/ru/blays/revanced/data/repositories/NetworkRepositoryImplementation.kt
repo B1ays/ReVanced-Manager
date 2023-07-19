@@ -132,11 +132,11 @@ class NetworkRepositoryImplementation(private val cacheManager: CacheManagerInte
         ?.serializeJsonFromString<List<ApkInfoModel>>()
         ?.mapApkInfoModelToDomainClass()
 
-    override suspend fun getText(changelogUrl: String, recreateCache: Boolean): String =
-        router(changelogUrl, recreateCache).orEmpty()
-
-    override suspend fun getManagerUpdateInfo(url: String): AppUpdateModelDto? = router(url, true)
+    override suspend fun getManagerUpdateInfo(url: String, recreateCache: Boolean): AppUpdateModelDto? = router(url, recreateCache)
         ?.serializeJsonFromString<AppUpdateModel>()
         ?.mapAppUpdateModelToDomainClass()
+
+    override suspend fun getText(changelogUrl: String, recreateCache: Boolean): String =
+        router(changelogUrl, recreateCache).orEmpty()
 
 }

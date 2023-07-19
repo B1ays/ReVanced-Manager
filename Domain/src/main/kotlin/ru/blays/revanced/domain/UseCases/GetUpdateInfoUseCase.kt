@@ -5,8 +5,8 @@ import ru.blays.revanced.domain.Repositories.NetworkRepositoryInterface
 
 class GetUpdateInfoUseCase(private val networkRepositoryInterface: NetworkRepositoryInterface) {
 
-    suspend fun execute(url: String): AppUpdateModelDto? {
-        return networkRepositoryInterface.getManagerUpdateInfo(url)
+    suspend fun execute(url: String, recreateCache: Boolean = false): AppUpdateModelDto? {
+        return networkRepositoryInterface.getManagerUpdateInfo(url, recreateCache)
     }
 
 }
