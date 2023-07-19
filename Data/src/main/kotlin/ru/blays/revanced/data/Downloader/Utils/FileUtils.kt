@@ -15,16 +15,19 @@ internal fun File.lengthNotZero(): Boolean = length().isNotZero()
 
 internal fun File.checkFileExists(): Boolean = exists() && lengthNotZero()
 
-
 internal fun File.createChannel(mode: RWMode): FileChannel {
     val randomAccessFile = RandomAccessFile(this, mode.code)
     return randomAccessFile.channel
 }
 
-@Suppress("RedundantLambdaOrAnonymousFunction")
+@JvmName("setPositionInternal")
+private fun FileChannel.setPosition(position: Long) {
+    position(position)
+}
+
 internal var FileChannel.position: Long
     get() = position()
-    set(value) = { position(value) }()
+    set(value) = setPosition(value)
 
 @JvmName("createFileExtension")
 internal fun String.createFile(fileExtension: String): File {

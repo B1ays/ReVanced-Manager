@@ -9,13 +9,10 @@ android {
 
     defaultConfig {
         minSdk = 26
-
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
         release {
-            /*isMinifyEnabled = false*/
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -32,6 +29,7 @@ android {
 }
 
 dependencies {
+    // AndroidX
     implementation(libs.androidx.core.core.ktx)
 
     // Koin

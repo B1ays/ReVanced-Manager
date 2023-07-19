@@ -30,14 +30,14 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.8"
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 }
 
 dependencies {
 
     implementation(libs.androidx.core.core.ktx)
-    implementation(libs.org.jetbrains.kotlin.kotlin.stdlib)
+    implementation(libs.kotlin.kotlin.stdlib)
 
     // Compose
     implementation(libs.androidx.compose.runtime)
@@ -51,6 +51,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.lifecycle.viewmodel.compose)
 
     // Helios
-    implementation(project(":Helios:helios-core"))
-    implementation(project(":Helios:helios-navigator"))
+    implementation(projects.helios.heliosCore)
+    implementation(projects.helios.heliosNavigator)
 }

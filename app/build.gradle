@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
 }
 
+
 android {
     namespace 'ru.Blays.ReVanced.Manager'
     compileSdk 33
@@ -19,7 +20,6 @@ android {
 
         resourceConfigurations += ["en", "ru"]
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -43,12 +43,17 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.8'
+        kotlinCompilerExtensionVersion project.ComposeCompiler
     }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        checkDependencies false
+        checkGeneratedSources false
     }
 }
 
@@ -91,18 +96,18 @@ dependencies {
     implementation libs.com.squareup.okhttp3.okhttp.asProvider()
 
     // Helios
-    implementation project (path: ':Helios:helios-core')
-    implementation project (path: ':Helios:helios-navigator')
-    implementation project (path: ':Helios:helios-bottom-sheet-navigator')
-    implementation project (path: ':Helios:helios-dialogs')
-    implementation project (path: ':Helios:helios-androidx')
-    implementation project (path: ':Helios:helios-transitions')
+    implementation projects.helios.heliosCore
+    implementation projects.helios.heliosNavigator
+    implementation projects.helios.heliosBottomSheetNavigator
+    implementation projects.helios.heliosDialogs
+    implementation projects.helios.heliosAndroidx
+    implementation projects.helios.heliosTransitions
 
     // Modules
-    implementation project (path: ':Domain')
-    implementation project (path: ':Data')
-    implementation project (path: ':Services')
-    implementation project (path: ':ComposeElements')
-    implementation project (path: ':Shared')
+    implementation projects.domain
+    implementation projects.data
+    implementation projects.services
+    implementation projects.composeElements
+    implementation projects.shared
 
 }

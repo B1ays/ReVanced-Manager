@@ -32,13 +32,13 @@ android {
 dependencies {
 
     implementation libs.androidx.core.core.ktx
-    implementation libs.org.jetbrains.kotlinx.kotlinx.coroutines.core.jvm
+    implementation libs.kotlinx.kotlinx.coroutines.core.jvm
 
     // LibSu
     implementation libs.core
     implementation libs.service
     implementation libs.nio
 
-    implementation project(path: ':Shared')
+    implementation projects.shared
 
 }

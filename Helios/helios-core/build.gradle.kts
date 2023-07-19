@@ -29,14 +29,14 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.8"
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 }
 
 dependencies {
 
     implementation(libs.androidx.core.core.ktx)
-    implementation(libs.org.jetbrains.kotlin.kotlin.stdlib)
+    implementation(libs.kotlin.kotlin.stdlib)
 
     // Compose
     implementation(libs.androidx.compose.runtime)
