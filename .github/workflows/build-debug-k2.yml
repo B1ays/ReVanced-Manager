@@ -1,4 +1,4 @@
-name: Android CI
+name: Build debug (K2 compiler)
 
 env:
   # The name of the main module repository
@@ -48,11 +48,11 @@ jobs:
 
       # Run Build Project
       - name: Build gradle project
-        run: ./gradlew build
+        run: ./gradlew build -'Pkotlin.experimental.tryK2'=true
 
       # Create APK Debug
       - name: Build debug apk
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug -'Pkotlin.experimental.tryK2'=true
 
       - name: Sign apk
         uses: r0adkll/sign-android-release@v1
