@@ -1,8 +1,8 @@
 package ru.blays.revanced.Services.PublicApi
 
+import kotlinx.coroutines.Deferred
 import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterface
 import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerResult
-import kotlinx.coroutines.Deferred
 import java.io.File
 
 interface PackageManagerApi {
@@ -18,5 +18,7 @@ interface PackageManagerApi {
     fun launchApp(packageName: String)
 
     fun getVersionName(packageName: String): Deferred<PackageManagerResult<String>>
+
+    fun getVersionCode(packageName: String): Deferred<PackageManagerResult<Int>>
 
 }

@@ -57,4 +57,8 @@ class PackageManagerApiImpl(context: Context, installerType: Int): PackageManage
         packageManagerInterface.getVersionName(packageName)
     }
 
+    override fun getVersionCode(packageName: String) = async {
+        packageManagerInterface.getVersionCode(packageName)
+    }
+
 }
