@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.DowmloaderImplementation
+package ru.blays.revanced.data.Downloader.DownloaderImpl
 
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -30,11 +30,17 @@ class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
     override val speedFlow = MutableStateFlow(0L)
 
-    override fun download(task: DownloadTask): DownloadInfo {
+    override fun download(task: DownloadTask): DownloadInfo? {
 
         val log = task.logAdapter::log
 
         val file = createFile(fileName = task.fileName, fileExtension = task.fileExtension)
+
+        if (file == null) {
+            log("Unable to create file", LogType.ERROR)
+            task.onError(this)
+            return null
+        }
 
         this.file = file
 

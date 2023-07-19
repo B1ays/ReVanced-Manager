@@ -5,9 +5,9 @@ import okhttp3.Request
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.data.Downloader.DataClass.DownloadMode
 import ru.blays.revanced.data.Downloader.DataClass.FileMode
-import ru.blays.revanced.data.Downloader.DowmloaderImplementation.BaseDownloader
-import ru.blays.revanced.data.Downloader.DowmloaderImplementation.InfinityTryDownloader
-import ru.blays.revanced.data.Downloader.DowmloaderImplementation.NormalDownloader
+import ru.blays.revanced.data.Downloader.DownloaderImpl.BaseDownloader
+import ru.blays.revanced.data.Downloader.DownloaderImpl.InfinityTryDownloader
+import ru.blays.revanced.data.Downloader.DownloaderImpl.NormalDownloader
 import ru.blays.revanced.data.Downloader.LogAdapter.LogAdapterAbstract
 import ru.blays.revanced.data.Downloader.LogAdapter.LogAdapterDefault
 import kotlin.reflect.KClass
@@ -76,7 +76,7 @@ data class DownloadTask(
     }
 }
 
-fun DownloadTask.build(okHttpClientBuilder: OkHttpClient.Builder = OkHttpClient.Builder()): DownloadInfo {
+fun DownloadTask.build(okHttpClientBuilder: OkHttpClient.Builder = OkHttpClient.Builder()): DownloadInfo? {
     val client = okHttpClientBuilder.build()
     val downloader: BaseDownloader = when(downloadMode) {
         is DownloadMode.SingleTry -> NormalDownloader(client)

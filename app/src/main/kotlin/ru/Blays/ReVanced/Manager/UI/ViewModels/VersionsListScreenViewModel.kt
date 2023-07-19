@@ -126,17 +126,17 @@ class VersionsListScreenViewModel(
         val task = DownloadTask(url, fileName)
             .setDefaultActions(
                 onSuccess = {
-                    packageManager.installApk(file, settingsRepository.installerType)
+                    file?.let { packageManager.installApk(it, settingsRepository.installerType) }
                     onRefresh()
                 },
                 onCancel = {
-                    file.delete()
+                    file?.delete()
                 }
             )
             .setLogAdapter(LogAdapterBLog::class)
             .build()
 
-        downloadsRepository.addToList(task)
+        task?.let { downloadsRepository.addToList(it) }
     }
 
     fun downloadRootVersion(
@@ -156,27 +156,24 @@ class VersionsListScreenViewModel(
                         with(state) { emit(value.copy(origApkDownloaded = true)) }
 
                         val installResult = async {
-                            RootPackageManager().installApp(file)
+                            file?.let { RootPackageManager().installApp(it) }
                         }.await()
 
-                        if (installResult.isError) {
+                        if (installResult?.isError == true) {
                             this.cancel()
                             return@launch
                         }
                         with(state) { emit(value.copy(origApkInstalled = true)) }
                     }
                 },
-                onError = {
-                    file.delete()
-                },
                 onCancel = {
-                    file.delete()
+                    file?.delete()
                 }
             )
             .setLogAdapter(LogAdapterBLog::class)
             .build()
             .also { downloadInfo ->
-                downloadsRepository.addToList(downloadInfo)
+                downloadInfo?.let { downloadsRepository.addToList(it) }
             }
 
         val modApkDownloadTask = DownloadTask(url = filesModel.modUrl, fileName = filesModel.fileName)
@@ -191,29 +188,23 @@ class VersionsListScreenViewModel(
                                 repository?.moduleType?.let { module ->
                                     MagiskInstaller.install(
                                         module,
-                                        file,
+                                        file!!,
                                         context
                                     )
-                                    file.delete()
-                                    origApkDownloadTask.file.delete()
                                     onRefresh()
                                 }
                             }
                         }
                     }
                 },
-                onError = {
-                    file.delete()
-                    origApkDownloadTask.file.delete()
-                },
                 onCancel = {
-                    file.delete()
+                    file?.delete()
                 }
             )
             .setLogAdapter(LogAdapterBLog::class)
             .build()
             .also { downloadInfo ->
-                downloadsRepository.addToList(downloadInfo)
+                downloadInfo?.let { downloadsRepository.addToList(it) }
             }
     }
 }

@@ -45,16 +45,16 @@ class AppUpdateScreenViewModel(
     @Suppress("DeferredResultUnused")
     fun downloadAndInstall() {
         val model = updateInfo.value
-        model?.let {
+        model?.let { infoModel ->
             val task = DownloadTask(
-                url = it.apkLink,
-                fileName = "Update_${it.availableVersion} (${it.versionCode})"
+                url = infoModel.apkLink,
+                fileName = "Update_${infoModel.availableVersion} (${infoModel.versionCode})"
             ).setDefaultActions(
                 onSuccess = {
-                    packageManagerApi.installApk(file, settingsRepository.installerType)
+                    packageManagerApi.installApk(file!!, settingsRepository.installerType)
                 }
             ).build()
-            downloadsRepository.addToList(task)
+            task?.let { task -> downloadsRepository.addToList(task) }
         }
     }
 

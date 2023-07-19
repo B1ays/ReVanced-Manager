@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.DowmloaderImplementation
+package ru.blays.revanced.data.Downloader.DownloaderImpl
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +16,11 @@ abstract class BaseDownloader: Downloader, CoroutineScope {
 
     abstract val client: OkHttpClient
 
-    lateinit var file: File
+    var file: File? = null
 
     abstract val progressFlow: MutableStateFlow<Float>
 
     abstract val speedFlow: MutableStateFlow<Long>
-
 
     fun getContentLength(url: String): Long? {
         try {

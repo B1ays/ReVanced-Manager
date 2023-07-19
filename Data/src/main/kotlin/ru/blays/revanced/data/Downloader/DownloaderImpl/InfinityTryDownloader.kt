@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.DowmloaderImplementation
+package ru.blays.revanced.data.Downloader.DownloaderImpl
 
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -29,14 +29,20 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
     override val progressFlow = MutableStateFlow(0F)
     override val speedFlow = MutableStateFlow(0L)
 
-    override fun download(task: DownloadTask): DownloadInfo {
+    override fun download(task: DownloadTask): DownloadInfo? {
 
         val log = task.logAdapter::log
 
         // Create file from name and extension
         val file = createFile(fileName = task.fileName, fileExtension = task.fileExtension)
 
-        // write file to lateinit variable
+        if (file == null) {
+            log("Unable to create file", LogType.ERROR)
+            task.onError(this)
+            return null
+        }
+
+        // write file to class property
         this.file = file
 
         // create fileChannel using RandomAccessFile
@@ -57,12 +63,12 @@ class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
                 if (it.isNull()) return@mainJob
             }
 
-            /*
-            Check file exists.
-            if exist && file size = real size -> download complete
-            if file not exist or file size != real size -> start download & append file size to totalBytesRead
-            */
-            if (/*file.checkFileExists() && */fileSize == originalFileSize) {
+            /**
+            * Check file exists.
+            * if exist && file size = real size -> download complete
+            * if file not exist or file size != real size -> start download & append file size to totalBytesRead
+            **/
+            if (fileSize == originalFileSize) {
                 task.onSuccess(this@InfinityTryDownloader)
                 return@mainJob
             } else {
