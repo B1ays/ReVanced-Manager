@@ -100,7 +100,8 @@ fun AppCardRoot(
                     ) {
                             TextWithBackground(
                                 text = "${getStringRes(R.string.Available_version_name)}: ${this@run}",
-                                textPadding = PaddingValues(5.dp)
+                                textPadding = PaddingValues(5.dp),
+                                maxLines = 1
                             )
                         }
                     }
@@ -112,7 +113,8 @@ fun AppCardRoot(
                     ) {
                         TextWithBackground(
                             text = "${getStringRes(R.string.Root_Version)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
+                            textPadding = PaddingValues(5.dp),
+                            maxLines = 1
                         )
                     }
                 }
@@ -124,7 +126,8 @@ fun AppCardRoot(
                     ) {
                         TextWithBackground(
                             text = "${getStringRes(R.string.NonRoot_Version)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
+                            textPadding = PaddingValues(5.dp),
+                            maxLines = 1
                         )
                     }
                 }
@@ -221,7 +224,8 @@ fun AppCard(
                     ) {
                         TextWithBackground(
                             text = "${getStringRes(R.string.Available_version_name)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
+                            textPadding = PaddingValues(5.dp),
+                            maxLines = 1
                         )
                     }
                 }
@@ -233,7 +237,8 @@ fun AppCard(
                     ) {
                         TextWithBackground(
                             text = "${getStringRes(R.string.Installed_version)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
+                            textPadding = PaddingValues(5.dp),
+                            maxLines = 1
                         )
                     }
                 }
@@ -285,6 +290,7 @@ fun AppCard(
 private fun TextWithBackground(
     modifier: Modifier = Modifier,
     text: String,
+    maxLines: Int = Int.MAX_VALUE,
     shape: Shape = CircleShape,
     backgroundColor: Color = MaterialTheme.colorScheme.secondary.copy(alpha = .8F),
     textColor: Color = Color.White,
@@ -302,7 +308,9 @@ private fun TextWithBackground(
             modifier = Modifier.padding(textPadding),
             text = text,
             style = textStyle,
-            color = textColor
+            color = textColor,
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
