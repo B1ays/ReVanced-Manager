@@ -9,7 +9,7 @@ import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.Microg
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.MusicMonochrome
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.YoutubeMonochrome
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
-import ru.blays.revanced.Services.Root.MagiskInstaller
+import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
 enum class Apps {
@@ -19,7 +19,7 @@ enum class Apps {
         override val repository = AppRepository.builder {
             appName = "YouTube ReVanced"
             appType = GetVersionsListUseCase.YOUTUBE
-            moduleType = MagiskInstaller.Module.YOUTUBE
+            moduleType = ModuleInstaller.Module.YOUTUBE
             getVersionsListUseCase = getVersionsListUС
             version {
                 versionName = "Non-Root"
@@ -50,7 +50,7 @@ enum class Apps {
         override val repository = AppRepository.builder {
             appName = "YouTube Music ReVanced"
             appType = GetVersionsListUseCase.MUSIC
-            moduleType = MagiskInstaller.Module.YOUTUBE_MUSIC
+            moduleType = ModuleInstaller.Module.YOUTUBE_MUSIC
             getVersionsListUseCase = getVersionsListUС
 
             // Non-Root version

@@ -63,7 +63,7 @@
     <string name="about_Iam">Я в</string>
     <string name="about_group_credits">Благодарности</string>
     <string name="about_credits_for">За</string>
-    <string name="Action_reboot_confirm">Перезагрузить?</string>
+    <string name="Action_reboot_confirm">Перезагрузить устройство?</string>
     <string name="Speed_kbs">Кб/с</string>
     <string name="Speed_mbs">Мб/с</string>
 
@@ -77,9 +77,12 @@
     <string name="File_size_Mb">Мб</string>
     <string name="Downloads_not_found">Загрузки не найдены</string>
     <string name="New_download">Новая загрузка</string>
+    <string name="Module_installer_complite">Модуль успешно установлен</string>
     <string name="Pick_color">Выбрать цвет</string>
     <string name="App_logs">Логи приложения</string>
     <string name="Version_code">Код версии</string>
     <string name="Updates_not_found">Обновления не найдены</string>
     <string name="AppBar_Updates">Обновление</string>
+    <string name="Module_installer_failed">Ошибка установки модуля</string>
+    <string name="Module_installer_error">Ошибка</string>
 </resources>

@@ -1,11 +1,16 @@
 package ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.background
@@ -25,10 +30,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -58,11 +63,11 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
-import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.Elements.Elements.GradientProgressIndicator.GradientLinearProgressIndicator
+import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
@@ -287,28 +292,101 @@ fun ChangelogBSContent(markdown: String) {
     Spacer(Modifier.fillMaxHeight(0.1F))
 }
 
+@Suppress("AnimatedContentLabel")
 @Composable
-fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot: () -> Unit, actionHide: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = actionHide,
-        title = {
-            Text(text = stringResource(R.string.Action_reboot_confirm))
-        },
-        confirmButton = {
-            Button(
-                onClick = actionReboot
+fun ModuleInstallDialogContent(
+    status: ModuleInstaller.Status,
+    actionReboot: () -> Unit,
+    actionHide: () -> Unit
+) {
+    when (status) {
+        ModuleInstaller.Status.COMPLETE -> {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 14.dp, vertical = 16.dp)
+                    .fillMaxWidth()
             ) {
-                Text(text = stringResource(R.string.Action_OK))
-            }
-        },
-        dismissButton = {
-            OutlinedButton(
-                onClick = actionHide
-            ) {
-                Text(text = stringResource(R.string.Action_Cancel))
+                Text(
+                    text = stringResource(id = R.string.Module_installer_complite),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = stringResource(id = R.string.Action_reboot_confirm))
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(
+                        onClick = actionHide
+                    ) {
+                        Text(text = stringResource(R.string.Action_Cancel))
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Button(
+                        onClick = actionReboot
+                    ) {
+                        Text(text = stringResource(R.string.Action_OK))
+                    }
+                }
             }
         }
-    )
+        ModuleInstaller.Status.ERROR -> {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 14.dp, vertical = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.Module_installer_failed),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "${stringResource(id = R.string.Module_installer_error)}: ${status.error}")
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = actionHide
+                    ) {
+                        Text(text = stringResource(R.string.Action_OK))
+                    }
+                }
+            }
+        }
+        else -> {
+            Row(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 14.dp,
+                        vertical = 16.dp
+                    )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(strokeCap = StrokeCap.Round)
+                AnimatedContent(
+                    targetState = status,
+                    transitionSpec = {
+                        (slideInVertically { height -> -height } + fadeIn())
+                            .togetherWith(
+                                slideOutVertically { height -> height } + fadeOut()
+                            ).using(
+                                SizeTransform(true)
+                            )
+                    }
+                ) { status ->
+                    Text(text = status.message)
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)

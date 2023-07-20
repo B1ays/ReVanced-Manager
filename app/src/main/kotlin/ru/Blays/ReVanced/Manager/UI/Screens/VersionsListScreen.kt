@@ -28,6 +28,8 @@ import androidx.compose.material3.pullrefresh.pullRefresh
 import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +38,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -59,9 +62,11 @@ import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabIndicator
 import ru.blays.revanced.Elements.Elements.CustomTabs.CustomTabRow
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ChangelogBSContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.DeleteConfirmDialogContent
+import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ModuleInstallDialogContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBSContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
+import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
@@ -229,8 +234,10 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                                 dialogNavigator.show(
                                                     DeleteConfirmDialog(
                                                         appInfo = viewModel.repository
-                                                            ?.createAppInfo(viewModel.repository
-                                                            !!.appVersions[page])
+                                                            ?.createAppInfo(
+                                                                viewModel.repository
+                                                                !!.appVersions[page]
+                                                            )
                                                             ?: AppInfo(),
                                                         actionDelete = viewModel::deleteModule
                                                     )
@@ -243,14 +250,19 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                     stickyHeader {
                                         VersionsListScreenHeader(
                                             appInfo = viewModel.repository
-                                                ?.createAppInfo(viewModel.repository
-                                                !!.appVersions[page])
+                                                ?.createAppInfo(
+                                                    viewModel.repository
+                                                    !!.appVersions[page]
+                                                )
                                                 ?: AppInfo(),
                                             actionOpenDialog = {
                                                 dialogNavigator.show(
                                                     DeleteConfirmDialog(
                                                         appInfo = viewModel.repository
-                                                            ?.createAppInfo(viewModel.repository!!.appVersions[page])
+                                                            ?.createAppInfo(
+                                                                viewModel.repository
+                                                                !!.appVersions[page]
+                                                            )
                                                             ?:AppInfo(),
                                                         actionDelete = viewModel::delete
                                                     )
@@ -275,7 +287,16 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                             bottomSheetNavigator.showSuspend(scope = viewModel) {
                                                 VersionsListBS(
                                                     list = viewModel.getApkList(url, isRoot),
-                                                    actionDownloadRootVersion = viewModel::downloadRootVersion,
+                                                    actionDownloadRootVersion = { downloadModel ->
+                                                        viewModel.downloadRootVersion(downloadModel) { statusFlow ->
+                                                            dialogNavigator.showNonDismissible(
+                                                                ModuleInstallerDialog(
+                                                                    statusFlow,
+                                                                    viewModel::reboot
+                                                                )
+                                                            )
+                                                        }
+                                                    },
                                                     actionDownloadNonRootVersion = viewModel::downloadNonRootVersion
                                                 )
                                             }
@@ -292,8 +313,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                     refreshing = viewModel.isRefreshing,
                     state = pullRefreshState,
                     contentColor = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
+                    modifier = Modifier.align(Alignment.TopCenter)
                 )
             }
         }
@@ -310,6 +330,7 @@ private class VersionsListBS(
     @Composable
     override fun Content() {
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
+
         SubversionsListBSContent(
             list = list,
             actionHide = bottomSheetNavigator::hide,
@@ -339,6 +360,22 @@ class DeleteConfirmDialog(
             appInfo = appInfo,
             actionDelete = actionDelete,
             actionHideDialog = dialogNavigator::hide
+        )
+    }
+}
+
+class ModuleInstallerDialog(
+    private val statusFlow: MutableStateFlow<ModuleInstaller.Status>,
+    private val actionReboot: () -> Unit
+): Screen {
+    @Composable
+    override fun Content() {
+        val status by statusFlow.collectAsState()
+        val dialogNavigator = LocalDialogNavigator.current
+        ModuleInstallDialogContent(
+            status = status,
+            actionReboot = actionReboot,
+            actionHide = dialogNavigator::hide
         )
     }
 }

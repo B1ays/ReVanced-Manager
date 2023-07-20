@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
-import ru.blays.revanced.Services.Root.MagiskInstaller
+import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
@@ -18,7 +18,7 @@ class AppRepository private constructor(): AppRepositoryInterface {
 
     override var appType = ""
 
-    override var moduleType: MagiskInstaller.Module? = null
+    override var moduleType: ModuleInstaller.Module? = null
 
     override var remoteVersionsList: MutableList<VersionsInfoModelDto> = mutableListOf()
 

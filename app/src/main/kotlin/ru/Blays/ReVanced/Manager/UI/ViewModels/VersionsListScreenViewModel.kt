@@ -1,6 +1,5 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -12,17 +11,17 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.get
-import org.koin.java.KoinJavaComponent.inject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
 import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
+import ru.Blays.ReVanced.Manager.Utils.ModuleInstallerLogAdapter.ModuleInstallerLogAdapter
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
+import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.Services.Root.PackageManager.RootPackageManager
-import ru.blays.revanced.Services.Root.MagiskInstaller
 import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
@@ -107,7 +106,7 @@ class VersionsListScreenViewModel(
 
     fun deleteModule(packageName: String) {
         repository?.moduleType?.let { module ->
-            MagiskInstaller.delete(module = module)
+            ModuleInstaller().delete(module = module)
         }
         onRefresh()
     }
@@ -143,12 +142,11 @@ class VersionsListScreenViewModel(
     }
 
     fun downloadRootVersion(
-        filesModel: RootVersionDownloadModel
+        filesModel: RootVersionDownloadModel,
+        installCallback: (MutableStateFlow<ModuleInstaller.Status>) -> Unit
     ) {
 
         if (filesModel.origUrl == null) return
-
-        val context: Context by inject(Context::class.java)
 
         val state = MutableStateFlow(MagiskInstallerState())
 
@@ -163,7 +161,7 @@ class VersionsListScreenViewModel(
                         }.await()
 
                         if (installResult?.isError == true) {
-                            this.cancel()
+                            cancel()
                             return@launch
                         }
                         with(state) { emit(value.copy(origApkInstalled = true)) }
@@ -184,15 +182,18 @@ class VersionsListScreenViewModel(
                 onSuccess = {
                     launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
 
-                    collect(state) {
+                    collect(state) { downloadState ->
 
-                        if (it.origApkInstalled) {
+                        if (downloadState.origApkInstalled) {
                             launch {
                                 repository?.moduleType?.let { module ->
-                                    MagiskInstaller.install(
+                                    ModuleInstaller(
+                                        logAdapter = ModuleInstallerLogAdapter()
+                                    ).also { installer ->
+                                        installCallback(installer.statusFlow)
+                                    }.install(
                                         module,
-                                        file!!,
-                                        context
+                                        file!!
                                     )
                                     onRefresh()
                                 }

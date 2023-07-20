@@ -1,37 +1,39 @@
-package ru.blays.revanced.Services.Root
+package ru.blays.revanced.Services.Root.ModuleIntstaller
 
-import android.content.Context
 import android.os.Environment
 import android.util.Log
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import ru.blays.revanced.Services.Root.ModuleIntstaller.LogAdapter.LogAdapter
+import ru.blays.revanced.Services.Root.ModuleIntstaller.LogAdapter.LogAdapterDefault
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalTime
 
+private const val DL_FOLDER_NAME = "ReVanced Manager"
+
 @Suppress("MemberVisibilityCanBePrivate")
-object MagiskInstaller {
+class ModuleInstaller(
+    private val logAdapter: LogAdapter = LogAdapterDefault()
+) {
 
-    val status = MutableStateFlow<Status>(Status.STARTING)
+    val statusFlow = MutableStateFlow<Status>(Status.STARTING)
 
-    suspend fun install(module: Module, file: File, context: Context) = coroutineScope {
+    suspend fun install(module: Module, file: File) = coroutineScope {
 
-        val logPath = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val logPath = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DL_FOLDER_NAME)
         val logFilePath = File(logPath, "InstallLog_${LocalDate.now()}_${LocalTime.now()}.txt").absolutePath
-        Log.d("Magisk Installer", "logFilePath: $logFilePath")
 
         val apkPath = file.absolutePath
 
-        Log.d("Magisk Installer", "ApkPath: $apkPath")
-
-        // post status & write to log
+        // post statusFlow & write to log
         postStatusAndWriteToLog(Status.STARTING, logFilePath)
 
         // Create path to app module
         val pathToModule = pathToModule(module.moduleId)
 
-        // post status & write to log
+        // post statusFlow & write to log
         postStatusAndWriteToLog(Status.CHECK_MODULE_EXISTS, logFilePath)
 
         // check module exists
@@ -39,12 +41,10 @@ object MagiskInstaller {
 
         val isModuleFileExist = checkModuleFilesExist(pathToModule)
 
-
-
         // if module exists - update files
         if (isModuleExist && isModuleFileExist) {
 
-            // post status & write to log
+            // post statusFlow & write to log
             postStatusAndWriteToLog(Status.GENERATE_SERVICE_SH, logFilePath)
 
             // generate new service
@@ -52,11 +52,11 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (serviceSh.isEmpty()) {
-                postStatusAndWriteToLog(Status.ERROR, "Error")
+                postStatusAndWriteToLog(Status.ERROR.addError("Unable to generate new service.sh for update"), logFilePath)
                 return@coroutineScope
             }
 
-            // post status & write to log
+            // post statusFlow & write to log
             postStatusAndWriteToLog(Status.UPDATE_MODULE, logFilePath)
 
             // run module update function
@@ -64,17 +64,20 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!updateModule) {
-                postStatusAndWriteToLog(Status.ERROR, "Error")
+                postStatusAndWriteToLog(
+                    Status.ERROR.addError("Unable to update module"),
+                    logFilePath
+                )
                 return@coroutineScope
             }
 
-            postStatusAndWriteToLog(Status.COMPLETE, "Install complete")
+            postStatusAndWriteToLog(Status.COMPLETE, logFilePath)
 
         }
         // create new module
         else {
 
-            // post status & write to log
+            // post statusFlow & write to log
             postStatusAndWriteToLog(Status.CREATE_MODULE_FOLDER, logFilePath)
 
             // create module folder
@@ -82,11 +85,14 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!createModuleFolder) {
-                postStatusAndWriteToLog(Status.ERROR, "Error")
+                postStatusAndWriteToLog(
+                    Status.ERROR.addError("Can't create module folder"),
+                    logFilePath
+                )
                 return@coroutineScope
             }
 
-            // post status & write to log
+            // post statusFlow & write to log
             postStatusAndWriteToLog(Status.COPY_APK, logFilePath)
 
             // copy mod apk to module folder as base.apk
@@ -94,32 +100,34 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!copyApkToModuleFolder) {
-                postStatusAndWriteToLog(Status.ERROR, "Error")
+                postStatusAndWriteToLog(
+                    Status.ERROR.addError("Can't copy apk to module folder"),
+                    logFilePath
+                )
                 return@coroutineScope
             }
 
-            // post status & write to log
+            // post statusFlow & write to log
             postStatusAndWriteToLog(Status.GENERATE_MODULE_PROP, logFilePath)
 
             // generate service.sh & module.prop
             val moduleProp = generateModuleProp(moduleId = module.moduleId, moduleName = module.moduleName)
 
-            Log.d("MagiskInstaller", moduleProp)
-
-            // post status & write to log
+            // post statusFlow & write to log
             postStatusAndWriteToLog(Status.GENERATE_SERVICE_SH, logFilePath)
 
             val serviceSh = generateServicesSh(path = pathToModule, packageName = module.packageName)
 
-            Log.d("MagiskInstaller", serviceSh)
-
             // abort install in case of error
             if (serviceSh.isEmpty()) {
-                postStatusAndWriteToLog(Status.ERROR, "Error")
+                postStatusAndWriteToLog(
+                    Status.ERROR.addError("Can't generate service.sh"),
+                    logFilePath
+                )
                 return@coroutineScope
             }
 
-            // post status & write to log
+            // post statusFlow & write to log
             postStatusAndWriteToLog(Status.WRITE_MODULE_FILES, logFilePath)
 
             // write service.sh & module.prop to module folder
@@ -128,11 +136,14 @@ object MagiskInstaller {
 
             // abort install in case of error
             if (!writeServiceSh || !writeModuleProp) {
-                postStatusAndWriteToLog(Status.ERROR, "Error")
+                postStatusAndWriteToLog(
+                    Status.ERROR.addError("Unable to write service.sh & module.prop"),
+                    logFilePath
+                )
                 return@coroutineScope
             }
 
-            postStatusAndWriteToLog(Status.COMPLETE, "Install complete")
+            postStatusAndWriteToLog(Status.COMPLETE, logFilePath)
         }
     }
 
@@ -159,8 +170,8 @@ object MagiskInstaller {
 
     // Get full path to module folder
     // Module.moduleId -> path
-    private val pathToModule: (String) -> String
-        get() = { "/data/adb/modules/$it/" }
+    private val pathToModule: (moduleID: String) -> String
+        get() = { moduleID ->  "/data/adb/modules/$moduleID/" }
 
     private fun checkModuleExist(path: String): Boolean {
         val checkModuleDirExists = Shell.cmd("test -e $path").exec()
@@ -193,9 +204,7 @@ object MagiskInstaller {
         val pathToOrigApp =
             Shell.cmd("pm path $packageName | cut -d \":\" -f2- | grep \"base.apk\"").exec()
 
-        Log.d("MagiskInstaller", pathToOrigApp.out.firstOrNull().toString())
-
-        /*if (!pathToOrigApp.isSuccess) return ""*/
+        Log.d("ModuleInstaller", pathToOrigApp.out.firstOrNull().toString())
 
         return """#!/system/bin/sh
 while [ "'"$(getprop sys.boot_completed)"'" != "1" ];
@@ -243,16 +252,18 @@ description=ReVanced Manager module."""
     }
 
     private fun deleteFile(filePath: String): Boolean {
-
-        val delete = Shell.cmd("rm -r -f $filePath").exec()
-
+        val delete = Shell.cmd("rm -rf $filePath").exec()
         return delete.isSuccess
     }
 
     private fun postStatusAndWriteToLog(status: Status, logPath: String) {
-        Log.i("MagiskInstaller", status.message)
-        MagiskInstaller.status.tryEmit(status)
-        Shell.cmd(" echo \"${status.message}\" >> $logPath").exec()
+        val fullMessage = with(status) {
+            if (error.isEmpty()) message
+            else "$message : error $error"
+        }
+        logAdapter.i(fullMessage)
+        this.statusFlow.tryEmit(status)
+        Shell.cmd(" echo \"${fullMessage}\" >> $logPath").exec()
     }
 
     enum class Module {
@@ -274,7 +285,7 @@ description=ReVanced Manager module."""
         abstract val packageName: String
     }
 
-    enum class Status(val message: String) {
+    enum class Status(val message: String, var error: String = "") {
         STARTING("Start install"),
         CHECK_MODULE_EXISTS("Check module exists"),
         CREATE_MODULE("Create module"),
@@ -285,7 +296,11 @@ description=ReVanced Manager module."""
         COPY_APK("Copy APK"),
         WRITE_MODULE_FILES("Write module files"),
         COMPLETE("Install complete"),
-        ERROR("Error")
+        ERROR("Error");
+
+        fun addError(error: String) = this.apply {
+            this.error = error
+        }
     }
 
 }
