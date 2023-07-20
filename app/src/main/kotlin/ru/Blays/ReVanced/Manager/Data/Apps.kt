@@ -9,7 +9,7 @@ import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.Microg
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.MusicMonochrome
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.YoutubeMonochrome
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
-import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
+import ru.blays.revanced.Services.Root.MagiskInstaller
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
 enum class Apps {

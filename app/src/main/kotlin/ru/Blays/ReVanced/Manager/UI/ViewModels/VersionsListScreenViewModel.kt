@@ -21,8 +21,8 @@ import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
-import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
-import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
+import ru.blays.revanced.Services.Root.PackageManager.RootPackageManager
+import ru.blays.revanced.Services.Root.MagiskInstaller
 import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto

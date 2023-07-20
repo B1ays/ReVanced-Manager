@@ -1,4 +1,4 @@
-package ru.blays.revanced.Services.RootService.Util
+package ru.blays.revanced.Services.Root
 
 import android.content.Context
 import android.os.Environment
@@ -251,7 +251,7 @@ description=ReVanced Manager module."""
 
     private fun postStatusAndWriteToLog(status: Status, logPath: String) {
         Log.i("MagiskInstaller", status.message)
-        this.status.tryEmit(status)
+        MagiskInstaller.status.tryEmit(status)
         Shell.cmd(" echo \"${status.message}\" >> $logPath").exec()
     }
 

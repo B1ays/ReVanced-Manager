@@ -1,4 +1,4 @@
-package ru.blays.revanced.Services.NonRootService.PackageManager
+package ru.blays.revanced.Services.NonRoot.PackageManager
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -7,13 +7,13 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.os.Build
-import ru.blays.revanced.Services.NonRootService.InstallService.AppInstallService
-import ru.blays.revanced.Services.NonRootService.InstallService.AppUninstallService
-import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerError
-import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterface
-import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerResult
-import ru.blays.revanced.Services.NonRootService.Util.doubleUnionTryCatch
-import ru.blays.revanced.Services.NonRootService.Util.tripleUnionTryCatch
+import ru.blays.revanced.Services.NonRoot.InstallService.AppInstallService
+import ru.blays.revanced.Services.NonRoot.InstallService.AppUninstallService
+import ru.blays.revanced.Services.NonRoot.Interfaces.PackageManagerError
+import ru.blays.revanced.Services.NonRoot.Interfaces.PackageManagerInterface
+import ru.blays.revanced.Services.NonRoot.Interfaces.PackageManagerResult
+import ru.blays.revanced.Services.NonRoot.Util.doubleUnionTryCatch
+import ru.blays.revanced.Services.NonRoot.Util.tripleUnionTryCatch
 import ru.blays.revanced.shared.Extensions.intentFor
 import ru.blays.revanced.shared.Extensions.isNotNull
 import java.io.File

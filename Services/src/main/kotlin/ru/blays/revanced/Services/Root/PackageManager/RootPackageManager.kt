@@ -1,13 +1,13 @@
-package ru.blays.revanced.Services.RootService.PackageManager
+package ru.blays.revanced.Services.Root.PackageManager
 
 import com.topjohnwu.superuser.Shell
-import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerError
-import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterface
-import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerResult
-import ru.blays.revanced.Services.NonRootService.Interfaces.getEnumForInstallFailed
-import ru.blays.revanced.Services.RootService.Util.SuException
-import ru.blays.revanced.Services.RootService.Util.awaitOutputOrThrow
-import ru.blays.revanced.Services.RootService.Util.errString
+import ru.blays.revanced.Services.NonRoot.Interfaces.PackageManagerError
+import ru.blays.revanced.Services.NonRoot.Interfaces.PackageManagerInterface
+import ru.blays.revanced.Services.NonRoot.Interfaces.PackageManagerResult
+import ru.blays.revanced.Services.NonRoot.Interfaces.getEnumForInstallFailed
+import ru.blays.revanced.Services.Root.Util.SuException
+import ru.blays.revanced.Services.Root.Util.awaitOutputOrThrow
+import ru.blays.revanced.Services.Root.Util.errString
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException

@@ -1,4 +1,4 @@
-package ru.blays.revanced.Services.NonRootService.Util
+package ru.blays.revanced.Services.NonRoot.Util
 
 //Dear reader, welcome to HELL.
 //We don't kink-shame here.

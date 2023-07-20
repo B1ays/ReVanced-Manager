@@ -9,9 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 import ru.blays.revanced.Elements.Elements.Screens.LogViewScreen.LogView
-import ru.blays.revanced.Services.RootService.Util.isKSUInstalled
-import ru.blays.revanced.Services.RootService.Util.isMagiskInstalled
-import ru.blays.revanced.Services.RootService.Util.isRootGranted
+import ru.blays.revanced.Services.Root.Util.isKSUInstalled
+import ru.blays.revanced.Services.Root.Util.isMagiskInstalled
+import ru.blays.revanced.Services.Root.Util.isRootGranted
 import ru.blays.revanced.shared.Extensions.copyToClipBoard
 import ru.blays.revanced.shared.Extensions.share
 import ru.blays.revanced.shared.Extensions.writeTextByUri

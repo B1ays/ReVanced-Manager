@@ -1,4 +1,4 @@
-package ru.blays.revanced.Services.RootService.Util
+package ru.blays.revanced.Services.Root.Util
 
 import com.topjohnwu.superuser.Shell
 import kotlin.coroutines.resume

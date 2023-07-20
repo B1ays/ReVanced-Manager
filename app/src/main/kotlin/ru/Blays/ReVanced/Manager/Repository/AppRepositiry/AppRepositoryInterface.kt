@@ -3,7 +3,7 @@ package ru.Blays.ReVanced.Manager.Repository.AppRepositiry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.blays.revanced.Elements.DataClasses.AppInfo
-import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
+import ru.blays.revanced.Services.Root.MagiskInstaller
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 

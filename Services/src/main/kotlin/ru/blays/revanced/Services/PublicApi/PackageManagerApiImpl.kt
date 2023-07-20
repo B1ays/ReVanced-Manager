@@ -5,10 +5,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import ru.blays.revanced.Services.NonRootService.Interfaces.PackageManagerInterface
-import ru.blays.revanced.Services.NonRootService.PackageManager.NonRootPackageManager
-import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
-import ru.blays.revanced.Services.RootService.Util.isRootGranted
+import ru.blays.revanced.Services.NonRoot.Interfaces.PackageManagerInterface
+import ru.blays.revanced.Services.NonRoot.PackageManager.NonRootPackageManager
+import ru.blays.revanced.Services.Root.PackageManager.RootPackageManager
+import ru.blays.revanced.Services.Root.Util.isRootGranted
 import ru.blays.revanced.shared.LogManager.BLog
 import java.io.File
 

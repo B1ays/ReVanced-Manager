@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
-import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
+import ru.blays.revanced.Services.Root.MagiskInstaller
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
