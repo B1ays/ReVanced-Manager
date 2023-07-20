@@ -11,14 +11,14 @@ androidx-lifecycle = "2.6.1"
 androidx-room = "2.6.0-alpha02"
 androidx-savedstate = "1.2.1"
 coil = "2.4.0"
-colorpicker-compose = "1.0.3"
+colorpicker-compose = "1.0.4"
 com-google-devtools-ksp = "1.9.0-1.0.11"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-markdown = "0.3.4"
-libsu = "5.1.0"
 github-pausing-coroutine-dispatcher = "ee40ae5"
 koin-androidx-compose = "3.4.5"
 kotlin = "1.9.0"
+libsu = "5.1.0"
 pausing-coroutine-dispatcher = "ee40ae5"
 rebugger = "1.0.0-alpha06"
 work-runtime-ktx = "2.9.0-alpha01"
@@ -83,20 +83,19 @@ compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.
 core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsu" }
 koin-android = "io.insert-koin:koin-android:3.4.2"
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-androidx-compose" }
-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-material3 = { module = "androidx.compose.material3:material3" }
-nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "libsu" }
-org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:3.0.0-alpha1"
 kotlin-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-kotlin-stdlib-common = { module = "org.jetbrains.kotlin:kotlin-stdlib-common", version.ref = "kotlin" }
 kotlin-kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
 kotlin-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinx-kotlinx-coroutines-core-jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2"
 kotlinx-kotlinx-serialization-bom = "org.jetbrains.kotlinx:kotlinx-serialization-bom:1.5.1"
 kotlinx-kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1"
 kotlinx-kotlinx-serialization-core-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.5.1"
-kotlinx-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 kotlinx-kotlinx-serialization-json-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.5.1"
+material3 = { module = "androidx.compose.material3:material3" }
+nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "libsu" }
+org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:3.0.0-alpha1"
 pausing-coroutine-dispatcher = { module = "com.github.Koitharu.pausing-coroutine-dispatcher:pausing-coroutine-dispatcher", version.ref = "pausing-coroutine-dispatcher" }
 pausing-coroutine-dispatcher-ee40ae5 = { module = "com.github.Koitharu.pausing-coroutine-dispatcher:pausing-coroutine-dispatcher", version.ref = "github-pausing-coroutine-dispatcher" }
 rebugger = { module = "com.github.theapache64:rebugger", version.ref = "rebugger" }
@@ -107,7 +106,7 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 com-android-application = "com.android.application:8.2.0-alpha13"
 com-github-ben-manes-versions = "com.github.ben-manes.versions:0.47.0"
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "com-google-devtools-ksp" }
-kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-nl-littlerobots-version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.1"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+nl-littlerobots-version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.1"
