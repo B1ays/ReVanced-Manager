@@ -22,6 +22,7 @@ import androidx.compose.material3.pullrefresh.pullRefresh
 import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -138,9 +139,9 @@ class MainScreen: AndroidScreen() {
                     items(Apps.entries) { app ->
 
                         val availableVersion = app.repository
-                            .appVersions
-                            .first()
-                            .remoteVersionNameState
+                            .availableVersion
+                            .collectAsState()
+
 
                         val versions = app.repository.appVersions
                                 .map { it.versionName to it.localVersionNameState }

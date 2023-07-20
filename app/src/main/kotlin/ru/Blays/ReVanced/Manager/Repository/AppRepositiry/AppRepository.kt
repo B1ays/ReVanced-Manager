@@ -1,6 +1,7 @@
 package ru.Blays.ReVanced.Manager.Repository.AppRepositiry
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
@@ -26,6 +27,8 @@ class AppRepository private constructor(): AppRepositoryInterface {
     override val hasRootVersion: Boolean
         get() = appVersions.any { it.isRootNeeded }
 
+    override var availableVersion: MutableStateFlow<String?> = MutableStateFlow(null)
+
     override fun version(scope: AppVersionModel.() -> Unit) {
         val appVersionModel = AppVersionModel()
         scope(appVersionModel)
@@ -42,12 +45,21 @@ class AppRepository private constructor(): AppRepositoryInterface {
         packageName = versionModel.packageName
     )
 
-    init {
+    override fun updateVersionsList() {
         launch {
-            getVersionsListUseCase?.let {
-                remoteVersionsList = it.execut(appType).toMutableList()
+            getVersionsListUseCase?.let { useCase ->
+                if (remoteVersionsList.isEmpty()) {
+                    remoteVersionsList.addAll(useCase.execut(appType))
+                } else {
+                    remoteVersionsList = useCase.execut(appType).toMutableList()
+                }
             }
+            availableVersion.value = remoteVersionsList.firstOrNull()?.version
         }
+    }
+
+    init {
+        updateVersionsList()
     }
 
     companion object {

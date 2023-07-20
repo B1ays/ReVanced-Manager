@@ -1,6 +1,7 @@
 package ru.Blays.ReVanced.Manager.Repository.AppRepositiry
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
@@ -22,7 +23,11 @@ interface AppRepositoryInterface: CoroutineScope {
 
     val hasRootVersion: Boolean
 
+    var availableVersion: MutableStateFlow<String?>
+
     fun version(scope: AppVersionModel.() -> Unit)
 
     fun createAppInfo(versionModel: AppVersionModel): AppInfo
+
+    fun updateVersionsList()
 }
