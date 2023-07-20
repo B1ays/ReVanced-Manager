@@ -145,7 +145,8 @@ fun DownloadItem(
                             .background(
                                 color = MaterialTheme.colorScheme.background.copy(alpha = .5F),
                                 shape = CircleShape
-                            ),
+                            )
+                            .animateContentSize(spring(stiffness = 300F, dampingRatio = .6F)),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Spacer(modifier = Modifier.width(5.dp))
