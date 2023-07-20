@@ -43,7 +43,9 @@ fun UpdateInfoHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
+        Column(
+            modifier = Modifier.weight(0.5F)
+        ) {
             availableVersion?.let { Text(text = "${stringResource(id = R.string.Available_version_name)}: $it")
                 Spacer(modifier = Modifier.height(8.dp))
             }
