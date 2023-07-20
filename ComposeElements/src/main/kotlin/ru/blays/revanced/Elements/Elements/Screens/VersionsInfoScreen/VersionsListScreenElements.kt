@@ -77,8 +77,8 @@ fun VersionsListScreenHeader(
     actionOpen: (String) -> Unit
 ) {
 
-    val version by appInfo.version.collectAsState()
-    val patchesVersion by appInfo.patchesVersion.collectAsState()
+    val version = appInfo.version
+    val patchesVersion = appInfo.patchesVersion
 
     Spacer(modifier = Modifier.height(8.dp))
     Row(

@@ -3,10 +3,7 @@ package ru.Blays.ReVanced.Manager.DI
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
-import ru.Blays.ReVanced.Manager.Repository.MicroGVersionsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
-import ru.Blays.ReVanced.Manager.Repository.YoutubeMusicVersionsRepository
-import ru.Blays.ReVanced.Manager.Repository.YoutubeVersionsRepository
 import ru.Blays.ReVanced.Manager.UI.ViewModels.AppUpdateScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
@@ -18,7 +15,7 @@ import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
 val appModule = module {
-    viewModel { MainScreenViewModel(get()) }
+    viewModel { MainScreenViewModel() }
     viewModel { VersionsListScreenViewModel(get(), get(), get()) }
     viewModel { AppUpdateScreenViewModel(get(), get(), get(), get(), get()) }
     factory<GetVersionsListUseCase> { GetVersionsListUseCase(get()) }
@@ -31,7 +28,4 @@ val appModule = module {
     }
     single<DownloadsRepository> { DownloadsRepository() }
     single<SettingsRepository> { SettingsRepository(get()) }
-    single<YoutubeVersionsRepository> { YoutubeVersionsRepository(get()) }
-    single<YoutubeMusicVersionsRepository> { YoutubeMusicVersionsRepository(get()) }
-    single<MicroGVersionsRepository> { MicroGVersionsRepository(get()) }
 }

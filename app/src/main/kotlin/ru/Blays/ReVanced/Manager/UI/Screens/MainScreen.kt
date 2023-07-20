@@ -21,6 +21,7 @@ import androidx.compose.material3.pullrefresh.PullRefreshIndicator
 import androidx.compose.material3.pullrefresh.pullRefresh
 import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,7 +39,6 @@ import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.blays.helios.androidx.AndroidScreen
 import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
-import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCard
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRoot
 import ru.blays.revanced.shared.R
 import ru.blays.revanced.shared.Util.getStringRes
@@ -71,6 +71,10 @@ class MainScreen: AndroidScreen() {
             !lazyListState.canScrollForward && lazyListState.canScrollBackward -> true
             !lazyListState.canScrollForward && !lazyListState.canScrollBackward -> false
             else -> false
+        }
+
+        LaunchedEffect(key1 = Unit) {
+            viewModel.onRefresh()
         }
 
         Scaffold(
@@ -132,30 +136,28 @@ class MainScreen: AndroidScreen() {
                     state = lazyListState
                 ) {
                     items(Apps.entries) { app ->
+
+                        val availableVersion = app.repository
+                            .appVersions
+                            .first()
+                            .remoteVersionNameState
+
+                        val versions = app.repository.appVersions
+                                .map { it.versionName to it.localVersionNameState }
+                                .toTypedArray()
+
                         if (
                             (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
                             (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
                             (app == Apps.MICROG && settingsRepository.microGManaged)
                         ) {
-                            if (app.repository.hasRootVersion) {
-                                AppCardRoot(
-                                    icon = app.icon,
-                                    appName = app.repository.appName,
-                                    availableVersion = app.repository.availableVersion,
-                                    rootVersion = app.repository.rootVersion,
-                                    nonRootVersion = app.repository.nonRootVersion
-                                ) {
-                                    navigator.push(VersionsListScreen(app))
-                                }
-                            } else {
-                                AppCard(
-                                    icon = app.icon,
-                                    appName = app.repository.appName,
-                                    availableVersion = app.repository.availableVersion,
-                                    version = app.repository.version
-                                ) {
-                                    navigator.push(VersionsListScreen(app))
-                                }
+                            AppCardRoot(
+                                icon = app.icon,
+                                appName = app.repository.appName,
+                                availableVersion = availableVersion,
+                                versions = versions
+                            ) {
+                                navigator.push(VersionsListScreen(app))
                             }
                             Spacer(modifier = Modifier.height(16.dp))
                         }

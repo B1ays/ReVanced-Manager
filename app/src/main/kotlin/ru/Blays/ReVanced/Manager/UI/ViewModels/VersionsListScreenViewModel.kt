@@ -6,25 +6,23 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
+import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
-import ru.Blays.ReVanced.Manager.Repository.VersionsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.RootService.PackageManager.RootPackageManager
 import ru.blays.revanced.Services.RootService.Util.MagiskInstaller
-import ru.blays.revanced.Services.RootService.Util.isRootGranted
 import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
@@ -55,7 +53,7 @@ class VersionsListScreenViewModel(
 
     private val downloadsRepository: DownloadsRepository = get(DownloadsRepository::class.java)
 
-    var repository: VersionsRepository? = null
+    var repository: AppRepositoryInterface? = null
         private set
 
     fun getDataForApp(app: Apps) {
@@ -65,26 +63,31 @@ class VersionsListScreenViewModel(
 
         calculatePagesCount(repository)
         appName = repository.appName
-        if (repository.versionsList.isNotEmpty()) {
-            versionsList = repository.versionsList
+        if (repository.remoteVersionsList.isNotEmpty()) {
+            versionsList = repository.remoteVersionsList
             isRefreshing = false
         } else {
-            launch { getList(repository.appType) }
+            launch { versionsList = getList(repository.appType) }
         }
     }
 
-    private fun calculatePagesCount(repo: VersionsRepository) {
-        pagesCount = if (repo.hasRootVersion && isRootGranted) 2 else 1
+    private fun calculatePagesCount(repo: AppRepositoryInterface) {
+        pagesCount = repo.appVersions.count()
     }
 
-    private suspend fun getList(appType: String) = withContext(Dispatchers.IO) {
+    private suspend fun getList(appType: String): List<VersionsInfoModelDto> = coroutineScope {
         isRefreshing = true
-        versionsList = getVersionsListUseCase.execut(appType)
+        val list = getVersionsListUseCase.execut(appType)
         isRefreshing = false
+        return@coroutineScope list
     }
 
     fun onRefresh() {
-        launch { repository?.updateInfo(recreateCache = true) }
+        launch {
+            repository?.appVersions?.forEach { version ->
+                version.updateInfo()
+            }
+        }
     }
 
     suspend fun getApkList(url: String, rootVersion: Boolean): List<ApkInfoModelDto> {

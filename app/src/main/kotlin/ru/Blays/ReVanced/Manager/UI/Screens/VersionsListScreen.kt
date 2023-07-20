@@ -191,24 +191,16 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                     )
                                 }
                             ) {
-                                CustomTab(
-                                    selected = currentPage == 0,
-                                    selectedContentColor = MaterialTheme.colorScheme.surface,
-                                    unselectedContentColor = MaterialTheme.colorScheme.primary,
-                                    minHeight = 45.dp,
-                                    onClick = { scope.launch { pagerState.animateScrollToPage(0) } }
-                                ) {
-                                    Text(text = "Non-Root")
-                                }
-
-                                CustomTab(
-                                    selected = currentPage == 1,
-                                    selectedContentColor = MaterialTheme.colorScheme.surface,
-                                    unselectedContentColor = MaterialTheme.colorScheme.primary,
-                                    minHeight = 45.dp,
-                                    onClick = { scope.launch { pagerState.animateScrollToPage(1) } }
-                                ) {
-                                    Text(text = "Root")
+                                viewModel.repository?.appVersions?.forEachIndexed { index, version ->
+                                    CustomTab(
+                                        selected = currentPage == index,
+                                        selectedContentColor = MaterialTheme.colorScheme.surface,
+                                        unselectedContentColor = MaterialTheme.colorScheme.primary,
+                                        minHeight = 45.dp,
+                                        onClick = { scope.launch { pagerState.animateScrollToPage(index) } }
+                                    ) {
+                                        Text(text = version.versionName ?: "")
+                                    }
                                 }
                             }
                         }
@@ -221,37 +213,46 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                                 state = lazyListState
                             ) {
-
-                                if (page == 0) {
+                                if (
+                                    viewModel.repository
+                                    ?.appVersions
+                                    ?.get(page)
+                                    ?.isRootNeeded == true
+                                ) {
                                     stickyHeader {
                                         VersionsListScreenHeader(
-                                            appInfo = viewModel.repository?.generateAppInfo() ?: AppInfo(),
+                                            appInfo = viewModel.repository
+                                                ?.createAppInfo(viewModel.repository
+                                                !!.appVersions[page])
+                                                ?: AppInfo(),
                                             actionOpenDialog = {
                                                 dialogNavigator.show(
                                                     DeleteConfirmDialog(
                                                         appInfo = viewModel.repository
-                                                            ?.generateAppInfo(false)
-                                                            ?:AppInfo(),
-                                                        actionDelete = viewModel::delete
+                                                            ?.createAppInfo(viewModel.repository
+                                                            !!.appVersions[page])
+                                                            ?: AppInfo(),
+                                                        actionDelete = viewModel::deleteModule
                                                     )
                                                 )
                                             },
                                             actionOpen = viewModel::launch
                                         )
                                     }
-                                } else if (page == 1) {
+                                } else {
                                     stickyHeader {
                                         VersionsListScreenHeader(
                                             appInfo = viewModel.repository
-                                                ?.generateAppInfo(true)
-                                                ?:AppInfo(),
+                                                ?.createAppInfo(viewModel.repository
+                                                !!.appVersions[page])
+                                                ?: AppInfo(),
                                             actionOpenDialog = {
                                                 dialogNavigator.show(
                                                     DeleteConfirmDialog(
                                                         appInfo = viewModel.repository
-                                                            ?.generateAppInfo(true)
-                                                            ?: AppInfo(),
-                                                        actionDelete = viewModel::deleteModule
+                                                            ?.createAppInfo(viewModel.repository!!.appVersions[page])
+                                                            ?:AppInfo(),
+                                                        actionDelete = viewModel::delete
                                                     )
                                                 )
                                             },
