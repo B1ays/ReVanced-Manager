@@ -36,7 +36,6 @@ import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.DownloadItem
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.FileItem
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -67,7 +66,7 @@ class DownloadsScreen: AndroidScreen(){
         Scaffold(
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Downloads)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_Downloads)),
                     scrollBehavior = scrollBehavior,
                     navigationIcon = {
                         IconButton(

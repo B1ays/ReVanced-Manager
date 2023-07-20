@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 
 
 @Composable
@@ -94,7 +93,7 @@ fun AppCardRoot(
                         enter = slideInHorizontally(animationSpec = spring(stiffness = 300F, dampingRatio = .6F))
                     ) {
                             TextWithBackground(
-                                text = "${getStringRes(R.string.Available_version_name)}: ${this@run}",
+                                text = "${stringResource(R.string.Available_version_name)}: ${this@run}",
                                 textPadding = PaddingValues(5.dp),
                                 maxLines = 1
                             )
@@ -108,7 +107,7 @@ fun AppCardRoot(
                             enter = slideInHorizontally(animationSpec = spring(stiffness = 300F, dampingRatio = .6F))
                         ) {
                             TextWithBackground(
-                                text = "$type ${getStringRes(R.string.Version)}: ${this@run}",
+                                text = "$type ${stringResource(R.string.Version)}: ${this@run}",
                                 textPadding = PaddingValues(5.dp),
                                 maxLines = 1
                             )

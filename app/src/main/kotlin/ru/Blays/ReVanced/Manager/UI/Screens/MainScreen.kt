@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
@@ -42,7 +43,6 @@ import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRoot
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -81,7 +81,7 @@ class MainScreen: AndroidScreen() {
         Scaffold(
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Main)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_Main)),
                     scrollBehavior = scrollBehavior,
                     actions = {
                         BadgedBox(

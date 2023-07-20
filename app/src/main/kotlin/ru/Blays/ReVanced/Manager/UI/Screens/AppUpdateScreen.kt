@@ -40,7 +40,6 @@ import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.AppUpdateScreen.ChangelogView
 import ru.blays.revanced.Elements.Elements.Screens.AppUpdateScreen.UpdateInfoHeader
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -70,7 +69,7 @@ class AppUpdateScreen: AndroidScreen() {
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Updates)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_Updates)),
                     scrollBehavior = scrollBehavior,
                     navigationIcon = {
                         IconButton(

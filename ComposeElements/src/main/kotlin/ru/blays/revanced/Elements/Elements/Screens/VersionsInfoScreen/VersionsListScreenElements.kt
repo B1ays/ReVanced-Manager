@@ -67,7 +67,6 @@ import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import java.time.Duration
 
 @Composable
@@ -91,10 +90,10 @@ fun VersionsListScreenHeader(
                 .weight(.5F)
         ) {
             version?.let {
-                Text(text = "${getStringRes(R.string.Installed_version)}: $it")
+                Text(text = "${stringResource(R.string.Installed_version)}: $it")
             }
             patchesVersion?.let {
-                Text(text = "${getStringRes(R.string.Patches_version)}: $it")
+                Text(text = "${stringResource(R.string.Patches_version)}: $it")
             }
         }
         version?.let {
@@ -191,11 +190,11 @@ fun VersionsInfoCard(
                 .padding(8.dp)
                 .fillMaxWidth()
         ) {
-            item.version?.let { Text(text = "${getStringRes(R.string.Version)}: $it") }
+            item.version?.let { Text(text = "${stringResource(R.string.Version)}: $it") }
             Spacer(modifier = Modifier.height(4.dp))
-            item.patchesVersion?.let { Text(text = "${getStringRes(R.string.Patches_version)}: $it") }
+            item.patchesVersion?.let { Text(text = "${stringResource(R.string.Patches_version)}: $it") }
             Spacer(modifier = Modifier.height(4.dp))
-            item.buildDate?.let { Text(text = "${getStringRes(R.string.Build_date)}: $it") }
+            item.buildDate?.let { Text(text = "${stringResource(R.string.Build_date)}: $it") }
         }
 
         AnimatedVisibility(
@@ -226,7 +225,7 @@ fun VersionsInfoCard(
                         }
                     }
                 ) {
-                    Text(text = getStringRes(R.string.Action_changelog))
+                    Text(text = stringResource(R.string.Action_changelog))
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Button(
@@ -234,7 +233,7 @@ fun VersionsInfoCard(
                         actionShowApkList(item.versionsListLink.orEmpty(), rootVersions)
                     }
                 ) {
-                    Text(text = getStringRes(R.string.Action_download))
+                    Text(text = stringResource(R.string.Action_download))
                 }
                 Spacer(modifier = Modifier.width(12.dp))
             }
@@ -293,20 +292,20 @@ fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot
     AlertDialog(
         onDismissRequest = actionHide,
         title = {
-            Text(text = getStringRes(R.string.Action_reboot_confirm))
+            Text(text = stringResource(R.string.Action_reboot_confirm))
         },
         confirmButton = {
             Button(
                 onClick = actionReboot
             ) {
-                Text(text = getStringRes(R.string.Action_OK))
+                Text(text = stringResource(R.string.Action_OK))
             }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = actionHide
             ) {
-                Text(text = getStringRes(R.string.Action_Cancel))
+                Text(text = stringResource(R.string.Action_Cancel))
             }
         }
     )
@@ -349,7 +348,7 @@ fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot
                     maxLines = 1
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "${getStringRes(R.string.Description)}: ${item.description}")
+                Text(text = "${stringResource(R.string.Description)}: ${item.description}")
             }
             IconButton(
                 onClick = {
@@ -398,7 +397,7 @@ fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) 
 
             val fileName = state.fileName
 
-            Text(text = "${getStringRes(R.string.Download)}: $fileName")
+            Text(text = "${stringResource(R.string.Download)}: $fileName")
             Spacer(modifier = Modifier.height(10.dp))
             GradientLinearProgressIndicator(
                 progress = progress,

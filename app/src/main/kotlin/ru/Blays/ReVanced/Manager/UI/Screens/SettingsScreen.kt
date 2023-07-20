@@ -96,7 +96,7 @@ class SettingsScreen: AndroidScreen() {
         Scaffold(
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Settings)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_Settings)),
                     navigationIcon = {
                         IconButton(onClick = navigator::pop) {
                             Icon(
@@ -109,7 +109,7 @@ class SettingsScreen: AndroidScreen() {
                     actions = {
                         DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeSpinnerExpanded) {
                             DropdownMenuItem(
-                                text = { Text(text = getStringRes(R.string.About_app)) },
+                                text = { Text(text = stringResource(R.string.About_app)) },
                                 onClick = { navigator.push(AboutScreen()) }
                             )
                             DropdownMenuItem(
@@ -187,19 +187,19 @@ class SettingsScreen: AndroidScreen() {
 @Composable
 private fun ThemeSelector(repository: SettingsRepository) {
     SettingsExpandableCard(
-        title = getStringRes(R.string.Settings_card_theme_title),
-        subtitle = getStringRes(R.string.Settings_card_theme_description)
+        title = stringResource(R.string.Settings_card_theme_title),
+        subtitle = stringResource(R.string.Settings_card_theme_description)
     ) {
 
         val themeCode = repository.appTheme.themeCode!!
 
-        SettingsRadioButtonWithTitle(title = getStringRes(R.string.Settings_card_theme_system), checkedIndex = themeCode, index = 0) {
+        SettingsRadioButtonWithTitle(title = stringResource(R.string.Settings_card_theme_system), checkedIndex = themeCode, index = 0) {
             repository.appTheme = ThemeModel(themeCode = 0)
         }
-        SettingsRadioButtonWithTitle(title = getStringRes(R.string.Settings_card_theme_dark), checkedIndex = themeCode, index = 1) {
+        SettingsRadioButtonWithTitle(title = stringResource(R.string.Settings_card_theme_dark), checkedIndex = themeCode, index = 1) {
             repository.appTheme = ThemeModel(themeCode = 1)
         }
-        SettingsRadioButtonWithTitle(title = getStringRes(R.string.Settings_card_theme_light), checkedIndex = themeCode, index = 2) {
+        SettingsRadioButtonWithTitle(title = stringResource(R.string.Settings_card_theme_light), checkedIndex = themeCode, index = 2) {
             repository.appTheme = ThemeModel(themeCode = 2)
         }
     }
@@ -208,8 +208,8 @@ private fun ThemeSelector(repository: SettingsRepository) {
 @Composable
 private fun MonetColors(repository: SettingsRepository) {
     SettingsCardWithSwitch(
-        title = getStringRes(R.string.Settings_card_monet_title),
-        subtitle = getStringRes(R.string.Settings_card_monet_description),
+        title = stringResource(R.string.Settings_card_monet_title),
+        subtitle = stringResource(R.string.Settings_card_monet_description),
         state = repository.monetTheme
     ) {
         repository.monetTheme = it
@@ -219,8 +219,8 @@ private fun MonetColors(repository: SettingsRepository) {
 @Composable
 fun AmoledTheme(repository: SettingsRepository) {
     SettingsCardWithSwitch(
-        title = getStringRes(R.string.Settings_card_amoled_title),
-        subtitle = getStringRes(R.string.Settings_card_amoled_description),
+        title = stringResource(R.string.Settings_card_amoled_title),
+        subtitle = stringResource(R.string.Settings_card_amoled_description),
         state = repository.isAmoledTheme
     ) {
         repository.isAmoledTheme = it
@@ -240,8 +240,8 @@ private fun AccentSelector(
     val rainbowBrush = Brush.sweepGradient(rainbowColors)
 
     SettingsExpandableCard(
-        title = getStringRes(R.string.Settings_card_accent_title),
-        subtitle = getStringRes(R.string.Settings_card_accent_description)
+        title = stringResource(R.string.Settings_card_accent_title),
+        subtitle = stringResource(R.string.Settings_card_accent_description)
     ) {
         LazyRow(modifier = Modifier.padding(12.dp)) {
             itemsIndexed(defaultAccentColorsList) { index, item ->
@@ -268,18 +268,18 @@ private fun AccentSelector(
 @Composable
 fun InstallerType(repository: SettingsRepository) {
     SettingsExpandableCard(
-        title = getStringRes(R.string.Settings_card_installer_title),
-        subtitle = getStringRes(R.string.Settings_card_installer_description)
+        title = stringResource(R.string.Settings_card_installer_title),
+        subtitle = stringResource(R.string.Settings_card_installer_description)
     ) {
         SettingsRadioButtonWithTitle(
-            title = getStringRes(R.string.Settings_card_installer_session),
+            title = stringResource(R.string.Settings_card_installer_session),
             checkedIndex = repository.installerType,
             index = 1
         ) {
             repository.installerType = 1
         }
         SettingsRadioButtonWithTitle(
-            title =  getStringRes(R.string.Settings_card_installer_root),
+            title =  stringResource(R.string.Settings_card_installer_root),
             checkedIndex = repository.installerType,
             index = 2,
             enabled = isRootGranted
@@ -287,7 +287,7 @@ fun InstallerType(repository: SettingsRepository) {
             repository.installerType = 2
         }
         SettingsRadioButtonWithTitle(
-            title =  getStringRes(R.string.Settings_card_installer_shizuku),
+            title =  stringResource(R.string.Settings_card_installer_shizuku),
             checkedIndex = repository.installerType,
             index = 3,
             enabled = false
@@ -300,8 +300,8 @@ fun InstallerType(repository: SettingsRepository) {
 @Composable
 fun ManagedApps(repository: SettingsRepository) {
     SettingsExpandableCard(
-        title = getStringRes(R.string.Settings_card_selected_apps_title),
-        subtitle = getStringRes(R.string.Settings_card_selected_apps_description)
+        title = stringResource(R.string.Settings_card_selected_apps_title),
+        subtitle = stringResource(R.string.Settings_card_selected_apps_description)
     ) {
         SettingsCheckboxWithTitle(title = "YouTube Revanced", state = repository.youtubeManaged) { newValue ->
             repository.youtubeManaged = newValue

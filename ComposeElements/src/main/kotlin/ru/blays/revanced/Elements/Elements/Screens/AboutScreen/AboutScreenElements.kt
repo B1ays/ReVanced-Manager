@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 
 @Composable
 fun ContactItem(contact: Contact, cardShape: RoundedCornerShape) {
@@ -59,7 +58,7 @@ fun ContactItem(contact: Contact, cardShape: RoundedCornerShape) {
                 onClick = { context.startActivity(intent) }
             ) {
                 Text(
-                    text = "${getStringRes(id = R.string.about_Iam)} ${contact.name}",
+                    text = "${stringResource(id = R.string.about_Iam)} ${contact.name}",
                     modifier = Modifier
                         .padding(start = 4.dp)
                 )
