@@ -35,8 +35,10 @@ class App: Application() {
         // Start koin DI
         startKoin {
             androidContext(this@App)
-            modules(appModule)
-            modules(dataModule)
+            modules(
+                appModule,
+                dataModule
+            )
         }
 
         // create channel for notifications
