@@ -1,5 +1,6 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -15,9 +16,9 @@ import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
 import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
-import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.Blays.ReVanced.Manager.Utils.ModuleInstallerLogAdapter.ModuleInstallerLogAdapter
+import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
@@ -34,7 +35,8 @@ import ru.blays.revanced.shared.Extensions.collect
 class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
     private val getApkListUseCase: GetApkListUseCase,
-    private val getChangelogUseCase: GetChangelogUseCase
+    private val getChangelogUseCase: GetChangelogUseCase,
+    context: Context
 ) : BaseViewModel() {
 
     // UI states
@@ -47,10 +49,9 @@ class VersionsListScreenViewModel(
     var pagesCount by mutableIntStateOf(0)
 
     private val packageManager: PackageManagerApi = get(PackageManagerApi::class.java)
-
-    private val settingsRepository: SettingsRepository = get(SettingsRepository::class.java)
-
     private val downloadsRepository: DownloadsRepository = get(DownloadsRepository::class.java)
+
+    val installerType by InstallerTypeDS(context)
 
     var repository: AppRepositoryInterface? = null
         private set
@@ -128,7 +129,7 @@ class VersionsListScreenViewModel(
         val task = DownloadTask(url, fileName)
             .setDefaultActions(
                 onSuccess = {
-                    file?.let { packageManager.installApk(it, settingsRepository.installerType) }
+                    file?.let { packageManager.installApk(it, installerType) }
                     onRefresh()
                 },
                 onCancel = {

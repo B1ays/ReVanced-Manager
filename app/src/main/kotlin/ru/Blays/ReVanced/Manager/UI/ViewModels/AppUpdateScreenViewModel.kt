@@ -1,5 +1,6 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
-import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
+import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.data.Downloader.DownloadTask
 import ru.blays.revanced.data.Downloader.build
@@ -27,13 +28,15 @@ class AppUpdateScreenViewModel(
     private val getUpdateInfoUseCase: GetUpdateInfoUseCase,
     private val getChangelogUseCase: GetChangelogUseCase,
     private val packageManagerApi: PackageManagerApi,
-    private val settingsRepository: SettingsRepository,
-    private val downloadsRepository: DownloadsRepository
+    private val downloadsRepository: DownloadsRepository,
+    context: Context
 ): BaseViewModel() {
 
     private var _updateInfo: MutableStateFlow<AppUpdateModelDto?> = MutableStateFlow(null)
 
     private var _changelog: MutableStateFlow<String> = MutableStateFlow("")
+
+    private val installerType by InstallerTypeDS(context)
 
     val updateInfo: AppUpdateModelDto?
         @Composable get() = _updateInfo.collectAsState().value
@@ -59,7 +62,7 @@ class AppUpdateScreenViewModel(
                 fileName = "Update_${infoModel.availableVersion} (${infoModel.versionCode})"
             ).setDefaultActions(
                 onSuccess = {
-                    packageManagerApi.installApk(file!!, settingsRepository.installerType)
+                    packageManagerApi.installApk(file!!, installerType)
                 }
             ).build()
             task?.let { task -> downloadsRepository.addToList(task) }

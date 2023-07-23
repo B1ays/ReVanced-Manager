@@ -7,7 +7,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.topjohnwu.superuser.Shell
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import ru.Blays.ReVanced.Manager.BackgroundService.CrashHandlerService
 import ru.Blays.ReVanced.Manager.DI.appModule
 import ru.blays.revanced.data.DI.dataModule
 import ru.blays.revanced.shared.LogManager.BLog
@@ -52,6 +51,6 @@ class App: Application() {
         NotificationManagerCompat.from(this@App).createNotificationChannel(channel)
 
         // Crash handler
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
+        /*Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))*/
     }
 }

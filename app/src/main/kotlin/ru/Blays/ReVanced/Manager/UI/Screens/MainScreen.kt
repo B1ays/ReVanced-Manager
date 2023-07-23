@@ -34,7 +34,6 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
-import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.ViewModels.AppUpdateScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
@@ -56,7 +55,6 @@ class MainScreen: AndroidScreen() {
 
         val viewModel: MainScreenViewModel = koinViewModel()
         val updateScreenViewModel: AppUpdateScreenViewModel = koinViewModel()
-        val settingsRepository: SettingsRepository = koinInject()
         val downloadsRepository: DownloadsRepository = koinInject()
 
         val pullRefreshState = rememberPullRefreshState(
@@ -147,21 +145,22 @@ class MainScreen: AndroidScreen() {
                                 .map { it.versionName to it.localVersionNameState }
                                 .toTypedArray()
 
-                        if (
+                        AppCardRoot(
+                            icon = app.icon,
+                            appName = app.repository.appName,
+                            availableVersion = availableVersion,
+                            versions = versions
+                        ) {
+                            navigator.push(VersionsListScreen(app))
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        /*if (
                             (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
                             (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
                             (app == Apps.MICROG && settingsRepository.microGManaged)
                         ) {
-                            AppCardRoot(
-                                icon = app.icon,
-                                appName = app.repository.appName,
-                                availableVersion = availableVersion,
-                                versions = versions
-                            ) {
-                                navigator.push(VersionsListScreen(app))
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
+
+                        }*/
                     }
                 }
 

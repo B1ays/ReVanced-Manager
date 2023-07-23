@@ -9,19 +9,19 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import org.koin.android.ext.android.inject
-import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Navigation.Navigator
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
+import ru.Blays.ReVanced.Manager.Utils.buildedTheme
+import ru.blays.preference.DataStores.AmoledThemeDS
+import ru.blays.preference.DataStores.MonetColorsDS
+import ru.blays.preference.DataStores.ThemeDS
 import ru.blays.revanced.shared.LogManager.BLog
 
 private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
-
-    private val settingsRepository: SettingsRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,17 +44,19 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            settingsRepository.isSystemInDarkMode = isSystemInDarkTheme()
-
-            val buildedTheme by settingsRepository.buildedTheme
-
-            val isAmoledTheme = settingsRepository.isAmoledTheme
+            val themeIndexState = remember { ThemeDS(this) }
+            val monetColorsEnabled = remember { MonetColorsDS(this) }
+            val amoledThemeEnabled = remember { AmoledThemeDS(this) }
 
             ReVancedManagerTheme(
-                darkTheme = settingsRepository.appTheme.isDarkMode!!,
-                dynamicColor = settingsRepository.monetTheme,
-                buildedTheme = buildedTheme,
-                isAmoledTheme = isAmoledTheme
+                darkTheme = when(themeIndexState.asState().value) {
+                    1 -> true
+                    2 -> false
+                    else -> isSystemInDarkTheme()
+                },
+                dynamicColor = monetColorsEnabled.asState().value,
+                buildedTheme = buildedTheme(),
+                isAmoledTheme = amoledThemeEnabled.asState().value
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
