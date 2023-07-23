@@ -5,35 +5,42 @@ import okhttp3.Request
 import ru.blays.downloader.DataClass.DownloadInfo
 import ru.blays.downloader.DataClass.DownloadMode
 import ru.blays.downloader.DataClass.FileMode
+import ru.blays.downloader.DataClass.StorageMode
 import ru.blays.downloader.DownloaderImpl.BaseDownloader
 import ru.blays.downloader.DownloaderImpl.InfinityTryDownloader
 import ru.blays.downloader.DownloaderImpl.NormalDownloader
 import ru.blays.downloader.LogAdapter.LogAdapterAbstract
 import ru.blays.downloader.LogAdapter.LogAdapterDefault
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
+import java.io.FileDescriptor
 
 private val DEFAULT_DOWNLOAD_MODE = DownloadMode.InfinityTry
 private val DEFAULT_FILE_MODE = FileMode.ContinueIfExists
 private const val DEFAULT_FILE_EXTENSION = ".apk"
 
-data class DownloadTask(
-    val url: String,
-    val fileName: String,
+class DownloadTask {
+
+    var url: String = ""
+
+    var fileName: String = ""
+
     val fileExtension: String = DEFAULT_FILE_EXTENSION
-) {
+
+    var storageMode: StorageMode = StorageMode.FileIO
+
+    var fileDescriptor: FileDescriptor? = null
+
     var downloadMode: DownloadMode = DEFAULT_DOWNLOAD_MODE
         private set
 
     var fileMode: FileMode = DEFAULT_FILE_MODE
         private set
 
-    var request: Request = Request.Builder()
+    val request: Request get() = Request
+        .Builder()
         .url(url)
         .build()
 
     var logAdapter: LogAdapterAbstract = LogAdapterDefault()
-        private set
 
     var onSuccess: BaseDownloader.() -> Unit = {}
         private set
@@ -47,32 +54,36 @@ data class DownloadTask(
     var onCancel: BaseDownloader.() -> Unit = {}
         private set
 
-    fun setDownloadMode(downloadMode: DownloadMode): DownloadTask = this.apply {
-        this.downloadMode = downloadMode
+    fun onSuccess(block: BaseDownloader.() -> Unit) {
+        onSuccess = block
     }
 
-    fun setFileMode(fileMode: FileMode): DownloadTask = this.apply {
-        this.fileMode = fileMode
+    fun onError(block: BaseDownloader.() -> Unit) {
+        onError = block
     }
 
-    fun setCustomRequest(request: Request): DownloadTask = this.apply {
-        this.request = request
+    fun onPause(block: BaseDownloader.() -> Unit) {
+        onPause = block
     }
 
-    fun setLogAdapter(clazz: KClass<out LogAdapterAbstract>): DownloadTask = this.apply {
-        this.logAdapter = clazz.createInstance()
+    fun onCancel(block: BaseDownloader.() -> Unit) {
+        onCancel = block
     }
 
-    fun setDefaultActions(
-        onSuccess: (BaseDownloader.() -> Unit)? = null,
-        onError: (BaseDownloader.() -> Unit)? = null,
-        onPause: (BaseDownloader.() -> Unit)? = null,
-        onCancel: (BaseDownloader.() -> Unit)? = null
-    ): DownloadTask = this.apply {
-        onSuccess?.let { this.onSuccess = it }
-        onError?.let { this.onError = it }
-        onPause?.let { this.onPause = it }
-        onCancel?.let { this.onCancel = it }
+    companion object {
+        fun builder(scope: DownloadTask.() -> Unit): DownloadTask {
+            val downloadTask = DownloadTask()
+            scope(downloadTask)
+            require(
+                when {
+                    downloadTask.storageMode == StorageMode.FileIO && downloadTask.fileName.isNotEmpty() -> true
+                    downloadTask.storageMode == StorageMode.SAF && downloadTask.fileDescriptor != null -> true
+                    else -> false
+                }
+            )  { "Unable to create download task with this storage parameter" }
+            require(downloadTask.url.isNotEmpty()) { "No value passed for [url]" }
+            return downloadTask
+        }
     }
 }
 

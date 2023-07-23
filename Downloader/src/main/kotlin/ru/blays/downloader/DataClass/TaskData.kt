@@ -12,3 +12,8 @@ enum class FileMode {
     ContinueIfExists,
     Recreate;
 }
+
+enum class StorageMode {
+    FileIO,
+    SAF
+}

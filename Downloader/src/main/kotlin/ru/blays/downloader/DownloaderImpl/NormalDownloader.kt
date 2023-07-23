@@ -22,7 +22,7 @@ import ru.blays.downloader.Utils.isNull
 import java.nio.ByteBuffer
 
 @Suppress("KotlinConstantConditions")
-class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
+internal class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
     override val client = httpClient
 

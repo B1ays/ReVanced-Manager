@@ -18,6 +18,7 @@ import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.Blays.ReVanced.Manager.Utils.ModuleInstallerLogAdapter.ModuleInstallerLogAdapter
+import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.build
 import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
@@ -125,19 +126,18 @@ class VersionsListScreenViewModel(
         url: String
     ) {
 
-        val task = ru.blays.downloader.DownloadTask(url, fileName)
-            .setDefaultActions(
-                onSuccess = {
-                    file?.let { packageManager.installApk(it, installerType) }
-                    onRefresh()
-                },
-                onCancel = {
-                    file?.delete()
-                }
-            )
-            .setLogAdapter(LogAdapterBLog::class)
-            .build()
-
+        val task = DownloadTask.builder {
+            this.url = url
+            this.fileName = fileName
+            logAdapter = LogAdapterBLog()
+            onSuccess {
+                file?.let { packageManager.installApk(it, installerType) }
+                onRefresh()
+            }
+            onCancel {
+                file?.delete()
+            }
+        }.build()
         task?.let { downloadsRepository.addToList(it) }
     }
 
@@ -150,71 +150,67 @@ class VersionsListScreenViewModel(
 
         val state = MutableStateFlow(MagiskInstallerState())
 
-        val origApkDownloadTask = ru.blays.downloader.DownloadTask(
-            url = filesModel.origUrl!!,
+        val origApkDownloadTask = DownloadTask.builder {
+            url = filesModel.origUrl!!
             fileName = filesModel.fileName + "-orig"
-        )
-            .setDefaultActions(
-                onSuccess = {
-                    launch {
-                        with(state) { emit(value.copy(origApkDownloaded = true)) }
+            logAdapter = LogAdapterBLog()
+            onSuccess {
+                launch {
+                    with(state) { emit(value.copy(origApkDownloaded = true)) }
 
-                        val installResult = async {
-                            file?.let { RootPackageManager().installApp(it) }
-                        }.await()
+                    val installResult = async {
+                        file?.let { RootPackageManager().installApp(it) }
+                    }.await()
 
-                        if (installResult?.isError == true) {
-                            cancel()
-                            return@launch
-                        }
-                        with(state) { emit(value.copy(origApkInstalled = true)) }
+                    if (installResult?.isError == true) {
+                        cancel()
+                        return@launch
                     }
-                },
-                onCancel = {
-                    file?.delete()
+                    with(state) { emit(value.copy(origApkInstalled = true)) }
                 }
-            )
-            .setLogAdapter(LogAdapterBLog::class)
-            .build()
-            .also { downloadInfo ->
-                downloadInfo?.let { downloadsRepository.addToList(it) }
             }
+            onCancel {
+                file?.delete()
+            }
+        }
+        .build()
+        .also { downloadInfo ->
+            downloadInfo?.let { downloadsRepository.addToList(it) }
+        }
 
-        val modApkDownloadTask = ru.blays.downloader.DownloadTask(
-            url = filesModel.modUrl,
+        val modApkDownloadTask = DownloadTask.builder {
+            url = filesModel.modUrl
             fileName = filesModel.fileName
-        )
-            .setDefaultActions(
-                onSuccess = {
-                    launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
+            logAdapter = LogAdapterBLog()
+            onSuccess {
+                launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
 
-                    collect(state) { downloadState ->
+                collect(state) { downloadState ->
 
-                        if (downloadState.origApkInstalled) {
-                            launch {
-                                repository?.moduleType?.let { module ->
-                                    ModuleInstaller(
-                                        logAdapter = ModuleInstallerLogAdapter()
-                                    ).also { installer ->
-                                        installCallback(installer.statusFlow)
-                                    }.install(
-                                        module,
-                                        file!!
-                                    )
-                                    onRefresh()
-                                }
+                    if (downloadState.origApkInstalled) {
+                        launch {
+                            repository?.moduleType?.let { module ->
+                                ModuleInstaller(
+                                    logAdapter = ModuleInstallerLogAdapter()
+                                ).also { installer ->
+                                    installCallback(installer.statusFlow)
+                                }.install(
+                                    module,
+                                    file!!
+                                )
+                                onRefresh()
                             }
                         }
                     }
-                },
-                onCancel = {
-                    file?.delete()
                 }
-            )
-            .setLogAdapter(LogAdapterBLog::class)
-            .build()
-            .also { downloadInfo ->
-                downloadInfo?.let { downloadsRepository.addToList(it) }
             }
+            onCancel {
+                file?.delete()
+            }
+        }
+        .build()
+        .also { downloadInfo ->
+            downloadInfo?.let { downloadsRepository.addToList(it) }
+        }
     }
 }

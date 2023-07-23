@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.build
 import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
@@ -56,15 +57,14 @@ class AppUpdateScreenViewModel(
     fun downloadAndInstall() {
         val model = _updateInfo.value
         model?.let { infoModel ->
-            val task = ru.blays.downloader.DownloadTask(
-                url = infoModel.apkLink,
+            val task = DownloadTask.Companion.builder {
+                url = infoModel.apkLink
                 fileName = "Update_${infoModel.availableVersion} (${infoModel.versionCode})"
-            ).setDefaultActions(
-                onSuccess = {
+                onSuccess {
                     packageManagerApi.installApk(file!!, installerType)
                 }
-            ).build()
-            task?.let { task -> downloadsRepository.addToList(task) }
+            }.build()
+            task?.let { downloadsRepository.addToList(it) }
         }
     }
 

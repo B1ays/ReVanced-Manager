@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 import kotlin.time.Duration.Companion.seconds
 
 @Suppress("KotlinConstantConditions")
-class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
+internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
     override val client = httpClient
 
