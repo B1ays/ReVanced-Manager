@@ -2,8 +2,10 @@
 
 package ru.Blays.ReVanced.Manager.UI.Screens
 
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -72,7 +75,7 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWi
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
 import ru.blays.revanced.Services.Root.Util.isRootGranted
-import ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
+import ru.blays.revanced.shared.Data.PersistableDocumentTree
 import ru.blays.revanced.shared.Extensions.getFileUri
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
@@ -472,44 +475,84 @@ fun DownloadsFolderSelector() {
     var downloadsFolderUri by downloadsFolderUriDS
     val downloadsFolderUriFlow by downloadsFolderUriDS.asState()
     val register = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocumentTree()) { uriOrNull ->
+        contract = PersistableDocumentTree()) { uriOrNull ->
         uriOrNull?.let { uri ->
+            context.contentResolver.releasePersistableUriPermission(
+                downloadsFolderUri.toUri(),
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            context.contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
             downloadsFolderUri = uri.toString()
         }
     }
-    val defaultDownloadFolderUri = context.getFileUri(ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER)
-    SettingsExpandableCard(title = "DownloadFolder") {
+    val defaultDownloadFolderUri = remember {
+        context.getFileUri(ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER)
+    }
+    SettingsExpandableCard(
+        title = stringResource(id = R.string.Settings_card_storage_access_mode_title),
+        subtitle = stringResource(id = R.string.Settings_card_storage_access_mode_description)
+    ) {
         SettingsRadioButtonWithTitle(
-            title = "Default",
+            title = stringResource(
+                id = R.string.Settings_card_storage_access_method_FileIO
+            ),
             checkedIndex = storageAccessTypeState,
             index = 0
         ) {
             storageAccessType = 0
         }
         SettingsRadioButtonWithTitle(
-            title = "From SAF",
+            title = stringResource(
+                id = R.string.Settings_card_storage_access_method_SAF
+            ),
             checkedIndex = storageAccessTypeState,
             index = 1
         ) {
             storageAccessType = 1
 
         }
-        Text(
-            modifier = Modifier
-                .padding(DefaultPadding.CardDefaultPadding),
-            text = "Select folder: ${downloadsFolderUriFlow.toUri().path}"
-        )
+        if (storageAccessTypeState == 1) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = DefaultPadding.CardHorizontalPadding),
+                text = stringResource(
+                    id = R.string.Settings_card_storage_access_mode_selected_folder
+                ) + ':'
+            )
+            Box(
+                modifier = Modifier
+                    .padding(DefaultPadding.CardDefaultPadding)
+                    .fillMaxWidth()
+                    .background(
+                        color = CardDefaults.cardColors().containerColor,
+                        shape = CardDefaults.shape
+                    )
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(DefaultPadding.CardDefaultPadding),
+                    text = downloadsFolderUriFlow
+                )
+            }
+        }
         Button(
             modifier = Modifier
                 .defaultMinSize(minHeight = 50.dp)
                 .padding(DefaultPadding.CardDefaultPadding)
                 .fillMaxWidth(),
             onClick = { register.launch(defaultDownloadFolderUri) },
-            enabled = storageAccessType == 1,
-            shape = MaterialTheme.shapes.small
+            enabled = storageAccessTypeState == 1,
+            shape = CardDefaults.shape
         ) {
             Text(
-                text = "Select folder",
+                text = stringResource(
+                    id = R.string.Settings_card_storage_access_mode_pick_folder
+                ),
                 style = MaterialTheme.typography.titleMedium
             )
         }

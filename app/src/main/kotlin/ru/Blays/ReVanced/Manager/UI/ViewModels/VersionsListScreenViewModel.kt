@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -18,9 +20,12 @@ import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.Blays.ReVanced.Manager.Utils.ModuleInstallerLogAdapter.ModuleInstallerLogAdapter
+import ru.blays.downloader.DataClass.StorageMode
 import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.build
+import ru.blays.preference.DataStores.DownloadsFolderUriDS
 import ru.blays.preference.DataStores.InstallerTypeDS
+import ru.blays.preference.DataStores.StorageAccessTypeDS
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
@@ -30,13 +35,19 @@ import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
+import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
+import ru.blays.revanced.shared.Data.APK_MIME_TYPE
 import ru.blays.revanced.shared.Extensions.collect
+import ru.blays.revanced.shared.LogManager.BLog
+import ru.blays.revanced.shared.Util.copyToTemp
+import ru.blays.revanced.shared.Util.fileDescriptor
+import java.io.File
 
 class VersionsListScreenViewModel(
     private val getVersionsListUseCase: GetVersionsListUseCase,
     private val getApkListUseCase: GetApkListUseCase,
     private val getChangelogUseCase: GetChangelogUseCase,
-    context: Context
+    private val context: Context
 ) : BaseViewModel() {
 
     // UI states
@@ -51,7 +62,9 @@ class VersionsListScreenViewModel(
     private val packageManager: PackageManagerApi = get(PackageManagerApi::class.java)
     private val downloadsRepository: DownloadsRepository = get(DownloadsRepository::class.java)
 
-    val installerType by InstallerTypeDS(context)
+    val downloadsFolderUri by DownloadsFolderUriDS(context)
+    private val storageMode by StorageAccessTypeDS(context)
+    private val installerType by InstallerTypeDS(context)
 
     var repository: AppRepositoryInterface? = null
         private set
@@ -125,20 +138,50 @@ class VersionsListScreenViewModel(
         fileName: String,
         url: String
     ) {
-
-        val task = DownloadTask.builder {
+        DownloadTask.builder {
             this.url = url
             this.fileName = fileName
             logAdapter = LogAdapterBLog()
-            onSuccess {
-                file?.let { packageManager.installApk(it, installerType) }
-                onRefresh()
+            when(this@VersionsListScreenViewModel.storageMode) {
+                0 -> {
+                    storageMode = StorageMode.FileIO
+                    onSuccess {
+                        file?.let { packageManager.installApk(it, installerType) }
+                        onRefresh()
+                    }
+                    onCancel {
+                        file?.delete()
+                    }
+                }
+                1 -> {
+                    documentFile = DocumentFile
+                        .fromTreeUri(context, downloadsFolderUri.toUri())
+                        ?.createFile("application/vnd.android.package-archive", fileName + APK_FILE_EXTENSION)
+                    if (documentFile == null) throw IllegalStateException("document file is null")
+                    else BLog.d("download call", "documentFile can write: ${documentFile?.canWrite()}")
+                    parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                    storageMode = StorageMode.SAF
+                    logAdapter = LogAdapterBLog()
+                    onSuccess {
+                        launch {
+                            val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
+                                createNewFile()
+                                context.copyToTemp(documentFile!!, this)
+                            }
+                            packageManager.installApk(tmpFile, installerType)
+                            onRefresh()
+                        }
+                    }
+                    onCancel {
+                        documentFile?.delete()
+                    }
+                }
             }
-            onCancel {
-                file?.delete()
-            }
-        }.build()
-        task?.let { downloadsRepository.addToList(it) }
+        }
+        .build()
+        .also {
+            it?.let { downloadsRepository.addToList(it) }
+        }
     }
 
     fun downloadRootVersion(
@@ -154,23 +197,57 @@ class VersionsListScreenViewModel(
             url = filesModel.origUrl!!
             fileName = filesModel.fileName + "-orig"
             logAdapter = LogAdapterBLog()
-            onSuccess {
-                launch {
-                    with(state) { emit(value.copy(origApkDownloaded = true)) }
-
-                    val installResult = async {
-                        file?.let { RootPackageManager().installApp(it) }
-                    }.await()
-
-                    if (installResult?.isError == true) {
-                        cancel()
-                        return@launch
+            when(this@VersionsListScreenViewModel.storageMode) {
+                0 -> {
+                    onSuccess {
+                        launch {
+                            with(state) { emit(value.copy(origApkDownloaded = true)) }
+                            val installResult = async {
+                                file?.let { RootPackageManager().installApp(it) }
+                            }.await()
+                            if (installResult?.isError == true) {
+                                cancel()
+                                return@launch
+                            }
+                            with(state) { emit(value.copy(origApkInstalled = true)) }
+                        }
                     }
-                    with(state) { emit(value.copy(origApkInstalled = true)) }
+                    onCancel {
+                        file?.delete()
+                    }
                 }
-            }
-            onCancel {
-                file?.delete()
+                1 -> {
+                    documentFile = DocumentFile
+                        .fromTreeUri(context, downloadsFolderUri.toUri())
+                        ?.createFile(
+                            APK_MIME_TYPE,
+                            filesModel.fileName + "-orig" + APK_FILE_EXTENSION
+                        )
+                    parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                    storageMode = StorageMode.SAF
+                    onSuccess {
+                        launch {
+                            with(state) { emit(value.copy(origApkDownloaded = true)) }
+                            val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
+                                createNewFile()
+                                context.copyToTemp(documentFile!!, this)
+                            }
+
+                            val installResult = async {
+                                 RootPackageManager().installApp(tmpFile)
+                            }.await()
+
+                            if (installResult.isError) {
+                                cancel()
+                                return@launch
+                            }
+                            with(state) { emit(value.copy(origApkInstalled = true)) }
+                        }
+                    }
+                    onCancel {
+                        documentFile?.delete()
+                    }
+                }
             }
         }
         .build()
@@ -182,30 +259,74 @@ class VersionsListScreenViewModel(
             url = filesModel.modUrl
             fileName = filesModel.fileName
             logAdapter = LogAdapterBLog()
-            onSuccess {
-                launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
 
-                collect(state) { downloadState ->
+            when(this@VersionsListScreenViewModel.storageMode) {
+                0 -> {
+                    onSuccess {
+                        launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
+                        collect(state) { downloadState ->
 
-                    if (downloadState.origApkInstalled) {
-                        launch {
-                            repository?.moduleType?.let { module ->
-                                ModuleInstaller(
-                                    logAdapter = ModuleInstallerLogAdapter()
-                                ).also { installer ->
-                                    installCallback(installer.statusFlow)
-                                }.install(
-                                    module,
-                                    file!!
-                                )
-                                onRefresh()
+                            if (downloadState.origApkInstalled) {
+                                launch {
+                                    repository?.moduleType?.let { module ->
+                                        ModuleInstaller(
+                                            logAdapter = ModuleInstallerLogAdapter()
+                                        ).also { installer ->
+                                            installCallback(installer.statusFlow)
+                                        }.install(
+                                            module,
+                                            file!!
+                                        )
+                                        onRefresh()
+                                    }
+                                }
                             }
                         }
                     }
+                    onCancel {
+                        file?.delete()
+                    }
                 }
-            }
-            onCancel {
-                file?.delete()
+                1 -> {
+                    documentFile = DocumentFile
+                        .fromTreeUri(
+                            context,
+                            downloadsFolderUri.toUri()
+                        )
+                        ?.createFile(
+                            APK_MIME_TYPE,
+                            filesModel.fileName + APK_FILE_EXTENSION
+                        )
+                    parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                    storageMode = StorageMode.SAF
+                    onSuccess {
+                        launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
+                        collect(state) { downloadState ->
+                            if (downloadState.origApkInstalled) {
+                                launch {
+                                    val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
+                                        createNewFile()
+                                        context.copyToTemp(documentFile!!, this)
+                                    }
+                                    repository?.moduleType?.let { module ->
+                                        ModuleInstaller(
+                                            logAdapter = ModuleInstallerLogAdapter()
+                                        ).also { installer ->
+                                            installCallback(installer.statusFlow)
+                                        }.install(
+                                            module,
+                                            tmpFile
+                                        )
+                                        onRefresh()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    onCancel {
+                        documentFile?.delete()
+                    }
+                }
             }
         }
         .build()

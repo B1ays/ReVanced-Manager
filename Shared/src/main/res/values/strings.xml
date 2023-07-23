@@ -109,6 +109,15 @@
     <string name="SeekBar_segment_48_hours">48 hours</string>
     <string name="SeekBar_segment_infinity">Infinity</string>
 
+    <!--  Storage access mode  -->
+    <string name="Settings_card_storage_access_mode_title">File access method</string>
+    <string name="Settings_card_storage_access_mode_description">Choose how to access files</string>
+    <string name="Settings_card_storage_access_mode_selected_folder">Selected folder</string>
+    <string name="Settings_card_storage_access_mode_pick_folder">Pick folder</string>
+    <string name="Settings_card_storage_access_method_FileIO">FileIO (Old)</string>
+    <string name="Settings_card_storage_access_method_SAF">SAF (Modern)</string>
+
+
     <!--  About Screen  -->
     <string name="about_group_information">Main information</string>
     <string name="about_group_author">About developer</string>

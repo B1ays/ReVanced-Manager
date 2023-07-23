@@ -150,6 +150,7 @@ internal class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
         return DownloadInfo(
             task.fileName,
             file,
+            task.documentFile,
             progressFlow,
             speedFlow,
             actionPauseResume,

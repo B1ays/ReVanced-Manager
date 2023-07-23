@@ -11,14 +11,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.build
 import ru.blays.preference.DataStores.InstallerTypeDS
+import ru.blays.preference.DataStores.StorageAccessTypeDS
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.domain.DataClasses.AppUpdateModelDto
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase
+import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
 import ru.blays.revanced.shared.LogManager.BLog
+import ru.blays.revanced.shared.Util.copyToTemp
+import java.io.File
 
 private const val TAG = "appUpdateViewModel"
 
@@ -29,7 +34,7 @@ class AppUpdateScreenViewModel(
     private val getChangelogUseCase: GetChangelogUseCase,
     private val packageManagerApi: PackageManagerApi,
     private val downloadsRepository: DownloadsRepository,
-    context: Context
+    private val context: Context
 ): BaseViewModel() {
 
     private var _updateInfo: MutableStateFlow<AppUpdateModelDto?> = MutableStateFlow(null)
@@ -37,6 +42,7 @@ class AppUpdateScreenViewModel(
     private var _changelog: MutableStateFlow<String> = MutableStateFlow("")
 
     private val installerType by InstallerTypeDS(context)
+    private val storageMode by StorageAccessTypeDS(context)
 
     val updateInfo: AppUpdateModelDto?
         @Composable get() = _updateInfo.collectAsState().value
@@ -60,9 +66,26 @@ class AppUpdateScreenViewModel(
             val task = DownloadTask.Companion.builder {
                 url = infoModel.apkLink
                 fileName = "Update_${infoModel.availableVersion} (${infoModel.versionCode})"
-                onSuccess {
-                    packageManagerApi.installApk(file!!, installerType)
+                logAdapter = LogAdapterBLog()
+                when(this@AppUpdateScreenViewModel.storageMode) {
+                    0 -> {
+                        onSuccess {
+                            packageManagerApi.installApk(file!!, installerType)
+                        }
+                    }
+                    1 -> {
+                        onSuccess {
+                            launch {
+                                val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
+                                    createNewFile()
+                                    context.copyToTemp(documentFile!!, this)
+                                }
+                                packageManagerApi.installApk(tmpFile, installerType)
+                            }
+                        }
+                    }
                 }
+
             }.build()
             task?.let { downloadsRepository.addToList(it) }
         }

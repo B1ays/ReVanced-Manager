@@ -54,6 +54,9 @@
     <string name="SeekBar_segment_24_hours">24 часа</string>
     <string name="SeekBar_segment_48_hours">48 часов</string>
     <string name="SeekBar_segment_infinity">Бесконечно</string>
+    <string name="Settings_card_storage_access_mode_title">Метод доступа к файлам</string>
+    <string name="Settings_card_storage_access_mode_description">Выбрать метод доступа к файлам</string>
+    <string name="Settings_card_storage_access_mode_pick_folder">Выбрать папку</string>
     <string name="about_group_information">Основная информация</string>
     <string name="about_group_author">О разработчике</string>
     <string name="about_card_github">Исходный код на GitHub</string>
@@ -85,4 +88,7 @@
     <string name="AppBar_Updates">Обновление</string>
     <string name="Module_installer_failed">Ошибка установки модуля</string>
     <string name="Module_installer_error">Ошибка</string>
+    <string name="Settings_card_storage_access_mode_selected_folder">Выбранная папка</string>
+    <string name="Settings_card_storage_access_method_FileIO">FileIO (Старый)</string>
+    <string name="Settings_card_storage_access_method_SAF">SAF (Современный)</string>
 </resources>

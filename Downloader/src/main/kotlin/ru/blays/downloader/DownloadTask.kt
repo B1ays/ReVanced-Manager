@@ -1,5 +1,7 @@
 package ru.blays.downloader
 
+import android.os.ParcelFileDescriptor
+import androidx.documentfile.provider.DocumentFile
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import ru.blays.downloader.DataClass.DownloadInfo
@@ -11,7 +13,6 @@ import ru.blays.downloader.DownloaderImpl.InfinityTryDownloader
 import ru.blays.downloader.DownloaderImpl.NormalDownloader
 import ru.blays.downloader.LogAdapter.LogAdapterAbstract
 import ru.blays.downloader.LogAdapter.LogAdapterDefault
-import java.io.FileDescriptor
 
 private val DEFAULT_DOWNLOAD_MODE = DownloadMode.InfinityTry
 private val DEFAULT_FILE_MODE = FileMode.ContinueIfExists
@@ -27,7 +28,9 @@ class DownloadTask {
 
     var storageMode: StorageMode = StorageMode.FileIO
 
-    var fileDescriptor: FileDescriptor? = null
+    var parcelFileDescriptor: ParcelFileDescriptor? = null
+
+    var documentFile: DocumentFile? = null
 
     var downloadMode: DownloadMode = DEFAULT_DOWNLOAD_MODE
         private set
@@ -76,8 +79,11 @@ class DownloadTask {
             scope(downloadTask)
             require(
                 when {
-                    downloadTask.storageMode == StorageMode.FileIO && downloadTask.fileName.isNotEmpty() -> true
-                    downloadTask.storageMode == StorageMode.SAF && downloadTask.fileDescriptor != null -> true
+                    downloadTask.storageMode == StorageMode.FileIO &&
+                            downloadTask.fileName.isNotEmpty() -> true
+                    downloadTask.storageMode == StorageMode.SAF &&
+                            downloadTask.parcelFileDescriptor != null &&
+                            downloadTask.documentFile  != null -> true
                     else -> false
                 }
             )  { "Unable to create download task with this storage parameter" }

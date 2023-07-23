@@ -31,6 +31,7 @@ android {
 dependencies {
     // AndroidX
     implementation(libs.androidx.core.core.ktx)
+    implementation(libs.androidx.documentfile)
 
     // Koin
     implementation(libs.koin.android)

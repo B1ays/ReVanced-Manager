@@ -6,18 +6,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.yield
 import okhttp3.OkHttpClient
+import okhttp3.internal.closeQuietly
 import okio.IOException
 import org.koitharu.pausingcoroutinedispatcher.launchPausing
 import ru.blays.downloader.DataClass.DownloadInfo
 import ru.blays.downloader.DataClass.LogType
+import ru.blays.downloader.DataClass.StorageMode
 import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.Utils.RWMode
+import ru.blays.downloader.Utils.channel
 import ru.blays.downloader.Utils.createChannel
 import ru.blays.downloader.Utils.createFile
 import ru.blays.downloader.Utils.createResponse
-import ru.blays.downloader.Utils.isNull
 import ru.blays.downloader.Utils.position
 import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
 import kotlin.time.Duration.Companion.seconds
 
 @Suppress("KotlinConstantConditions")
@@ -33,20 +36,32 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
 
         val log = task.logAdapter::log
 
-        // Create file from name and extension
-        val file = createFile(fileName = task.fileName, fileExtension = task.fileExtension)
+        val fileLength: Long
 
-        if (file == null) {
-            log("Unable to create file", LogType.ERROR)
-            task.onError(this)
-            return null
+        val channel: FileChannel
+
+        if (task.storageMode == StorageMode.FileIO) {
+            // Create file from name and extension
+            val file = createFile(
+                fileName = task.fileName,
+                fileExtension = task.fileExtension
+            )
+
+            if (file == null) {
+                log("Unable to create file", LogType.ERROR)
+                task.onError(this)
+                return null
+            }
+
+            // write file to class property
+            this.file = file
+
+            fileLength = file.length()
+            channel = file.createChannel(mode = RWMode.READ_WRITE)
+        } else {
+            channel = task.parcelFileDescriptor?.fileDescriptor.channel
+            fileLength = task.documentFile?.length() ?: 0L
         }
-
-        // write file to class property
-        this.file = file
-
-        // create fileChannel using RandomAccessFile
-        val channel = file.createChannel(mode = RWMode.READ_WRITE)
 
         // Download process running status
         var isRunning = true
@@ -55,30 +70,26 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
 
             var totalBytesRead = 0L
 
-            val fileSize = file.length()
+            log("file size: $fileLength bytes", LogType.INFO)
 
-            log("file size: $fileSize bytes", LogType.INFO)
-
-            val originalFileSize = getContentLength(task.url).also {
-                if (it.isNull()) return@mainJob
-            }
+            val originalFileSize = getContentLength(task.url) ?: return@mainJob
 
             /**
             * Check file exists.
             * if exist && file size = real size -> download complete
             * if file not exist or file size != real size -> start download & append file size to totalBytesRead
             **/
-            if (fileSize == originalFileSize) {
+            if (fileLength == originalFileSize) {
                 task.onSuccess(this@InfinityTryDownloader)
                 return@mainJob
             } else {
                 // Add existing file size to totalBytesRead
-                totalBytesRead += fileSize
+                totalBytesRead += fileLength
                 // Set channel position to totalBytesRead
                 channel.position = totalBytesRead
             }
 
-            while(totalBytesRead < originalFileSize!!) {
+            while(totalBytesRead < originalFileSize) {
 
                 try {
 
@@ -136,6 +147,7 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
                         channel.close()
                         inputStream.close()
                         downloadSpeedJob.cancel()
+                        task.parcelFileDescriptor?.closeQuietly()
                         resp.close()
                         log("Download complete", LogType.INFO)
                     }
@@ -166,6 +178,7 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
         return DownloadInfo(
             task.fileName,
             file,
+            task.documentFile,
             progressFlow,
             speedFlow,
             actionPauseResume,

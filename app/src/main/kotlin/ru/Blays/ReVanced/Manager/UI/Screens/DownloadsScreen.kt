@@ -96,14 +96,17 @@ class DownloadsScreen: AndroidScreen(){
                 items(list) { item ->
                     DownloadItem(
                         fileName = item.fileName,
-                        fileLength = item.file.length(),
+                        fileLength = item.file?.length()
+                            ?: item.documentFile?.length()
+                            ?: 0L,
                         progressFlow = item.progressFlow,
                         speedFlow = item.speedFlow,
                         actionOpenFile = {
-                            item.file.open(context)
+                            item.file?.open(context)
                         },
                         actionDeleteFile = {
-                            item.file.delete()
+                            item.file?.delete()
+                            item.documentFile?.delete()
                         },
                         actionRemove = {
                             repository.removeFromList(item)
