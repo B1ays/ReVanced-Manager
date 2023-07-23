@@ -18,13 +18,12 @@ import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.Blays.ReVanced.Manager.Utils.ModuleInstallerLogAdapter.ModuleInstallerLogAdapter
+import ru.blays.downloader.build
 import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
 import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.Services.Root.PackageManager.RootPackageManager
-import ru.blays.revanced.data.Downloader.DownloadTask
-import ru.blays.revanced.data.Downloader.build
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase
@@ -126,7 +125,7 @@ class VersionsListScreenViewModel(
         url: String
     ) {
 
-        val task = DownloadTask(url, fileName)
+        val task = ru.blays.downloader.DownloadTask(url, fileName)
             .setDefaultActions(
                 onSuccess = {
                     file?.let { packageManager.installApk(it, installerType) }
@@ -151,7 +150,10 @@ class VersionsListScreenViewModel(
 
         val state = MutableStateFlow(MagiskInstallerState())
 
-        val origApkDownloadTask = DownloadTask(url = filesModel.origUrl!!, fileName = filesModel.fileName + "-orig")
+        val origApkDownloadTask = ru.blays.downloader.DownloadTask(
+            url = filesModel.origUrl!!,
+            fileName = filesModel.fileName + "-orig"
+        )
             .setDefaultActions(
                 onSuccess = {
                     launch {
@@ -178,7 +180,10 @@ class VersionsListScreenViewModel(
                 downloadInfo?.let { downloadsRepository.addToList(it) }
             }
 
-        val modApkDownloadTask = DownloadTask(url = filesModel.modUrl, fileName = filesModel.fileName)
+        val modApkDownloadTask = ru.blays.downloader.DownloadTask(
+            url = filesModel.modUrl,
+            fileName = filesModel.fileName
+        )
             .setDefaultActions(
                 onSuccess = {
                     launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }

@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.Utils
+package ru.blays.downloader.Utils
 
 import android.os.Environment
 import java.io.File

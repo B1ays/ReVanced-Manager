@@ -72,7 +72,7 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWi
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
 import ru.blays.revanced.Services.Root.Util.isRootGranted
-import ru.blays.revanced.data.Downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
+import ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
 import ru.blays.revanced.shared.Extensions.getFileUri
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
@@ -477,7 +477,7 @@ fun DownloadsFolderSelector() {
             downloadsFolderUri = uri.toString()
         }
     }
-    val defaultDownloadFolderUri = context.getFileUri(DEFAULT_DOWNLOADS_FOLDER)
+    val defaultDownloadFolderUri = context.getFileUri(ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER)
     SettingsExpandableCard(title = "DownloadFolder") {
         SettingsRadioButtonWithTitle(
             title = "Default",

@@ -1,6 +1,6 @@
-package ru.blays.revanced.data.Downloader.LogAdapter
+package ru.blays.downloader.LogAdapter
 
-import ru.blays.revanced.data.Downloader.DataClass.LogType
+import ru.blays.downloader.DataClass.LogType
 
 @Suppress("PropertyName")
 abstract class LogAdapterAbstract {

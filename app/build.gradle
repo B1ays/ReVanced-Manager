@@ -112,5 +112,6 @@ dependencies {
     implementation projects.composeElements
     implementation projects.shared
     implementation projects.preference
+    implementation projects.downloader
 
 }

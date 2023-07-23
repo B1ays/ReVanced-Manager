@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/ComposeElements" />
             <option value="$PROJECT_DIR$/Data" />
             <option value="$PROJECT_DIR$/Domain" />
+            <option value="$PROJECT_DIR$/Downloader" />
             <option value="$PROJECT_DIR$/Helios" />
             <option value="$PROJECT_DIR$/Helios/helios-androidx" />
             <option value="$PROJECT_DIR$/Helios/helios-bottom-sheet-navigator" />

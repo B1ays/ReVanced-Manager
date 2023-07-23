@@ -1,11 +1,11 @@
-package ru.blays.revanced.data.Downloader.DownloaderImpl
+package ru.blays.downloader.DownloaderImpl
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import ru.blays.revanced.data.Downloader.Downloader
+import ru.blays.downloader.Downloader
 import java.io.File
 
 abstract class BaseDownloader: Downloader, CoroutineScope {
@@ -33,6 +33,5 @@ abstract class BaseDownloader: Downloader, CoroutineScope {
         } catch (_: Exception) {
             return null
         }
-
     }
 }

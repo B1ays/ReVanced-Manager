@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.DataClass
+package ru.blays.downloader.DataClass
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File

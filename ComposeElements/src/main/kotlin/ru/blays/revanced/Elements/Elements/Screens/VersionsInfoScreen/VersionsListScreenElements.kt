@@ -17,7 +17,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -42,16 +41,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -66,9 +62,7 @@ import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
-import ru.blays.revanced.Elements.Elements.GradientProgressIndicator.GradientLinearProgressIndicator
 import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.shared.R
@@ -449,93 +443,6 @@ fun ModuleInstallDialogContent(
                     contentDescription = "DownloadButton",
                     modifier = Modifier.scale(1.3F)
                 )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) {
-
-    var isPaused by remember { mutableStateOf(false) }
-
-    LazyColumn(
-        modifier = Modifier
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-
-        items(downloadStateList) { state ->
-
-            val progress by state.progressFlow.collectAsState()
-
-            val speed by state.speedFlow.collectAsState()
-
-            val fileName = state.fileName
-
-            Text(text = "${stringResource(R.string.Download)}: $fileName")
-            Spacer(modifier = Modifier.height(10.dp))
-            GradientLinearProgressIndicator(
-                progress = progress,
-                strokeCap = StrokeCap.Round,
-                brush = Brush.linearGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "${stringResource(R.string.Progress)}: ${(progress * 100F).toInt()}%"
-            )
-            Text(
-                text = "${stringResource(R.string.Speed)}: $speed ${stringResource(R.string.Speed_kbs)}"
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        stickyHeader {
-            Row {
-                CustomIconButton(
-                    onClick = {
-                        isPaused = !isPaused
-                        downloadStateList.forEach {
-                            it.actionPauseResume()
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    contentPadding = PaddingValues(6.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else
-                            ImageVector.vectorResource(id = R.drawable.round_pause_24),
-                        contentDescription = null,
-                        modifier = Modifier.scale(1.3F)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                CustomIconButton(
-                    onClick = {
-                        downloadStateList.forEach {
-                            it.actionCancel()
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    contentPadding = PaddingValues(6.dp)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
-                        contentDescription = null,
-                        modifier = Modifier.scale(1.3F)
-                    )
-                }
             }
         }
     }

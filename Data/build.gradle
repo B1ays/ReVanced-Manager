@@ -41,9 +41,6 @@ dependencies {
     implementation libs.kotlinx.kotlinx.serialization.core.jvm
     implementation libs.kotlinx.kotlinx.serialization.json.jvm
 
-    // Kotlin reflection
-    implementation libs.kotlin.reflect
-
     // OkHttp
     implementation libs.com.squareup.okhttp3.okhttp.asProvider()
 
@@ -55,11 +52,7 @@ dependencies {
 
     // Koin
     implementation libs.koin.android
-
-    // Pausing coroutines
-    implementation libs.pausing.coroutine.dispatcher.asProvider()
-
-
+    
     // Modules
     implementation projects.domain
     implementation projects.shared

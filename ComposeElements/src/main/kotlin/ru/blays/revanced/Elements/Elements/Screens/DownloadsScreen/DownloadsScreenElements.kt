@@ -42,9 +42,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.StateFlow
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
 import ru.blays.revanced.shared.Extensions.open
 import ru.blays.revanced.shared.R
 import java.io.File
@@ -52,8 +52,14 @@ import java.io.File
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DownloadItem(
-    downloadInfo: DownloadInfo,
-    actionRemove: (DownloadInfo) -> Unit
+    fileName: String,
+    fileLength: Long,
+    progressFlow: StateFlow<Float>,
+    speedFlow: StateFlow<Long>,
+    actionOpenFile: () -> Unit,
+    actionDeleteFile: () -> Unit,
+    actionRemove: () -> Unit,
+    actionPause: () -> Unit
 ) {
 
     val height = 80.dp
@@ -62,8 +68,8 @@ fun DownloadItem(
     val overlayColor = MaterialTheme.colorScheme.primary.copy(alpha = .2F)
     val contentColor = MaterialTheme.colorScheme.onSurface
 
-    val progress by downloadInfo.progressFlow.collectAsState()
-    val speed by downloadInfo.speedFlow.collectAsState()
+    val progress by progressFlow.collectAsState()
+    val speed by speedFlow.collectAsState()
 
     val isDownloaded = progress == 1F
 
@@ -74,8 +80,6 @@ fun DownloadItem(
     val context = LocalContext.current
 
     val changeVisible = { isDeleteButtonVisible = !isDeleteButtonVisible }
-
-    val actionOpenFile = { downloadInfo.file.open(context) }
 
     Row(
         modifier = Modifier
@@ -121,7 +125,7 @@ fun DownloadItem(
                 Column(modifier = Modifier.weight(.5F)) {
                     Text(
                         modifier = Modifier,
-                        text = downloadInfo.fileName,
+                        text = fileName,
                         style = MaterialTheme.typography.titleMedium,
                         color = contentColor,
                         maxLines = 2,
@@ -130,7 +134,7 @@ fun DownloadItem(
                     if (isDownloaded) {
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(
-                            text = "${stringResource(id = R.string.File_size)}: ${(downloadInfo.file.length() / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
+                            text = "${stringResource(id = R.string.File_size)}: ${(fileLength / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
                             style = MaterialTheme.typography.titleSmall,
                             color = contentColor,
                             maxLines = 1,
@@ -186,7 +190,7 @@ fun DownloadItem(
                     .size(height),
                 onClick = {
                     isPaused = !isPaused
-                    downloadInfo.actionPauseResume()
+                    actionPause()
                 },
                 shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(6.dp),
@@ -219,8 +223,8 @@ fun DownloadItem(
                     .padding(start = 10.dp)
                     .size(height),
                 onClick = {
-                    downloadInfo.file.delete()
-                    actionRemove(downloadInfo)
+                    actionDeleteFile()
+                    actionRemove()
                 },
                 shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(6.dp),

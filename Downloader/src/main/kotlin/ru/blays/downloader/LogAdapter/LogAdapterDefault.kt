@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.LogAdapter
+package ru.blays.downloader.LogAdapter
 
 import android.util.Log
 

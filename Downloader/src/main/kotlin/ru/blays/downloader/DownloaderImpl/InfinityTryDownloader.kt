@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.DownloaderImpl
+package ru.blays.downloader.DownloaderImpl
 
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -8,15 +8,15 @@ import kotlinx.coroutines.yield
 import okhttp3.OkHttpClient
 import okio.IOException
 import org.koitharu.pausingcoroutinedispatcher.launchPausing
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
-import ru.blays.revanced.data.Downloader.DataClass.LogType
-import ru.blays.revanced.data.Downloader.DownloadTask
-import ru.blays.revanced.data.Downloader.Utils.RWMode
-import ru.blays.revanced.data.Downloader.Utils.createChannel
-import ru.blays.revanced.data.Downloader.Utils.createFile
-import ru.blays.revanced.data.Downloader.Utils.createResponse
-import ru.blays.revanced.data.Downloader.Utils.isNull
-import ru.blays.revanced.data.Downloader.Utils.position
+import ru.blays.downloader.DataClass.DownloadInfo
+import ru.blays.downloader.DataClass.LogType
+import ru.blays.downloader.DownloadTask
+import ru.blays.downloader.Utils.RWMode
+import ru.blays.downloader.Utils.createChannel
+import ru.blays.downloader.Utils.createFile
+import ru.blays.downloader.Utils.createResponse
+import ru.blays.downloader.Utils.isNull
+import ru.blays.downloader.Utils.position
 import java.nio.ByteBuffer
 import kotlin.time.Duration.Companion.seconds
 

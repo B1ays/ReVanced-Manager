@@ -1,11 +1,11 @@
-package ru.blays.revanced.data.Downloader.DataClass
+package ru.blays.downloader.DataClass
 
 sealed class DownloadMode {
-    class SingleTry: DownloadMode()
+    data object SingleTry : DownloadMode()
 
     class MultipleTry(tryCount: Int): DownloadMode()
 
-    class InfinityTry: DownloadMode()
+    data object InfinityTry : DownloadMode()
 }
 
 enum class FileMode {

@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.Utils
+package ru.blays.downloader.Utils
 
 import okhttp3.OkHttpClient
 import okhttp3.Request

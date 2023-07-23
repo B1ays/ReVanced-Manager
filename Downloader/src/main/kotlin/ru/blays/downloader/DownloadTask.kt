@@ -1,19 +1,19 @@
-package ru.blays.revanced.data.Downloader
+package ru.blays.downloader
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
-import ru.blays.revanced.data.Downloader.DataClass.DownloadMode
-import ru.blays.revanced.data.Downloader.DataClass.FileMode
-import ru.blays.revanced.data.Downloader.DownloaderImpl.BaseDownloader
-import ru.blays.revanced.data.Downloader.DownloaderImpl.InfinityTryDownloader
-import ru.blays.revanced.data.Downloader.DownloaderImpl.NormalDownloader
-import ru.blays.revanced.data.Downloader.LogAdapter.LogAdapterAbstract
-import ru.blays.revanced.data.Downloader.LogAdapter.LogAdapterDefault
+import ru.blays.downloader.DataClass.DownloadInfo
+import ru.blays.downloader.DataClass.DownloadMode
+import ru.blays.downloader.DataClass.FileMode
+import ru.blays.downloader.DownloaderImpl.BaseDownloader
+import ru.blays.downloader.DownloaderImpl.InfinityTryDownloader
+import ru.blays.downloader.DownloaderImpl.NormalDownloader
+import ru.blays.downloader.LogAdapter.LogAdapterAbstract
+import ru.blays.downloader.LogAdapter.LogAdapterDefault
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-private val DEFAULT_DOWNLOAD_MODE = DownloadMode.InfinityTry()
+private val DEFAULT_DOWNLOAD_MODE = DownloadMode.InfinityTry
 private val DEFAULT_FILE_MODE = FileMode.ContinueIfExists
 private const val DEFAULT_FILE_EXTENSION = ".apk"
 

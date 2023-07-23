@@ -3,8 +3,8 @@ package ru.Blays.ReVanced.Manager.Repository
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
-import ru.blays.revanced.data.Downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
+import ru.blays.downloader.DataClass.DownloadInfo
+import ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
 import ru.blays.revanced.shared.LogManager.BLog
 import java.io.File
 
@@ -18,19 +18,19 @@ class DownloadsRepository {
     var downloadsCount = mutableIntStateOf(0)
         private set
 
-    var downloadsList = mutableStateListOf<DownloadInfo>()
+    var downloadsList = mutableStateListOf<ru.blays.downloader.DataClass.DownloadInfo>()
         private set
 
     var existingFilesList = mutableStateListOf<File>()
 
-    fun addToList(taskInfo: DownloadInfo) {
+    fun addToList(taskInfo: ru.blays.downloader.DataClass.DownloadInfo) {
         downloadsList.add(taskInfo)
         downloadsCount.intValue = (downloadsCount.intValue + 1).coerceIn(0..Int.MAX_VALUE)
         isDownloadRunning.value = true
         BLog.i(TAG, "Add task to list: ${taskInfo.fileName}")
     }
 
-    fun removeFromList(taskInfo: DownloadInfo) {
+    fun removeFromList(taskInfo: ru.blays.downloader.DataClass.DownloadInfo) {
         downloadsList.remove(taskInfo)
         downloadsCount.intValue = (downloadsCount.intValue - 1).coerceIn(0..Int.MAX_VALUE)
         if (downloadsCount.intValue == 0) isDownloadRunning.value = false
@@ -38,7 +38,7 @@ class DownloadsRepository {
     }
 
     private fun getExistingFiles() {
-        val downloadDir = DEFAULT_DOWNLOADS_FOLDER
+        val downloadDir = ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
         val files = downloadDir.listFiles() ?: return
         val list = files.asList()
         existingFilesList.addAll(list)

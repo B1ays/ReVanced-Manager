@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +36,7 @@ import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.DownloadItem
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.FileItem
+import ru.blays.revanced.shared.Extensions.open
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
@@ -44,6 +46,8 @@ class DownloadsScreen: AndroidScreen(){
 
     @Composable
     override fun Content() {
+
+        val context = LocalContext.current
 
         val navigator = LocalNavigator.currentOrThrow
 
@@ -89,8 +93,24 @@ class DownloadsScreen: AndroidScreen(){
                     .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
                 state = lazyListState
             ) {
-                items(list) {
-                    DownloadItem(downloadInfo = it, repository::removeFromList)
+                items(list) { item ->
+                    DownloadItem(
+                        fileName = item.fileName,
+                        fileLength = item.file.length(),
+                        progressFlow = item.progressFlow,
+                        speedFlow = item.speedFlow,
+                        actionOpenFile = {
+                            item.file.open(context)
+                        },
+                        actionDeleteFile = {
+                            item.file.delete()
+                        },
+                        actionRemove = {
+                            repository.removeFromList(item)
+                        },
+                        actionPause = item.actionPauseResume
+
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 items(existingFilesList) {

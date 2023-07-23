@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.DataClass
+package ru.blays.downloader.DataClass
 
 internal enum class LogType {
     DEBUG, INFO, WARN, ERROR

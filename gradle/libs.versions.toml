@@ -17,13 +17,17 @@ com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-markdown = "0.3.4"
 datastore-preferences = "1.1.0-alpha04"
 documentfile = "1.1.0-alpha01"
-github-pausing-coroutine-dispatcher = "ee40ae5"
 koin-androidx-compose = "3.4.5"
 kotlin = "1.9.0"
 libsu = "5.1.0"
 pausing-coroutine-dispatcher = "ee40ae5"
 rebugger = "1.0.0-alpha06"
 work-runtime-ktx = "2.9.0-alpha01"
+junit = "4.13.2"
+androidx-test-ext-junit = "1.1.5"
+espresso-core = "3.5.1"
+appcompat = "1.6.1"
+material = "1.9.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
@@ -101,7 +105,6 @@ material3 = { module = "androidx.compose.material3:material3" }
 nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "libsu" }
 org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:3.0.0-alpha1"
 pausing-coroutine-dispatcher = { module = "com.github.Koitharu.pausing-coroutine-dispatcher:pausing-coroutine-dispatcher", version.ref = "pausing-coroutine-dispatcher" }
-pausing-coroutine-dispatcher-ee40ae5 = { module = "com.github.Koitharu.pausing-coroutine-dispatcher:pausing-coroutine-dispatcher", version.ref = "github-pausing-coroutine-dispatcher" }
 rebugger = { module = "com.github.theapache64:rebugger", version.ref = "rebugger" }
 service = { module = "com.github.topjohnwu.libsu:service", version.ref = "libsu" }
 

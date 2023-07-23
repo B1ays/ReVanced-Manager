@@ -1,4 +1,4 @@
-package ru.blays.revanced.data.Downloader.Utils
+package ru.blays.downloader.Utils
 
 internal fun Any?.isNull(): Boolean = this == null
 
