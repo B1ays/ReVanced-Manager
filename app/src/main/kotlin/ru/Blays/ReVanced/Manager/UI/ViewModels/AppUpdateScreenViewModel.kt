@@ -22,6 +22,7 @@ import ru.blays.revanced.domain.DataClasses.AppUpdateModelDto
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase
 import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
+import ru.blays.revanced.shared.Data.DEFAULT_INSTALLER_CACHE_FOLDER
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.Util.copyToTemp
 import java.io.File
@@ -78,10 +79,13 @@ class AppUpdateScreenViewModel(
                     1 -> {
                         onSuccess {
                             launch {
-                                val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
-                                    createNewFile()
-                                    context.copyToTemp(documentFile!!, this)
+                                val tmpFile = File(
+                                    DEFAULT_INSTALLER_CACHE_FOLDER(context),
+                                    fileName + APK_FILE_EXTENSION
+                                ).apply {
+                                    if (!exists()) createNewFile()
                                 }
+                                context.copyToTemp(documentFile!!, tmpFile)
                                 packageManagerApi.installApk(tmpFile, installerType)
                             }
                         }

@@ -14,6 +14,7 @@ import org.koin.android.ext.android.inject
 import ru.Blays.ReVanced.Manager.UI.Navigation.Navigator
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 import ru.Blays.ReVanced.Manager.Utils.buildedTheme
+import ru.Blays.ReVanced.Manager.Utils.clearInstallerCache
 import ru.blays.preference.DataStores.AmoledThemeDS
 import ru.blays.preference.DataStores.MonetColorsDS
 import ru.blays.preference.DataStores.ThemeDS
@@ -39,6 +40,9 @@ class MainActivity : ComponentActivity() {
             BLog.i(TAG, "Request runtime permission for for api less than 30")
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1234)
         }
+
+        BLog.d(TAG, "Clear installer cache")
+        clearInstallerCache(this)
 
         BLog.i(TAG, "Init Compose UI")
 

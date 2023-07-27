@@ -37,6 +37,7 @@ import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
 import ru.blays.revanced.shared.Data.APK_MIME_TYPE
+import ru.blays.revanced.shared.Data.DEFAULT_INSTALLER_CACHE_FOLDER
 import ru.blays.revanced.shared.Extensions.collect
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.Util.copyToTemp
@@ -167,10 +168,13 @@ class VersionsListScreenViewModel(
                     logAdapter = LogAdapterBLog()
                     onSuccess {
                         launch {
-                            val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
-                                createNewFile()
-                                context.copyToTemp(documentFile!!, this)
+                            val tmpFile = File(
+                                DEFAULT_INSTALLER_CACHE_FOLDER(context),
+                                fileName + APK_FILE_EXTENSION
+                            ).apply {
+                                if (!exists()) createNewFile()
                             }
+                            context.copyToTemp(documentFile!!, tmpFile)
                             packageManager.installApk(tmpFile, installerType)
                             onRefresh()
                         }
@@ -231,10 +235,13 @@ class VersionsListScreenViewModel(
                     onSuccess {
                         launch {
                             with(state) { emit(value.copy(origApkDownloaded = true)) }
-                            val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
-                                createNewFile()
-                                context.copyToTemp(documentFile!!, this)
+                            val tmpFile = File(
+                                DEFAULT_INSTALLER_CACHE_FOLDER(context),
+                                fileName + APK_FILE_EXTENSION
+                            ).apply {
+                                if (!exists()) createNewFile()
                             }
+                            context.copyToTemp(documentFile!!, tmpFile)
 
                             val installResult = async {
                                  RootPackageManager().installApp(tmpFile)
@@ -307,10 +314,13 @@ class VersionsListScreenViewModel(
                         collect(state) { downloadState ->
                             if (downloadState.origApkInstalled) {
                                 launch {
-                                    val tmpFile = File(context.cacheDir, fileName + APK_FILE_EXTENSION).apply {
-                                        createNewFile()
-                                        context.copyToTemp(documentFile!!, this)
+                                    val tmpFile = File(
+                                        DEFAULT_INSTALLER_CACHE_FOLDER(context),
+                                        fileName + APK_FILE_EXTENSION
+                                    ).apply {
+                                        if (!exists()) createNewFile()
                                     }
+                                    context.copyToTemp(documentFile!!, tmpFile)
                                     repository?.moduleType?.let { module ->
                                         ModuleInstaller(
                                             logAdapter = ModuleInstallerLogAdapter()
