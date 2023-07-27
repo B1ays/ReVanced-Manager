@@ -13,7 +13,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.koin.java.KoinJavaComponent.get
+import ru.Blays.ReVanced.Manager.DI.autoInject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
 import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
@@ -59,12 +59,15 @@ class VersionsListScreenViewModel(
 
     var pagesCount by mutableIntStateOf(0)
 
-    private val packageManager: PackageManagerApi = get(PackageManagerApi::class.java)
-    private val downloadsRepository: DownloadsRepository = get(DownloadsRepository::class.java)
+    private val packageManager: PackageManagerApi by autoInject()
+    private val downloadsRepository: DownloadsRepository by autoInject()
 
-    val downloadsFolderUri by DownloadsFolderUriDS(context)
-    private val storageMode by StorageAccessTypeDS(context)
-    private val installerType by InstallerTypeDS(context)
+    private val _downloadsFolderUri: DownloadsFolderUriDS by autoInject()
+    private val _storageMode: StorageAccessTypeDS  by autoInject()
+    private val _installerType: InstallerTypeDS by autoInject()
+    private var downloadsFolderUri by _downloadsFolderUri
+    private var storageMode by _storageMode
+    private var installerType by _installerType
 
     var repository: AppRepositoryInterface? = null
         private set

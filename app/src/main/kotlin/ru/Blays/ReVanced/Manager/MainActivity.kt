@@ -9,8 +9,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import org.koin.android.ext.android.inject
 import ru.Blays.ReVanced.Manager.UI.Navigation.Navigator
 import ru.Blays.ReVanced.Manager.UI.Theme.ReVancedManagerTheme
 import ru.Blays.ReVanced.Manager.Utils.buildedTheme
@@ -42,11 +42,11 @@ class MainActivity : ComponentActivity() {
 
         BLog.i(TAG, "Init Compose UI")
 
-        setContent {
+        val themeIndexState: ThemeDS by inject()
+        val monetColorsEnabled: MonetColorsDS by inject()
+        val amoledThemeEnabled: AmoledThemeDS by inject()
 
-            val themeIndexState = remember { ThemeDS(this) }
-            val monetColorsEnabled = remember { MonetColorsDS(this) }
-            val amoledThemeEnabled = remember { AmoledThemeDS(this) }
+        setContent {
 
             ReVancedManagerTheme(
                 darkTheme = when(themeIndexState.asState().value) {

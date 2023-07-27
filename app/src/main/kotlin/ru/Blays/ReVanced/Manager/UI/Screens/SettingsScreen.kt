@@ -50,6 +50,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
@@ -113,11 +114,8 @@ class SettingsScreen: AndroidScreen() {
 
         val lazyListState = rememberLazyListState()
 
-        val context = LocalContext.current
 
-        val customColorValueDS = remember {
-            CustomColorValueDS(context)
-        }
+        val customColorValueDS: CustomColorValueDS = koinInject()
         var customColorValue by customColorValueDS
 
         shouldHideNavigationBar = when {
@@ -221,10 +219,7 @@ private fun ThemeSelector() {
         title = stringResource(R.string.Settings_card_theme_title),
         subtitle = stringResource(R.string.Settings_card_theme_description)
     ) {
-        val context = LocalContext.current
-        val themeDS: ThemeDS = remember {
-            ThemeDS(context)
-        }
+        val themeDS: ThemeDS = koinInject()
         var checkedIndex by themeDS
         val checkedIndexState by themeDS.asState()
 
@@ -254,10 +249,7 @@ private fun ThemeSelector() {
 
 @Composable
 private fun MonetColors() {
-    val context = LocalContext.current
-    val monetColorAccentDS = remember {
-        MonetColorsDS(context)
-    }
+    val monetColorAccentDS: MonetColorsDS = koinInject()
     var monetColorAccent by monetColorAccentDS
     val state by monetColorAccentDS.asState()
 
@@ -272,10 +264,7 @@ private fun MonetColors() {
 
 @Composable
 fun AmoledTheme() {
-    val context = LocalContext.current
-    val amoledThemeDS = remember {
-        AmoledThemeDS(context)
-    }
+    val amoledThemeDS: AmoledThemeDS = koinInject()
     var amoledTheme by amoledThemeDS
     val state by amoledThemeDS.asState()
 
@@ -292,19 +281,12 @@ fun AmoledTheme() {
 private fun AccentSelector(
     openAlertDialog: () -> Unit
 ) {
-    val context = LocalContext.current
-    val colorAccentIndexDS = remember {
-        ColorAccentIndexDS(context)
-    }
+    val colorAccentIndexDS: ColorAccentIndexDS = koinInject()
     var colorAccent by colorAccentIndexDS
     val colorAccentFlow by colorAccentIndexDS.asState()
-
-    val customColorSelectedDS = remember {
-        CustomColorSelectedDS(context)
-    }
+    val customColorSelectedDS: CustomColorSelectedDS = koinInject()
     var customColorSelected by customColorSelectedDS
     val customColorSelectedFlow by customColorSelectedDS.asState()
-
 
     val rainbowBrush = Brush.sweepGradient(rainbowColors)
 
@@ -341,10 +323,7 @@ private fun AccentSelector(
 
 @Composable
 fun InstallerType() {
-    val context = LocalContext.current
-    val dataStore = remember {
-        InstallerTypeDS(context)
-    }
+    val dataStore: InstallerTypeDS = koinInject()
     var installerType by dataStore
     val installerTypeState by dataStore.asState()
 
@@ -406,8 +385,7 @@ fun ManagedApps() {
 @Composable
 fun CacheLifetimeSelector() {
 
-    val context = LocalContext.current
-    val cacheDS = CacheLifetimeDS(context)
+    val cacheDS: CacheLifetimeDS = koinInject()
     var cacheLifetime by cacheDS
     val cacheLifetimeState by cacheDS.asState()
 
@@ -471,12 +449,8 @@ fun CacheLifetimeSelector() {
 @Composable
 fun DownloadsFolderSelector() {
     val context = LocalContext.current
-    val storageAccessDS = remember {
-        StorageAccessTypeDS(context)
-    }
-    val downloadsFolderUriDS = remember {
-        DownloadsFolderUriDS(context)
-    }
+    val storageAccessDS: StorageAccessTypeDS = koinInject()
+    val downloadsFolderUriDS: DownloadsFolderUriDS = koinInject()
     var storageAccessType by storageAccessDS
     val storageAccessTypeState by storageAccessDS.asState()
     var downloadsFolderUri by downloadsFolderUriDS

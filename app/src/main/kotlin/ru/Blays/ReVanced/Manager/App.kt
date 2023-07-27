@@ -9,6 +9,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.Blays.ReVanced.Manager.BackgroundService.CrashHandlerService
 import ru.Blays.ReVanced.Manager.DI.appModule
+import ru.blays.preference.DI.preferencesModule
 import ru.blays.revanced.data.DI.dataModule
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
@@ -37,7 +38,8 @@ class App: Application() {
             androidContext(this@App)
             modules(
                 appModule,
-                dataModule
+                dataModule,
+                preferencesModule
             )
         }
 

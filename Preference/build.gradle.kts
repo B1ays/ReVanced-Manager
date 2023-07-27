@@ -44,4 +44,8 @@ dependencies {
 
     // Compose
     implementation(libs.androidx.compose.runtime)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 }

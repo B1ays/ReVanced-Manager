@@ -10,6 +10,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.BuildConfig
+import ru.Blays.ReVanced.Manager.DI.autoInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.blays.downloader.DownloadTask
@@ -41,9 +42,6 @@ class AppUpdateScreenViewModel(
 
     private var _changelog: MutableStateFlow<String> = MutableStateFlow("")
 
-    private val installerType by InstallerTypeDS(context)
-    private val storageMode by StorageAccessTypeDS(context)
-
     val updateInfo: AppUpdateModelDto?
         @Composable get() = _updateInfo.collectAsState().value
 
@@ -61,13 +59,17 @@ class AppUpdateScreenViewModel(
 
     @Suppress("DeferredResultUnused")
     fun downloadAndInstall() {
+        val _installerType: InstallerTypeDS by autoInject()
+        val _storageMode: StorageAccessTypeDS by autoInject()
+        val installerType by _installerType
+        val storageMode by _storageMode
         val model = _updateInfo.value
         model?.let { infoModel ->
             val task = DownloadTask.Companion.builder {
                 url = infoModel.apkLink
                 fileName = "Update_${infoModel.availableVersion} (${infoModel.versionCode})"
                 logAdapter = LogAdapterBLog()
-                when(this@AppUpdateScreenViewModel.storageMode) {
+                when(storageMode) {
                     0 -> {
                         onSuccess {
                             packageManagerApi.installApk(file!!, installerType)

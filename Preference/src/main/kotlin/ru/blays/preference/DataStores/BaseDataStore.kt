@@ -18,7 +18,7 @@ import ru.blays.preference.Interfaces.IDataStore
 import ru.blays.preference.dataStore
 import kotlin.reflect.KProperty
 
-abstract class BaseDataStore <T: Any> (context: Context): IDataStore<T> {
+abstract class BaseDataStore <T: Any> internal constructor (context: Context): IDataStore<T> {
 
     final override val dataStore: DataStore<Preferences> = context.dataStore
 
@@ -27,6 +27,16 @@ abstract class BaseDataStore <T: Any> (context: Context): IDataStore<T> {
     val flow: Flow<T> = dataStore.data.map { preferences ->
         preferences[KEY] ?: DEFAULT_VALUE
     }
+
+    var value: T
+        get() = runBlocking { flow.first() }
+        set(value) {
+            launch {
+                dataStore.edit { mutablePreferences ->
+                    mutablePreferences[KEY] = value
+                }
+            }
+        }
 
     @NonRestartableComposable
     @Composable

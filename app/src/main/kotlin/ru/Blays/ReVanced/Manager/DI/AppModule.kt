@@ -25,12 +25,12 @@ val appModule = module {
     factory<GetChangelogUseCase> { GetChangelogUseCase(get()) }
     factory { GetUpdateInfoUseCase(get()) }
     factory<PackageManagerApi> {
-        val installerType by InstallerTypeDS(get())
-        PackageManagerApiImpl(get(), installerType)
+        val installerType = get<InstallerTypeDS>()
+        PackageManagerApiImpl(get(), installerType.value)
     }
     factory<Long>(named("cacheLifetimeLong")) {
-        val cacheLifetimeLong: Long by CacheLifetimeDS(get())
-        return@factory when (cacheLifetimeLong) {
+        val cacheLifetimeLong = get<CacheLifetimeDS>()
+        return@factory when (cacheLifetimeLong.value) {
             0L -> 3L
             2L -> 6L
             4L -> 12L
