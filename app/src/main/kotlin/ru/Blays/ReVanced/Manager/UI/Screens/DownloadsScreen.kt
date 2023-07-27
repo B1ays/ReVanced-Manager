@@ -59,6 +59,8 @@ class DownloadsScreen: AndroidScreen(){
 
         val existingFilesList = repository.existingFilesList
 
+        val existingDocumentsList = repository.existingDocumentsList
+
         val lazyListState = rememberLazyListState()
 
         shouldHideNavigationBar = when {
@@ -116,13 +118,31 @@ class DownloadsScreen: AndroidScreen(){
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
-                items(existingFilesList) {
-                    FileItem(file = it, actionRemove = repository::removeExistingFile)
+                items(existingFilesList) {file ->
+                    FileItem(
+                        fileName = file.nameWithoutExtension,
+                        fileLength = file.length(),
+                        actionOpenFile = { file.open(context) },
+                        actionDeleteFile = { repository.removeExistingFile(file) }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                items(existingDocumentsList) {document ->
+                    FileItem(
+                        fileName = document.name ?: "",
+                        fileLength = document.length(),
+                        actionOpenFile = { document.open(context) },
+                        actionDeleteFile = { repository.removeExistingFile(document) }
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
-            if (repository.downloadsList.isEmpty() && repository.existingFilesList.isEmpty()) {
+            if (
+                repository.downloadsList.isEmpty() &&
+                repository.existingFilesList.isEmpty() &&
+                repository.existingDocumentsList.isEmpty()
+            ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

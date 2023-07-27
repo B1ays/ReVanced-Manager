@@ -45,9 +45,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.StateFlow
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
-import ru.blays.revanced.shared.Extensions.open
 import ru.blays.revanced.shared.R
-import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -244,8 +242,10 @@ fun DownloadItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FileItem(
-    file: File,
-    actionRemove: (File) -> Unit
+    fileName: String,
+    fileLength: Long,
+    actionOpenFile: () -> Unit,
+    actionDeleteFile: () -> Unit,
 ) {
 
     val height = 80.dp
@@ -256,11 +256,7 @@ fun FileItem(
 
     var isDeleteButtonVisible by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-
     val changeVisible = { isDeleteButtonVisible = !isDeleteButtonVisible }
-
-    val actionOpenFile = { file.open(context) }
 
     Row(
         modifier = Modifier
@@ -294,7 +290,7 @@ fun FileItem(
                 Column(modifier = Modifier.weight(.5F)) {
                     Text(
                         modifier = Modifier,
-                        text = file.nameWithoutExtension,
+                        text = fileName,
                         style = MaterialTheme.typography.titleMedium,
                         color = contentColor,
                         maxLines = 2,
@@ -302,7 +298,7 @@ fun FileItem(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
-                        text = "${stringResource(id = R.string.File_size)}: ${(file.length() / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
+                        text = "${stringResource(id = R.string.File_size)}: ${(fileLength / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
                         style = MaterialTheme.typography.titleSmall,
                         color = contentColor,
                         maxLines = 1,
@@ -328,7 +324,7 @@ fun FileItem(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .size(height),
-                onClick = { actionRemove(file) },
+                onClick = actionDeleteFile,
                 shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(6.dp),
                 containerColor = overlayColor,
