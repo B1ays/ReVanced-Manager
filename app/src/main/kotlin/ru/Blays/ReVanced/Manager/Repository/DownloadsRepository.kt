@@ -3,8 +3,7 @@ package ru.Blays.ReVanced.Manager.Repository
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import ru.blays.downloader.DataClass.DownloadInfo
-import ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
+import ru.blays.revanced.shared.Data.DEFAULT_DOWNLOADS_FOLDER
 import ru.blays.revanced.shared.LogManager.BLog
 import java.io.File
 
@@ -38,7 +37,7 @@ class DownloadsRepository {
     }
 
     private fun getExistingFiles() {
-        val downloadDir = ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER
+        val downloadDir = DEFAULT_DOWNLOADS_FOLDER
         val files = downloadDir.listFiles() ?: return
         val list = files.asList()
         existingFilesList.addAll(list)

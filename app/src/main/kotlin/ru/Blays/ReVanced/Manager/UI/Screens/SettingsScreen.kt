@@ -2,10 +2,16 @@
 
 package ru.Blays.ReVanced.Manager.UI.Screens
 
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +50,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
@@ -75,7 +80,9 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWi
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
 import ru.blays.revanced.Services.Root.Util.isRootGranted
+import ru.blays.revanced.shared.Data.DEFAULT_DOWNLOADS_FOLDER
 import ru.blays.revanced.shared.Data.PersistableDocumentTree
+import ru.blays.revanced.shared.Data.URI_DEFAULT_FLAGS
 import ru.blays.revanced.shared.Extensions.getFileUri
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
@@ -475,23 +482,18 @@ fun DownloadsFolderSelector() {
     var downloadsFolderUri by downloadsFolderUriDS
     val downloadsFolderUriFlow by downloadsFolderUriDS.asState()
     val register = rememberLauncherForActivityResult(
-        contract = PersistableDocumentTree()) { uriOrNull ->
+        contract = PersistableDocumentTree()
+    ) { uriOrNull ->
         uriOrNull?.let { uri ->
-            context.contentResolver.releasePersistableUriPermission(
-                downloadsFolderUri.toUri(),
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
             context.contentResolver.takePersistableUriPermission(
                 uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                URI_DEFAULT_FLAGS
             )
             downloadsFolderUri = uri.toString()
         }
     }
     val defaultDownloadFolderUri = remember {
-        context.getFileUri(ru.blays.downloader.Utils.DEFAULT_DOWNLOADS_FOLDER)
+        context.getFileUri(DEFAULT_DOWNLOADS_FOLDER)
     }
     SettingsExpandableCard(
         title = stringResource(id = R.string.Settings_card_storage_access_mode_title),
@@ -516,45 +518,56 @@ fun DownloadsFolderSelector() {
             storageAccessType = 1
 
         }
-        if (storageAccessTypeState == 1) {
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = DefaultPadding.CardHorizontalPadding),
-                text = stringResource(
-                    id = R.string.Settings_card_storage_access_mode_selected_folder
-                ) + ':'
-            )
-            Box(
-                modifier = Modifier
-                    .padding(DefaultPadding.CardDefaultPadding)
-                    .fillMaxWidth()
-                    .background(
-                        color = CardDefaults.cardColors().containerColor,
-                        shape = CardDefaults.shape
-                    )
-            ) {
+        AnimatedVisibility(
+            visible = storageAccessTypeState == 1,
+            enter = slideInVertically(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                initialOffsetY = { -it / 2 }
+            ) + expandVertically(),
+            exit = slideOutVertically(
+                animationSpec = spring(stiffness = 300F, dampingRatio = .6F),
+                targetOffsetY = { -it / 2 }
+            ) + shrinkVertically()
+        ) {
+            Column(modifier = Modifier) {
                 Text(
                     modifier = Modifier
-                        .padding(DefaultPadding.CardDefaultPadding),
-                    text = downloadsFolderUriFlow
+                        .padding(horizontal = DefaultPadding.CardHorizontalPadding),
+                    text = stringResource(
+                        id = R.string.Settings_card_storage_access_mode_selected_folder
+                    ) + ':'
                 )
+                Box(
+                    modifier = Modifier
+                        .padding(DefaultPadding.CardDefaultPadding)
+                        .fillMaxWidth()
+                        .background(
+                            color = CardDefaults.cardColors().containerColor,
+                            shape = CardDefaults.shape
+                        )
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(DefaultPadding.CardDefaultPadding),
+                        text = downloadsFolderUriFlow
+                    )
+                }
+                Button(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 50.dp)
+                        .padding(DefaultPadding.CardDefaultPadding)
+                        .fillMaxWidth(),
+                    onClick = { register.launch(defaultDownloadFolderUri) },
+                    shape = CardDefaults.shape
+                ) {
+                    Text(
+                        text = stringResource(
+                            id = R.string.Settings_card_storage_access_mode_pick_folder
+                        ),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
-        }
-        Button(
-            modifier = Modifier
-                .defaultMinSize(minHeight = 50.dp)
-                .padding(DefaultPadding.CardDefaultPadding)
-                .fillMaxWidth(),
-            onClick = { register.launch(defaultDownloadFolderUri) },
-            enabled = storageAccessTypeState == 1,
-            shape = CardDefaults.shape
-        ) {
-            Text(
-                text = stringResource(
-                    id = R.string.Settings_card_storage_access_mode_pick_folder
-                ),
-                style = MaterialTheme.typography.titleMedium
-            )
         }
     }
 }

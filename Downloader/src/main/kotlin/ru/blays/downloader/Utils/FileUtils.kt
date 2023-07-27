@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel
 
 private const val DL_FOLDER_NAME = "ReVanced Manager"
 
-val DEFAULT_DOWNLOADS_FOLDER: File = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DL_FOLDER_NAME).also {
+private val DEFAULT_DOWNLOADS_FOLDER: File = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DL_FOLDER_NAME).also {
     if (!it.exists()) it.mkdir()
 }
 
