@@ -19,8 +19,8 @@ class PackageManagerApiImpl(context: Context, installerType: Int): PackageManage
     override val coroutineContext = Dispatchers.Default
 
     override val packageManagerInterface: PackageManagerInterface = when {
-        installerType == 1 -> NonRootPackageManager(context)
-        installerType == 2 && isRootGranted -> RootPackageManager()
+        installerType == 0 -> NonRootPackageManager(context)
+        installerType == 1 && isRootGranted -> RootPackageManager()
         else -> NonRootPackageManager(context)
     }
 

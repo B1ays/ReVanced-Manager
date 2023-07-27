@@ -334,25 +334,25 @@ fun InstallerType() {
         SettingsRadioButtonWithTitle(
             title = stringResource(R.string.Settings_card_installer_session),
             checkedIndex = installerTypeState,
-            index = 1
+            index = 0
         ) {
-            installerType = 1
+            installerType = 0
         }
         SettingsRadioButtonWithTitle(
             title =  stringResource(R.string.Settings_card_installer_root),
             checkedIndex = installerTypeState,
-            index = 2,
+            index = 1,
             enabled = isRootGranted
         ) {
-            installerType = 2
+            installerType = 1
         }
         SettingsRadioButtonWithTitle(
             title =  stringResource(R.string.Settings_card_installer_shizuku),
             checkedIndex = installerTypeState,
-            index = 3,
+            index = 2,
             enabled = false
         ) {
-            installerType = 3
+            installerType = 2
         }
     }
 }
