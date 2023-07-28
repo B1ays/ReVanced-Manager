@@ -16,7 +16,7 @@ class AppRepository private constructor(): AppRepositoryInterface {
 
     override var appName = ""
 
-    override var appType = ""
+    override var catalogUrl = ""
 
     override var moduleType: ModuleInstaller.Module? = null
 
@@ -49,9 +49,9 @@ class AppRepository private constructor(): AppRepositoryInterface {
         launch {
             getVersionsListUseCase?.let { useCase ->
                 if (remoteVersionsList.isEmpty()) {
-                    remoteVersionsList.addAll(useCase.execut(appType))
+                    remoteVersionsList.addAll(useCase.execut(catalogUrl, true))
                 } else {
-                    remoteVersionsList = useCase.execut(appType).toMutableList()
+                    remoteVersionsList = useCase.execut(catalogUrl, true).toMutableList()
                 }
             }
             availableVersion.value = remoteVersionsList.firstOrNull()?.version
@@ -67,13 +67,13 @@ class AppRepository private constructor(): AppRepositoryInterface {
             val repository = AppRepository()
             scope(repository)
             require(repository.appName.isNotEmpty()) { "No value passed for [appName]" }
-            require(repository.appType.isNotEmpty()) { "No value passed for [appType]" }
+            require(repository.catalogUrl.isNotEmpty()) { "No value passed for [catalogUrl]" }
             require(
                 if (repository.appVersions.any { it.isRootNeeded }) {
                     repository.moduleType != null
                 } else true
             ) { "No value passed for [moduleType]. App has Root version" }
-            requireNotNull(repository.getVersionsListUseCase) { "No value passed for [appType]" }
+            requireNotNull(repository.getVersionsListUseCase) { "No value passed for [catalogUrl]" }
             require(repository.appVersions.isNotEmpty()) { "At least one version must be added" }
             return repository
         }

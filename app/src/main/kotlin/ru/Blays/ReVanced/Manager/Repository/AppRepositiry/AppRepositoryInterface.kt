@@ -13,7 +13,7 @@ interface AppRepositoryInterface: CoroutineScope {
 
     var appName: String
 
-    var appType: String
+    var catalogUrl: String
 
     var moduleType: ModuleInstaller.Module?
 

@@ -154,13 +154,6 @@ class MainScreen: AndroidScreen() {
                             navigator.push(VersionsListScreen(app))
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        /*if (
-                            (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
-                            (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
-                            (app == Apps.MICROG && settingsRepository.microGManaged)
-                        ) {
-
-                        }*/
                     }
                 }
 

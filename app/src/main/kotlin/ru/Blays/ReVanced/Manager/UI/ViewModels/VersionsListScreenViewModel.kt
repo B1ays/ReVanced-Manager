@@ -84,7 +84,7 @@ class VersionsListScreenViewModel(
             versionsList = repository.remoteVersionsList
             isRefreshing = false
         } else {
-            launch { versionsList = getList(repository.appType) }
+            launch { versionsList = getList(repository.catalogUrl) }
         }
     }
 

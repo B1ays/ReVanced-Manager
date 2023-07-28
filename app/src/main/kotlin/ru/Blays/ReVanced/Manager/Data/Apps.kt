@@ -18,7 +18,7 @@ enum class Apps {
         override val icon = AppsIcons.YoutubeMonochrome
         override val repository = AppRepository.builder {
             appName = "YouTube ReVanced"
-            appType = GetVersionsListUseCase.YOUTUBE
+            catalogUrl = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/YouTube/VersionsList.json"
             moduleType = ModuleInstaller.Module.YOUTUBE
             getVersionsListUseCase = getVersionsListUС
             version {
@@ -49,7 +49,7 @@ enum class Apps {
         override val icon = AppsIcons.MusicMonochrome
         override val repository = AppRepository.builder {
             appName = "YouTube Music ReVanced"
-            appType = GetVersionsListUseCase.MUSIC
+            catalogUrl = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/YouTube%20Music/VersionsList.json"
             moduleType = ModuleInstaller.Module.YOUTUBE_MUSIC
             getVersionsListUseCase = getVersionsListUС
 
@@ -83,7 +83,7 @@ enum class Apps {
         override val icon = AppsIcons.Microg
         override val repository = AppRepository.builder {
             appName = "MMicroG"
-            appType = GetVersionsListUseCase.MICROG
+            catalogUrl = "https://github.com/B1ays/ReVanced-Versions-Catalog/raw/main/MicroG/VersionsList.json"
             getVersionsListUseCase = getVersionsListUС
 
             version {
