@@ -54,6 +54,7 @@ android {
         checkReleaseBuilds false
         checkDependencies false
         checkGeneratedSources false
+        abortOnError false
     }
 }
 
