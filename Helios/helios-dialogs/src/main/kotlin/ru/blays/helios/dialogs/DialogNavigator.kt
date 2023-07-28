@@ -12,8 +12,6 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.blays.helios.core.Screen
 import ru.blays.helios.core.Stack
@@ -37,7 +34,6 @@ typealias DialogNavigatorContent = @Composable (dialogNavigator: DialogNavigator
 val LocalDialogNavigator: ProvidableCompositionLocal<DialogNavigator> =
     staticCompositionLocalOf { error("BottomSheetNavigator not initialized") }
 
-@Suppress("LocalVariableName")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogNavigator(
@@ -55,13 +51,7 @@ fun DialogNavigator(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val _isDismissRequestEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
-    val isDismissRequestEnabled by _isDismissRequestEnabled.collectAsState()
-
-    val _dialogState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
-    val dialogState by _dialogState.collectAsState()
+    val dialogState = rememberDialogState()
 
     Navigator(
         screen = EmptyDialog,
@@ -71,14 +61,12 @@ fun DialogNavigator(
     ) { navigator ->
         val dialogNavigator = remember(
             navigator,
-            _dialogState,
-            _isDismissRequestEnabled,
+            dialogState,
             coroutineScope
         ) {
             DialogNavigator(
                 navigator,
-                _dialogState,
-                _isDismissRequestEnabled,
+                dialogState,
                 coroutineScope
             )
         }
@@ -87,12 +75,12 @@ fun DialogNavigator(
 
         CompositionLocalProvider(LocalDialogNavigator provides dialogNavigator) {
             content(dialogNavigator)
-            if (dialogState) {
+            if (dialogState.isVisible.value) {
                 AlertDialog(
                     onDismissRequest = closeDialog,
                     properties = DialogProperties(
-                        dismissOnBackPress = isDismissRequestEnabled,
-                        dismissOnClickOutside = isDismissRequestEnabled,
+                        dismissOnBackPress = dialogState.isDismissible.value,
+                        dismissOnClickOutside = dialogState.isDismissible.value,
                         securePolicy = SecureFlagPolicy.SecureOff
                     )
                 ) {
@@ -115,35 +103,31 @@ fun DialogNavigator(
 
 class DialogNavigator internal constructor(
     private val navigator: Navigator,
-    private val dialogState: MutableStateFlow<Boolean>,
-    private val isDismissRequestEnabled: MutableStateFlow<Boolean>,
+    private val dialogState: DialogState,
     private val coroutineScope: CoroutineScope
 ): Stack<Screen> by navigator {
 
     fun show(screen: Screen) {
         coroutineScope.launch {
-            isDismissRequestEnabled.`true`()
             replaceAll(screen)
-            dialogState.`true`()
+            dialogState.show()
         }
     }
 
     fun showNonDismissible(screen: Screen) {
         coroutineScope.launch {
-            isDismissRequestEnabled.`false`()
             replaceAll(screen)
-            dialogState.`true`()
+            dialogState.showNonDismissible()
         }
     }
 
     fun hide() {
         coroutineScope.launch {
-            dialogState.`false`()
             popAll()
             replaceAll(EmptyDialog)
+            dialogState.hide()
         }
     }
-
 }
 
 private object EmptyDialog: Screen {
@@ -151,12 +135,4 @@ private object EmptyDialog: Screen {
     override fun Content() {
         Spacer(modifier = Modifier.height(1.dp))
     }
-}
-
-private suspend fun MutableStateFlow<Boolean>.`false`() {
-    emit(false)
-}
-
-private suspend fun MutableStateFlow<Boolean>.`true`() {
-    emit(true)
 }
