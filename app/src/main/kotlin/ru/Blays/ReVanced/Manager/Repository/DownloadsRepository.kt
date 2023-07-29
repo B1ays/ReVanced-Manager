@@ -56,12 +56,14 @@ class DownloadsRepository {
             val list = files.asList()
             existingFilesList.addAll(list)
         } else {
-            val downloadDir = DocumentFile.fromTreeUri(
-                context,
-                downloadsFolderUriDS.value.toUri()
-            )
-            val files = downloadDir?.listFiles()
-            files?.let { existingDocumentsList.addAll(it) }
+            try {
+                val downloadDir = DocumentFile.fromTreeUri(
+                    context,
+                    downloadsFolderUriDS.value.toUri()
+                )
+                val files = downloadDir?.listFiles()
+                files?.let { existingDocumentsList.addAll(it) }
+            } catch (_: Exception) {}
         }
     }
 
