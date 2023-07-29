@@ -1,4 +1,4 @@
-package ru.blays.revanced.shared.Util
+package ru.blays.revanced.shared.Extensions
 
 import android.annotation.SuppressLint
 import android.content.Context

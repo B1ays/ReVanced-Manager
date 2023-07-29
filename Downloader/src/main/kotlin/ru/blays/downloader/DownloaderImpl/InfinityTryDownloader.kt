@@ -81,6 +81,7 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
             **/
             if (fileLength == originalFileSize) {
                 task.onSuccess(this@InfinityTryDownloader)
+                progressFlow.value = 1F
                 return@mainJob
             } else {
                 // Add existing file size to totalBytesRead

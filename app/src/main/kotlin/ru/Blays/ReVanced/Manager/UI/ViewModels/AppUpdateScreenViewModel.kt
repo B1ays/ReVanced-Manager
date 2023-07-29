@@ -6,6 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -13,8 +15,10 @@ import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.DI.autoInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
+import ru.blays.downloader.DataClass.StorageMode
 import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.build
+import ru.blays.preference.DataStores.DownloadsFolderUriDS
 import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.preference.DataStores.StorageAccessTypeDS
 import ru.blays.revanced.Services.PublicApi.PackageManagerApi
@@ -22,7 +26,10 @@ import ru.blays.revanced.domain.DataClasses.AppUpdateModelDto
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase
 import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
+import ru.blays.revanced.shared.Data.APK_MIME_TYPE
 import ru.blays.revanced.shared.Data.DEFAULT_INSTALLER_CACHE_FOLDER
+import ru.blays.revanced.shared.Extensions.fileDescriptor
+import ru.blays.revanced.shared.Extensions.getOrCreate
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.Util.copyToTemp
 import java.io.File
@@ -58,25 +65,39 @@ class AppUpdateScreenViewModel(
         }
     }
 
-    @Suppress("DeferredResultUnused")
+    @Suppress("DeferredResultUnused", "LocalVariableName")
     fun downloadAndInstall() {
         val _installerType: InstallerTypeDS by autoInject()
         val _storageMode: StorageAccessTypeDS by autoInject()
+        val _downloadsFolderURI: DownloadsFolderUriDS by autoInject()
         val installerType by _installerType
         val storageMode by _storageMode
+        val downloadsFolderUri by _downloadsFolderURI
         val model = _updateInfo.value
         model?.let { infoModel ->
-            val task = DownloadTask.Companion.builder {
+            DownloadTask.Companion.builder {
                 url = infoModel.apkLink
                 fileName = "Update_${infoModel.availableVersion} (${infoModel.versionCode})"
                 logAdapter = LogAdapterBLog()
                 when(storageMode) {
                     0 -> {
+                        this.storageMode = StorageMode.FileIO
                         onSuccess {
                             packageManagerApi.installApk(file!!, installerType)
                         }
                     }
                     1 -> {
+                        documentFile = DocumentFile
+                            .fromTreeUri(
+                                context,
+                                downloadsFolderUri.toUri()
+                            )
+                            ?.getOrCreate(
+                                fileName + APK_FILE_EXTENSION,
+                                APK_MIME_TYPE
+                            )
+                        parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                        this.storageMode = StorageMode.SAF
                         onSuccess {
                             launch {
                                 val tmpFile = File(
@@ -91,9 +112,11 @@ class AppUpdateScreenViewModel(
                         }
                     }
                 }
-
-            }.build()
-            task?.let { downloadsRepository.addToList(it) }
+            }
+            .build()
+            ?.let {
+                downloadsRepository.addToList(it)
+            }
         }
     }
 

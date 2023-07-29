@@ -19,3 +19,10 @@ fun DocumentFile.open(context: Context) {
     context.startActivity(intent)
 }
 
+fun DocumentFile.getOrCreate(displayName: String, mimeType: String): DocumentFile {
+    return if (isDirectory) findFile(displayName)
+        ?: createFile(mimeType, displayName)
+        ?: throw IllegalStateException("Can't find or create file")
+    else throw IllegalStateException("Document file is not a directory")
+}
+

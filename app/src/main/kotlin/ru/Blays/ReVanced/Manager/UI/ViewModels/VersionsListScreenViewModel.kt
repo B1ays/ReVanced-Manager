@@ -39,9 +39,9 @@ import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
 import ru.blays.revanced.shared.Data.APK_MIME_TYPE
 import ru.blays.revanced.shared.Data.DEFAULT_INSTALLER_CACHE_FOLDER
 import ru.blays.revanced.shared.Extensions.collect
-import ru.blays.revanced.shared.LogManager.BLog
+import ru.blays.revanced.shared.Extensions.fileDescriptor
+import ru.blays.revanced.shared.Extensions.getOrCreate
 import ru.blays.revanced.shared.Util.copyToTemp
-import ru.blays.revanced.shared.Util.fileDescriptor
 import java.io.File
 
 class VersionsListScreenViewModel(
@@ -159,10 +159,14 @@ class VersionsListScreenViewModel(
                 }
                 1 -> {
                     documentFile = DocumentFile
-                        .fromTreeUri(context, downloadsFolderUri.toUri())
-                        ?.createFile("application/vnd.android.package-archive", fileName + APK_FILE_EXTENSION)
-                    if (documentFile == null) throw IllegalStateException("document file is null")
-                    else BLog.d("download call", "documentFile can write: ${documentFile?.canWrite()}")
+                        .fromTreeUri(
+                            context,
+                            downloadsFolderUri.toUri()
+                        )
+                        ?.getOrCreate(
+                            fileName + APK_FILE_EXTENSION,
+                            APK_MIME_TYPE
+                        )
                     parcelFileDescriptor = context.fileDescriptor(documentFile!!)
                     storageMode = StorageMode.SAF
                     logAdapter = LogAdapterBLog()
@@ -225,10 +229,13 @@ class VersionsListScreenViewModel(
                 }
                 1 -> {
                     documentFile = DocumentFile
-                        .fromTreeUri(context, downloadsFolderUri.toUri())
-                        ?.createFile(
-                            APK_MIME_TYPE,
-                            filesModel.fileName + "-orig" + APK_FILE_EXTENSION
+                        .fromTreeUri(
+                            context,
+                            downloadsFolderUri.toUri()
+                        )
+                        ?.getOrCreate(
+                            filesModel.fileName + "-orig" + APK_FILE_EXTENSION,
+                            APK_MIME_TYPE
                         )
                     parcelFileDescriptor = context.fileDescriptor(documentFile!!)
                     storageMode = StorageMode.SAF
@@ -303,9 +310,9 @@ class VersionsListScreenViewModel(
                             context,
                             downloadsFolderUri.toUri()
                         )
-                        ?.createFile(
-                            APK_MIME_TYPE,
-                            filesModel.fileName + APK_FILE_EXTENSION
+                        ?.getOrCreate(
+                            filesModel.fileName + APK_FILE_EXTENSION,
+                            APK_MIME_TYPE
                         )
                     parcelFileDescriptor = context.fileDescriptor(documentFile!!)
                     storageMode = StorageMode.SAF
