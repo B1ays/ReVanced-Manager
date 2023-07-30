@@ -501,7 +501,9 @@ fun DownloadsFolderSelector() {
             index = 1
         ) {
             storageAccessType = 1
-
+            if (downloadsFolderUri.isEmpty() || downloadsFolderUri.toUri().path == null) {
+                register.launch(defaultDownloadFolderUri)
+            }
         }
         AnimatedVisibility(
             visible = storageAccessTypeState == 1,
