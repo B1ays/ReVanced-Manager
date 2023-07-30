@@ -23,7 +23,7 @@ enum class Apps {
             getVersionsListUseCase = getVersionsListUС
             version {
                 versionName = "Non-Root"
-                packageName = "app.revanced.android.youtube"
+                packageName = "app.rvx.android.youtube"
                 localVersionSource = {
                     localVersionSourceImpl(packageName!!)
                 }
@@ -56,7 +56,7 @@ enum class Apps {
             // Non-Root version
             version {
                 versionName = "Non-Root"
-                packageName = "app.revanced.android.apps.youtube.music"
+                packageName = "app.rvx.android.apps.youtube.music"
                 localVersionSource = {
                     localVersionSourceImpl(packageName!!)
                 }
