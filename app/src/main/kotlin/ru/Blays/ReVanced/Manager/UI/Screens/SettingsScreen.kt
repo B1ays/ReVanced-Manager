@@ -524,7 +524,7 @@ fun DownloadsFolderSelector() {
                     Text(
                         modifier = Modifier
                             .padding(DefaultPadding.CardDefaultPadding),
-                        text = downloadsFolderUriFlow.toUri().path
+                        text = downloadsFolderUriFlow.toUri().lastPathSegment
                             ?: stringResource(id = R.string.Settings_card_storage_access_method_cant_encode_path)
                     )
                 }
