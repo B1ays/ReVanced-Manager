@@ -50,6 +50,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
@@ -523,7 +524,8 @@ fun DownloadsFolderSelector() {
                     Text(
                         modifier = Modifier
                             .padding(DefaultPadding.CardDefaultPadding),
-                        text = downloadsFolderUriFlow
+                        text = downloadsFolderUriFlow.toUri().path
+                            ?: stringResource(id = R.string.Settings_card_storage_access_method_cant_encode_path)
                     )
                 }
                 Button(

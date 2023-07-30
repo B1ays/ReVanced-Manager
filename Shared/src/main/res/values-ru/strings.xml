@@ -57,6 +57,7 @@
     <string name="Settings_card_storage_access_mode_title">Метод доступа к файлам</string>
     <string name="Settings_card_storage_access_mode_description">Выбрать метод доступа к файлам</string>
     <string name="Settings_card_storage_access_mode_pick_folder">Выбрать папку</string>
+    <string name="Settings_card_storage_access_method_cant_encode_path">Невозможно расшифровать URI. Выберите другую папку</string>
     <string name="about_group_information">Основная информация</string>
     <string name="about_group_author">О разработчике</string>
     <string name="about_card_github">Исходный код на GitHub</string>

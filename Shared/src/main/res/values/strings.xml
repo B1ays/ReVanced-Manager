@@ -116,6 +116,7 @@
     <string name="Settings_card_storage_access_mode_pick_folder">Pick folder</string>
     <string name="Settings_card_storage_access_method_FileIO">FileIO (Old)</string>
     <string name="Settings_card_storage_access_method_SAF">SAF (Modern)</string>
+    <string name="Settings_card_storage_access_method_cant_encode_path">Can\'t encode URI path. Re-select folder</string>
 
 
     <!--  About Screen  -->
