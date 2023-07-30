@@ -10,6 +10,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -266,13 +267,22 @@ private fun MonetColors() {
 @Composable
 fun AmoledTheme() {
     val amoledThemeDS: AmoledThemeDS = koinInject()
+    val themeDs: ThemeDS = koinInject()
     var amoledTheme by amoledThemeDS
-    val state by amoledThemeDS.asState()
+    val themeCodeState by themeDs.asState()
+    val amoledThemeState by amoledThemeDS.asState()
+
+    val isCardEnabled = when {
+        isSystemInDarkTheme() && themeCodeState == 0 -> true
+        themeCodeState == 1 -> true
+        else -> false
+    }
 
     SettingsCardWithSwitch(
         title = stringResource(R.string.Settings_card_amoled_title),
         subtitle = stringResource(R.string.Settings_card_amoled_description),
-        state = state
+        state = amoledThemeState,
+        isSwitchEnabled = isCardEnabled
     ) { value ->
         amoledTheme = value
     }
