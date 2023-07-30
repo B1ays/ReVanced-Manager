@@ -60,6 +60,7 @@ import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
+import ru.blays.revanced.Elements.Elements.CustomButton.BackgroundIcon
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
@@ -179,21 +180,33 @@ fun VersionsInfoCard(
         modifier = Modifier
             .padding(DefaultPadding.CardDefaultPadding)
             .fillMaxWidth(),
-        shape = CardShape.CardStandalone,
+        shape = CardShape.CardStandaloneLarge,
         onClick = {
             isExpanded = !isExpanded
         }
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .padding(8.dp)
                 .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            item.version?.let { Text(text = "${stringResource(R.string.Version)}: $it") }
-            Spacer(modifier = Modifier.height(4.dp))
-            item.patchesVersion?.let { Text(text = "${stringResource(R.string.Patches_version)}: $it") }
-            Spacer(modifier = Modifier.height(4.dp))
-            item.buildDate?.let { Text(text = "${stringResource(R.string.Build_date)}: $it") }
+            BackgroundIcon(
+                modifier = Modifier.padding(horizontal = 6.dp),
+                icon = ImageVector.vectorResource(id = R.drawable.app),
+                shape = MaterialTheme.shapes.large,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+            Column(
+                modifier = Modifier.padding(horizontal = 6.dp)
+            ) {
+                item.version?.let { Text(text = "${stringResource(R.string.Version)}: $it") }
+                Spacer(modifier = Modifier.height(4.dp))
+                item.patchesVersion?.let { Text(text = "${stringResource(R.string.Patches_version)}: $it") }
+                Spacer(modifier = Modifier.height(4.dp))
+                item.buildDate?.let { Text(text = "${stringResource(R.string.Build_date)}: $it") }
+            }
         }
 
         AnimatedVisibility(

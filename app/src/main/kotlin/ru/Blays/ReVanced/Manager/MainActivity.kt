@@ -7,8 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import org.koin.android.ext.android.inject
 import ru.Blays.ReVanced.Manager.UI.Navigation.Navigator
@@ -18,6 +20,7 @@ import ru.Blays.ReVanced.Manager.Utils.clearInstallerCache
 import ru.blays.preference.DataStores.AmoledThemeDS
 import ru.blays.preference.DataStores.MonetColorsDS
 import ru.blays.preference.DataStores.ThemeDS
+import ru.blays.revanced.Elements.Elements.CustomRippleTheme.CustomRippleTheme
 import ru.blays.revanced.shared.LogManager.BLog
 
 private const val TAG = "MainActivity"
@@ -62,11 +65,17 @@ class MainActivity : ComponentActivity() {
                 buildedTheme = buildedTheme(),
                 isAmoledTheme = amoledThemeEnabled.asState().value
             ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                CompositionLocalProvider(LocalRippleTheme provides
+                    CustomRippleTheme(
+                        MaterialTheme.colorScheme.primary
+                    )
                 ) {
-                   Navigator()
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        Navigator()
+                    }
                 }
             }
         }
