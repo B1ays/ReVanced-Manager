@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
-import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -28,10 +27,8 @@ import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase
 import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
 import ru.blays.revanced.shared.Data.APK_MIME_TYPE
 import ru.blays.revanced.shared.Data.DEFAULT_INSTALLER_CACHE_FOLDER
-import ru.blays.revanced.shared.Extensions.fileDescriptor
-import ru.blays.revanced.shared.Extensions.getOrCreate
 import ru.blays.revanced.shared.LogManager.BLog
-import ru.blays.revanced.shared.Util.copyToTemp
+import ru.blays.simpledocument.SimpleDocument
 import java.io.File
 
 private const val TAG = "appUpdateViewModel"
@@ -87,16 +84,14 @@ class AppUpdateScreenViewModel(
                         }
                     }
                     1 -> {
-                        documentFile = DocumentFile
-                            .fromTreeUri(
-                                context,
-                                downloadsFolderUri.toUri()
-                            )
-                            ?.getOrCreate(
-                                fileName + APK_FILE_EXTENSION,
-                                APK_MIME_TYPE
-                            )
-                        parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                        simpleDocument = SimpleDocument.fromTreeUri(
+                            downloadsFolderUri.toUri(),
+                            context
+                        )?.getOrCreateDocument(
+                            fileName,
+                            APK_FILE_EXTENSION,
+                            APK_MIME_TYPE
+                        )
                         this.storageMode = StorageMode.SAF
                         onSuccess {
                             launch {
@@ -106,7 +101,8 @@ class AppUpdateScreenViewModel(
                                 ).apply {
                                     if (!exists()) createNewFile()
                                 }
-                                context.copyToTemp(documentFile!!, tmpFile)
+                                val copyToTemp = simpleDocument!!.copyTo(tmpFile)
+                                if (!copyToTemp) return@launch
                                 packageManagerApi.installApk(tmpFile, installerType)
                             }
                         }

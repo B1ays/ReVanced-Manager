@@ -55,7 +55,7 @@ class DownloadsScreen: AndroidScreen(){
 
         val scrollBehavior = rememberToolbarScrollBehavior()
 
-        val list = repository.downloadsList
+        val downloadingFilesList = repository.downloadsList
 
         val existingFilesList = repository.existingFilesList
 
@@ -95,11 +95,11 @@ class DownloadsScreen: AndroidScreen(){
                     .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
                 state = lazyListState
             ) {
-                items(list) { item ->
+                items(downloadingFilesList) { item ->
                     DownloadItem(
                         fileName = item.fileName,
                         fileLength = item.file?.length()
-                            ?: item.documentFile?.length()
+                            ?: item.simpleDocument?.length
                             ?: 0L,
                         progressFlow = item.progressFlow,
                         speedFlow = item.speedFlow,
@@ -108,7 +108,7 @@ class DownloadsScreen: AndroidScreen(){
                         },
                         actionDeleteFile = {
                             item.file?.delete()
-                            item.documentFile?.delete()
+                            item.simpleDocument?.delete()
                         },
                         actionRemove = {
                             repository.removeFromList(item)
@@ -130,8 +130,8 @@ class DownloadsScreen: AndroidScreen(){
                 items(existingDocumentsList) {document ->
                     FileItem(
                         fileName = document.name ?: "",
-                        fileLength = document.length(),
-                        actionOpenFile = { document.open(context) },
+                        fileLength = document.length ?: 0,
+                        actionOpenFile = document::open,
                         actionDeleteFile = { repository.removeExistingFile(document) }
                     )
                     Spacer(modifier = Modifier.height(8.dp))

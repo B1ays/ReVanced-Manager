@@ -6,15 +6,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.yield
 import okhttp3.OkHttpClient
-import okhttp3.internal.closeQuietly
 import okio.IOException
 import org.koitharu.pausingcoroutinedispatcher.launchPausing
 import ru.blays.downloader.DataClass.DownloadInfo
+import ru.blays.downloader.DataClass.FileMode
 import ru.blays.downloader.DataClass.LogType
 import ru.blays.downloader.DataClass.StorageMode
 import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.Utils.RWMode
-import ru.blays.downloader.Utils.channel
 import ru.blays.downloader.Utils.createChannel
 import ru.blays.downloader.Utils.createFile
 import ru.blays.downloader.Utils.createResponse
@@ -41,6 +40,8 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
         val channel: FileChannel
 
         if (task.storageMode == StorageMode.FileIO) {
+            if (task.fileMode == FileMode.Recreate) file?.delete()
+
             // Create file from name and extension
             val file = createFile(
                 fileName = task.fileName,
@@ -59,8 +60,10 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
             fileLength = file.length()
             channel = file.createChannel(mode = RWMode.READ_WRITE)
         } else {
-            channel = task.parcelFileDescriptor?.fileDescriptor.channel
-            fileLength = task.documentFile?.length() ?: 0L
+            if (task.fileMode == FileMode.Recreate) task.simpleDocument?.delete()
+            val outputStream = task.simpleDocument?.outputStream ?: return null
+            channel = outputStream.channel
+            fileLength = task.simpleDocument?.length ?: 0L
         }
 
         // Download process running status
@@ -148,7 +151,6 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
                         channel.close()
                         inputStream.close()
                         downloadSpeedJob.cancel()
-                        task.parcelFileDescriptor?.closeQuietly()
                         resp.close()
                         log("Download complete", LogType.INFO)
                     }
@@ -179,7 +181,7 @@ internal class InfinityTryDownloader(httpClient: OkHttpClient): BaseDownloader()
         return DownloadInfo(
             task.fileName,
             file,
-            task.documentFile,
+            task.simpleDocument,
             progressFlow,
             speedFlow,
             actionPauseResume,

@@ -69,7 +69,6 @@ dependencies {
     implementation(libs.androidx.core.core.ktx)
     implementation(libs.androidx.lifecycle.lifecycle.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.documentfile)
 
     // Work manager
     implementation(libs.androidx.work.runtime.ktx)
@@ -119,5 +118,6 @@ dependencies {
     implementation(projects.shared)
     implementation(projects.preference)
     implementation(projects.downloader)
+    implementation(projects.simpleDocument)
 
 }

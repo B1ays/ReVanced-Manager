@@ -12,14 +12,16 @@ import org.koitharu.pausingcoroutinedispatcher.launchPausing
 import ru.blays.downloader.DataClass.DownloadInfo
 import ru.blays.downloader.DataClass.FileMode
 import ru.blays.downloader.DataClass.LogType
+import ru.blays.downloader.DataClass.StorageMode
 import ru.blays.downloader.DownloadTask
 import ru.blays.downloader.Utils.RWMode
-import ru.blays.downloader.Utils.checkFileExists
 import ru.blays.downloader.Utils.createChannel
 import ru.blays.downloader.Utils.createFile
 import ru.blays.downloader.Utils.createResponse
 import ru.blays.downloader.Utils.isNull
+import ru.blays.downloader.Utils.position
 import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
 
 @Suppress("KotlinConstantConditions")
 internal class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
@@ -42,13 +44,40 @@ internal class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
             return null
         }
 
-        this.file = file
+        val fileLength: Long
 
-        val channel = file.createChannel(mode = RWMode.READ_WRITE)
+        val channel: FileChannel
+
+        if (task.storageMode == StorageMode.FileIO) {
+            if (task.fileMode == FileMode.Recreate) file.delete()
+
+            // Create file from name and extension
+            val file = createFile(
+                fileName = task.fileName,
+                fileExtension = task.fileExtension
+            )
+
+            if (file == null) {
+                log("Unable to create file", LogType.ERROR)
+                task.onError(this)
+                return null
+            }
+
+            // write file to class property
+            this.file = file
+
+            fileLength = file.length()
+            channel = file.createChannel(mode = RWMode.READ_WRITE)
+        } else {
+            if (task.fileMode == FileMode.Recreate) task.simpleDocument?.delete()
+            val outputStream = task.simpleDocument?.outputStream ?: return null
+            channel = outputStream.channel
+            fileLength = task.simpleDocument?.length ?: 0L
+        }
 
         var isRunning = true
 
-        if (task.fileMode == FileMode.Recreate) file.delete()
+
 
         val job = launchPausing mainJob@ {
 
@@ -56,21 +85,20 @@ internal class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
 
                 val response: Response
 
-                val fileSize = file.length()
 
                 val originalFileSize = getContentLength(task.url).also {
                     if (it.isNull()) return@mainJob
                 }
 
-                if (file.checkFileExists() && fileSize == originalFileSize) {
+                if (fileLength == originalFileSize) {
                     task.onSuccess(this@NormalDownloader)
                     return@mainJob
                 }
 
-                response = if (task.fileMode == FileMode.ContinueIfExists && fileSize < originalFileSize!!) {
-                    channel.position(fileSize)
+                response = if (task.fileMode == FileMode.ContinueIfExists && fileLength < originalFileSize!!) {
+                    channel.position = fileLength
                     val newRequest = task.request.newBuilder()
-                        .addHeader("Range", "bytes=${fileSize}-")
+                        .addHeader("Range", "bytes=${fileLength}-")
                         .build()
                     client.createResponse(newRequest)
                 } else {
@@ -111,7 +139,7 @@ internal class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
                         channel.write(byteBuffer)
 
                         totalBytesRead += bytesRead
-                        val progress: Float = ((totalBytesRead + fileSize).toFloat() / originalFileSize!!.toFloat())
+                        val progress: Float = ((totalBytesRead + fileLength).toFloat() / originalFileSize!!.toFloat())
                         progressFlow.emit(progress)
                     }
 
@@ -150,7 +178,7 @@ internal class NormalDownloader(httpClient: OkHttpClient): BaseDownloader() {
         return DownloadInfo(
             task.fileName,
             file,
-            task.documentFile,
+            task.simpleDocument,
             progressFlow,
             speedFlow,
             actionPauseResume,

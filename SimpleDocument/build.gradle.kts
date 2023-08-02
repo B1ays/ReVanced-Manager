@@ -1,10 +1,11 @@
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
 }
 
 android {
-    namespace = "ru.blays.downloader"
+    namespace = "ru.blays.simpledocument"
     compileSdk = 33
 
     defaultConfig {
@@ -30,21 +31,6 @@ android {
 }
 
 dependencies {
-    // AndroidX
+
     implementation(libs.androidx.core.core.ktx)
-
-    // KotlinX
-    implementation(libs.kotlinx.kotlinx.coroutines.core.jvm)
-
-    // Kotlin reflection
-    implementation(libs.kotlin.reflect)
-
-    // OkHttp
-    implementation(libs.com.squareup.okhttp3.okhttp)
-
-    // Pausing coroutines
-    implementation(libs.pausing.coroutine.dispatcher)
-
-    // Project
-    implementation(projects.simpleDocument)
 }

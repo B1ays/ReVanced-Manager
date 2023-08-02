@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
-import androidx.documentfile.provider.DocumentFile
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -39,9 +38,8 @@ import ru.blays.revanced.shared.Data.APK_FILE_EXTENSION
 import ru.blays.revanced.shared.Data.APK_MIME_TYPE
 import ru.blays.revanced.shared.Data.DEFAULT_INSTALLER_CACHE_FOLDER
 import ru.blays.revanced.shared.Extensions.collect
-import ru.blays.revanced.shared.Extensions.fileDescriptor
-import ru.blays.revanced.shared.Extensions.getOrCreate
-import ru.blays.revanced.shared.Util.copyToTemp
+import ru.blays.revanced.shared.LogManager.BLog
+import ru.blays.simpledocument.SimpleDocument
 import java.io.File
 
 class VersionsListScreenViewModel(
@@ -158,16 +156,15 @@ class VersionsListScreenViewModel(
                     }
                 }
                 1 -> {
-                    documentFile = DocumentFile
-                        .fromTreeUri(
-                            context,
-                            downloadsFolderUri.toUri()
-                        )
-                        ?.getOrCreate(
-                            fileName + APK_FILE_EXTENSION,
-                            APK_MIME_TYPE
-                        )
-                    parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                    simpleDocument = SimpleDocument.fromTreeUri(
+                        downloadsFolderUri.toUri(),
+                        context
+                    )
+                    ?.getOrCreateDocument(
+                        fileName,
+                        APK_FILE_EXTENSION,
+                        APK_MIME_TYPE
+                    )
                     storageMode = StorageMode.SAF
                     logAdapter = LogAdapterBLog()
                     onSuccess {
@@ -178,13 +175,14 @@ class VersionsListScreenViewModel(
                             ).apply {
                                 if (!exists()) createNewFile()
                             }
-                            context.copyToTemp(documentFile!!, tmpFile)
+                            val copyToTemp = simpleDocument!!.copyTo(tmpFile)
+                            if (!copyToTemp) return@launch
                             packageManager.installApk(tmpFile, installerType)
                             onRefresh()
                         }
                     }
                     onCancel {
-                        documentFile?.delete()
+                        simpleDocument?.delete()
                     }
                 }
             }
@@ -200,11 +198,14 @@ class VersionsListScreenViewModel(
         installCallback: (MutableStateFlow<ModuleInstaller.Status>) -> Unit
     ) {
 
-        if (filesModel.origUrl == null) return
+        if (filesModel.origUrl == null) {
+            BLog.d("Download", "origUrl is null")
+            return
+        }
 
         val state = MutableStateFlow(MagiskInstallerState())
 
-        val origApkDownloadTask = DownloadTask.builder {
+        DownloadTask.builder {
             url = filesModel.origUrl!!
             fileName = filesModel.fileName + "-orig"
             logAdapter = LogAdapterBLog()
@@ -228,16 +229,15 @@ class VersionsListScreenViewModel(
                     }
                 }
                 1 -> {
-                    documentFile = DocumentFile
-                        .fromTreeUri(
-                            context,
-                            downloadsFolderUri.toUri()
-                        )
-                        ?.getOrCreate(
-                            filesModel.fileName + "-orig" + APK_FILE_EXTENSION,
-                            APK_MIME_TYPE
-                        )
-                    parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                    simpleDocument = SimpleDocument.fromTreeUri(
+                        downloadsFolderUri.toUri(),
+                        context
+                    )
+                    ?.getOrCreateDocument(
+                        fileName,
+                        APK_FILE_EXTENSION,
+                        APK_MIME_TYPE
+                    )
                     storageMode = StorageMode.SAF
                     onSuccess {
                         launch {
@@ -248,7 +248,8 @@ class VersionsListScreenViewModel(
                             ).apply {
                                 if (!exists()) createNewFile()
                             }
-                            context.copyToTemp(documentFile!!, tmpFile)
+                            val copyToTemp = simpleDocument!!.copyTo(tmpFile)
+                            if (!copyToTemp) return@launch
 
                             val installResult = async {
                                  RootPackageManager().installApp(tmpFile)
@@ -262,7 +263,7 @@ class VersionsListScreenViewModel(
                         }
                     }
                     onCancel {
-                        documentFile?.delete()
+                        simpleDocument?.delete()
                     }
                 }
             }
@@ -272,7 +273,7 @@ class VersionsListScreenViewModel(
             downloadInfo?.let { downloadsRepository.addToList(it) }
         }
 
-        val modApkDownloadTask = DownloadTask.builder {
+        DownloadTask.builder {
             url = filesModel.modUrl
             fileName = filesModel.fileName
             logAdapter = LogAdapterBLog()
@@ -305,16 +306,15 @@ class VersionsListScreenViewModel(
                     }
                 }
                 1 -> {
-                    documentFile = DocumentFile
-                        .fromTreeUri(
-                            context,
-                            downloadsFolderUri.toUri()
-                        )
-                        ?.getOrCreate(
-                            filesModel.fileName + APK_FILE_EXTENSION,
-                            APK_MIME_TYPE
-                        )
-                    parcelFileDescriptor = context.fileDescriptor(documentFile!!)
+                    simpleDocument = SimpleDocument.fromTreeUri(
+                        downloadsFolderUri.toUri(),
+                        context
+                    )
+                    ?.getOrCreateDocument(
+                        fileName,
+                        APK_FILE_EXTENSION,
+                        APK_MIME_TYPE
+                    )
                     storageMode = StorageMode.SAF
                     onSuccess {
                         launch { with(state) { emit(value.copy(modApkDownloaded = true)) } }
@@ -327,7 +327,8 @@ class VersionsListScreenViewModel(
                                     ).apply {
                                         if (!exists()) createNewFile()
                                     }
-                                    context.copyToTemp(documentFile!!, tmpFile)
+                                    val copyToTemp = simpleDocument!!.copyTo(tmpFile)
+                                    if (!copyToTemp) return@launch
                                     repository?.moduleType?.let { module ->
                                         ModuleInstaller(
                                             logAdapter = ModuleInstallerLogAdapter()
@@ -344,7 +345,7 @@ class VersionsListScreenViewModel(
                         }
                     }
                     onCancel {
-                        documentFile?.delete()
+                        simpleDocument?.delete()
                     }
                 }
             }
