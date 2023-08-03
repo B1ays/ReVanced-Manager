@@ -1,6 +1,7 @@
 package ru.blays.revanced.DeviceUtils.Root.PackageManager
 
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.coroutineScope
 import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerError
 import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerInterface
 import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerResult
@@ -14,10 +15,11 @@ import java.io.IOException
 
 class RootPackageManager: PackageManagerInterface {
 
-    override suspend fun getVersionCode(packageName: String): PackageManagerResult<Int> {
-        return try {
+    override suspend fun getVersionCode(packageName: String): PackageManagerResult<Int> = coroutineScope {
+        return@coroutineScope try {
             val keyword = "versionCode="
-            val dumpsys = Shell.cmd("dumpsys package $packageName | grep $keyword").awaitOutputOrThrow()
+            val dumpsys =
+                Shell.cmd("dumpsys package $packageName | grep $keyword").awaitOutputOrThrow()
             val versionCode = dumpsys.removePrefix(keyword).substringAfter("minSdk").toInt()
 
             PackageManagerResult.Success(versionCode)
@@ -34,8 +36,8 @@ class RootPackageManager: PackageManagerInterface {
         }
     }
 
-    override suspend fun getVersionName(packageName: String): PackageManagerResult<String> {
-        return try {
+    override suspend fun getVersionName(packageName: String): PackageManagerResult<String> = coroutineScope {
+        return@coroutineScope try {
             val keyword = "versionName="
             val dumpsys = Shell.cmd("dumpsys package $packageName | grep $keyword").awaitOutputOrThrow()
             val versionName = dumpsys.split('=').last()
@@ -49,8 +51,8 @@ class RootPackageManager: PackageManagerInterface {
         }
     }
 
-    override suspend fun getInstallationDir(packageName: String): PackageManagerResult<String> {
-        return try {
+    override suspend fun getInstallationDir(packageName: String): PackageManagerResult<String> = coroutineScope {
+        return@coroutineScope try {
             val keyword = "path: "
             val dumpsys = Shell.cmd("dumpsys package $packageName | grep $keyword").awaitOutputOrThrow()
             val installationDir = dumpsys.removePrefix(keyword)
@@ -67,8 +69,8 @@ class RootPackageManager: PackageManagerInterface {
     override suspend fun setInstaller(
         targetPackage: String,
         installerPackage: String
-    ): PackageManagerResult<Nothing> {
-        return try {
+    ): PackageManagerResult<Nothing> = coroutineScope {
+        return@coroutineScope try {
             Shell.cmd("pm set-installer $targetPackage $installerPackage").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
@@ -80,8 +82,8 @@ class RootPackageManager: PackageManagerInterface {
         }
     }
 
-    override suspend fun forceStop(packageName: String): PackageManagerResult<Nothing> {
-        return try {
+    override suspend fun forceStop(packageName: String): PackageManagerResult<Nothing> = coroutineScope {
+        return@coroutineScope try {
             Shell.cmd("am force-stop $packageName").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
@@ -93,7 +95,7 @@ class RootPackageManager: PackageManagerInterface {
         }
     }
 
-    override suspend fun installApp(apk: File): PackageManagerResult<Nothing> {
+    override suspend fun installApp(apk: File): PackageManagerResult<Nothing> = coroutineScope {
         val apkPath = apk.absolutePath
 
         val size = apk.length()
@@ -102,25 +104,25 @@ class RootPackageManager: PackageManagerInterface {
 
         if (!install.isSuccess) {
             val errString = install.errString
-            return PackageManagerResult.Error(getEnumForInstallFailed(errString), errString)
+            return@coroutineScope PackageManagerResult.Error(getEnumForInstallFailed(errString), errString)
         }
 
-        return PackageManagerResult.Success(null)
+        return@coroutineScope PackageManagerResult.Success(null)
     }
 
-    override suspend fun installSplitApp(apks: Array<File>): PackageManagerResult<Nothing> {
+    override suspend fun installSplitApp(apks: Array<File>): PackageManagerResult<Nothing> = coroutineScope {
         val sessionId = try {
 
             val installCreate = Shell.cmd("pm install-create -r").awaitOutputOrThrow()
 
             installCreate.toInt()
         } catch (e: SuException) {
-            return PackageManagerResult.Error(
+            return@coroutineScope PackageManagerResult.Error(
                 error = PackageManagerError.SESSION_FAILED_CREATE,
                 message = e.stderrOut
             )
         } catch (e: NumberFormatException) {
-            return PackageManagerResult.Error(
+            return@coroutineScope PackageManagerResult.Error(
                 error = PackageManagerError.SESSION_INVALID_ID,
                 message = e.stackTraceToString()
             )
@@ -132,12 +134,12 @@ class RootPackageManager: PackageManagerInterface {
                 tempApk = copyApkToTemp(apk)
                 Shell.cmd("pm install-write $sessionId '${apk.name}' '$tempApk'").awaitOutputOrThrow()
             } catch (e: SuException) {
-                return PackageManagerResult.Error(
+                return@coroutineScope PackageManagerResult.Error(
                     error = PackageManagerError.SESSION_FAILED_WRITE,
                     message = e.stderrOut
                 )
             } catch (e: IOException) {
-                return PackageManagerResult.Error(
+                return@coroutineScope PackageManagerResult.Error(
                     error = PackageManagerError.SESSION_FAILED_COPY,
                     message = e.stackTraceToString()
                 )
@@ -146,7 +148,7 @@ class RootPackageManager: PackageManagerInterface {
             }
         }
 
-        return try {
+        return@coroutineScope try {
             Shell.cmd("pm install-commit $sessionId").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
@@ -158,8 +160,8 @@ class RootPackageManager: PackageManagerInterface {
         }
     }
 
-    override suspend fun uninstallApp(packageName: String): PackageManagerResult<Nothing> {
-        return try {
+    override suspend fun uninstallApp(packageName: String): PackageManagerResult<Nothing> = coroutineScope {
+        return@coroutineScope try {
             Shell.cmd("pm uninstall $packageName").awaitOutputOrThrow()
 
             PackageManagerResult.Success(null)
@@ -171,8 +173,8 @@ class RootPackageManager: PackageManagerInterface {
         }
     }
 
-    override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> {
-        return try {
+    override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> = coroutineScope {
+        return@coroutineScope try {
             val launchCategoryLauncher = Shell.cmd("monkey -p $packageName -c android.intent.category.LAUNCHER 1").exec()
             if (!launchCategoryLauncher.isSuccess) Shell.cmd("monkey -p $packageName -c android.intent.category.DEFAULT 1").exec()
             PackageManagerResult.Success(null)

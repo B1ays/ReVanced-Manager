@@ -40,8 +40,8 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
     }
 
     @Suppress("DEPRECATION")
-    override suspend fun getVersionCode(packageName: String): PackageManagerResult<Int> {
-        return try {
+    override suspend fun getVersionCode(packageName: String): PackageManagerResult<Int> = coroutineScope {
+        return@coroutineScope try {
 
             val packageInfo = getPackageInfo(packageName)
 
@@ -61,8 +61,8 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
     }
 
     @SuppressLint("WrongConstant")
-    override suspend fun getVersionName(packageName: String): PackageManagerResult<String> {
-        return try {
+    override suspend fun getVersionName(packageName: String): PackageManagerResult<String> = coroutineScope {
+        return@coroutineScope try {
 
             val packageInfo = getPackageInfo(packageName)
 
@@ -77,8 +77,8 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
         }
     }
 
-    override suspend fun getInstallationDir(packageName: String): PackageManagerResult<String> {
-        return try {
+    override suspend fun getInstallationDir(packageName: String): PackageManagerResult<String> = coroutineScope {
+        return@coroutineScope try {
 
             val packageInfo = getPackageInfo(packageName)
 
@@ -105,28 +105,28 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
         )
     }
 
-    override suspend fun forceStop(packageName: String): PackageManagerResult<Nothing> {
-        return PackageManagerResult.Error(
+    override suspend fun forceStop(packageName: String): PackageManagerResult<Nothing> = coroutineScope {
+        return@coroutineScope PackageManagerResult.Error(
             error = PackageManagerError.APP_FAILED_FORCE_STOP,
             message = "Unsupported"
         )
     }
 
-    override suspend fun installApp(apk: File): PackageManagerResult<Nothing> {
-        return createInstallationSession {
+    override suspend fun installApp(apk: File): PackageManagerResult<Nothing> = coroutineScope {
+        return@coroutineScope createInstallationSession {
             writeApkToSession(apk)
         }
     }
 
-    override suspend fun installSplitApp(apks: Array<File>): PackageManagerResult<Nothing> {
-        return createInstallationSession {
+    override suspend fun installSplitApp(apks: Array<File>): PackageManagerResult<Nothing> = coroutineScope {
+        return@coroutineScope createInstallationSession {
             for (apk in apks) {
                 writeApkToSession(apk)
             }
         }
     }
 
-    override suspend fun uninstallApp(packageName: String): PackageManagerResult<Nothing> {
+    override suspend fun uninstallApp(packageName: String): PackageManagerResult<Nothing> = coroutineScope {
         val packageInstaller = context.packageManager.packageInstaller
         val intent = context.intentFor<AppUninstallService>()
         val pendingIntent = PendingIntent.getService(
@@ -136,7 +136,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
             intentFlags
         ).intentSender
         packageInstaller.uninstall(packageName, pendingIntent)
-        return PackageManagerResult.Success(null)
+        return@coroutineScope PackageManagerResult.Success(null)
     }
 
     override suspend fun launchApp(packageName: String): PackageManagerResult<Nothing> {
@@ -151,7 +151,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
     }
 
     private suspend inline fun createInstallationSession(
-        crossinline block: PackageInstaller.Session.() -> Unit
+        crossinline block: suspend PackageInstaller.Session.() -> Unit
     ): PackageManagerResult<Nothing> = coroutineScope {
 
         val packageInstaller = context.packageManager.packageInstaller
@@ -237,7 +237,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
         }
     }
 
-    private fun PackageInstaller.Session.writeApkToSession(apk: File) {
+    private suspend fun PackageInstaller.Session.writeApkToSession(apk: File) = coroutineScope {
         apk.inputStream().use { inputStream ->
             openWrite(apk.name, 0, apk.length()).use { outputStream ->
                 inputStream.copyTo(outputStream, byteArraySize)
