@@ -47,9 +47,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import org.koin.compose.koinInject
@@ -217,14 +219,20 @@ class SettingsScreen: AndroidScreen() {
 
 @Composable
 private fun ThemeSelector() {
+    val themeDS: ThemeDS = koinInject()
+    var checkedIndex by themeDS
+    val checkedIndexState by themeDS.asState()
     SettingsExpandableCard(
         title = stringResource(R.string.Settings_card_theme_title),
-        subtitle = stringResource(R.string.Settings_card_theme_description)
+        subtitle = stringResource(R.string.Settings_card_theme_description),
+        icon = ImageVector.vectorResource(
+            id = when {
+                checkedIndex == 0 && isSystemInDarkTheme() || 
+                        checkedIndex == 1 -> R.drawable.moon
+                else -> R.drawable.sun
+            }
+        )
     ) {
-        val themeDS: ThemeDS = koinInject()
-        var checkedIndex by themeDS
-        val checkedIndexState by themeDS.asState()
-
         SettingsRadioButtonWithTitle(
             title = stringResource(R.string.Settings_card_theme_system),
             checkedIndex = checkedIndexState,
@@ -258,6 +266,7 @@ private fun MonetColors() {
     SettingsCardWithSwitch(
         title = stringResource(R.string.Settings_card_monet_title),
         subtitle = stringResource(R.string.Settings_card_monet_description),
+        icon = ImageVector.vectorResource(id = R.drawable.color_swatches),
         state = state
     ) { value ->
         monetColorAccent = value
@@ -281,6 +290,7 @@ fun AmoledTheme() {
     SettingsCardWithSwitch(
         title = stringResource(R.string.Settings_card_amoled_title),
         subtitle = stringResource(R.string.Settings_card_amoled_description),
+        icon = ImageVector.vectorResource(id = R.drawable.eclipse),
         state = amoledThemeState,
         isSwitchEnabled = isCardEnabled
     ) { value ->
@@ -308,7 +318,8 @@ private fun AccentSelector(
 
     SettingsExpandableCard(
         title = stringResource(R.string.Settings_card_accent_title),
-        subtitle = stringResource(R.string.Settings_card_accent_description)
+        subtitle = stringResource(R.string.Settings_card_accent_description),
+        icon = ImageVector.vectorResource(id = R.drawable.brush)
     ) {
         LazyRow(modifier = Modifier.padding(12.dp)) {
             itemsIndexed(defaultAccentColorsList) { index, item ->
@@ -340,7 +351,8 @@ fun InstallerType() {
 
     SettingsExpandableCard(
         title = stringResource(R.string.Settings_card_installer_title),
-        subtitle = stringResource(R.string.Settings_card_installer_description)
+        subtitle = stringResource(R.string.Settings_card_installer_description),
+        icon = ImageVector.vectorResource(id = R.drawable.installer_type)
     ) {
         SettingsRadioButtonWithTitle(
             title = stringResource(R.string.Settings_card_installer_session),
@@ -431,7 +443,8 @@ fun CacheLifetimeSelector() {
 
     SettingsExpandableCard(
         title = stringResource(id = R.string.Settings_card_cache_lifetime_title),
-        subtitle = stringResource(id = R.string.Settings_card_cache_lifetime_description)
+        subtitle = stringResource(id = R.string.Settings_card_cache_lifetime_description),
+        icon = ImageVector.vectorResource(id = R.drawable.cache)
     ) {
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -470,6 +483,7 @@ fun DownloadsFolderSelector() {
         contract = PersistableDocumentTree()
     ) { uriOrNull ->
         uriOrNull?.let { uri ->
+            BLog.i(TAG, "Picked uri: $uri")
             context.contentResolver.takePersistableUriPermission(
                 uri,
                 URI_DEFAULT_FLAGS
@@ -482,7 +496,10 @@ fun DownloadsFolderSelector() {
     }
     SettingsExpandableCard(
         title = stringResource(id = R.string.Settings_card_storage_access_mode_title),
-        subtitle = stringResource(id = R.string.Settings_card_storage_access_mode_description)
+        subtitle = stringResource(id = R.string.Settings_card_storage_access_mode_description),
+        icon = ImageVector.vectorResource(
+            id = R.drawable.folder
+        )
     ) {
         SettingsRadioButtonWithTitle(
             title = stringResource(

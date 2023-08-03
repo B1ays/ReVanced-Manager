@@ -64,6 +64,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
+import ru.blays.revanced.Elements.Elements.CustomButton.BackgroundIcon
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.shared.Extensions.invert
@@ -76,6 +77,7 @@ const val ANIMATION_DURATION_MILLIS = 300
 fun SettingsExpandableCard(
     title: String,
     subtitle: String = "",
+    icon: ImageVector? = null,
     content: @Composable () -> Unit
 ) {
 
@@ -103,36 +105,53 @@ fun SettingsExpandableCard(
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .fillMaxWidth()
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(0.7F)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                if (subtitle.isNotEmpty()) Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall
+        ) {
+            icon?.let {
+                BackgroundIcon(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    icon = icon,
+                    iconScale = 0.8F,
+                    shape = MaterialTheme.shapes.large,
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary.copy(.6F)
                 )
             }
-            Icon(
+            Row(
                 modifier = Modifier
-                    .scale(1.5F)
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                        shape = CircleShape
-                    )
-                    .rotate(rotateValue),
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down_24dp),
-                contentDescription = null
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             )
+            {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7F)
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    if (subtitle.isNotEmpty()) Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Icon(
+                    modifier = Modifier
+                        .scale(1.5F)
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = CircleShape
+                        )
+                        .rotate(rotateValue),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down_24dp),
+                    contentDescription = null
+                )
+            }
         }
         AnimatedVisibility(
             visible = isMenuExpanded,
@@ -165,6 +184,7 @@ fun SettingsExpandableCard(
 fun SettingsCardWithSwitch(
     title: String,
     subtitle: String,
+    icon: ImageVector? = null,
     state: Boolean,
     isSwitchEnabled: Boolean = true,
     action: (Boolean) -> Unit
@@ -176,31 +196,48 @@ fun SettingsCardWithSwitch(
     ) {
         Row(
             modifier = Modifier
-                .padding(vertical = 5.dp, horizontal = 12.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .fillMaxWidth()
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(0.7F)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall
+        ) {
+            icon?.let {
+                BackgroundIcon(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    icon = icon,
+                    iconScale = 0.8F,
+                    shape = MaterialTheme.shapes.large,
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary.copy(.6F)
                 )
             }
-
-            Switch(
-                checked = state,
-                onCheckedChange = action,
-                enabled = isSwitchEnabled
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 4.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             )
+            {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7F)
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Switch(
+                    checked = state,
+                    onCheckedChange = action,
+                    enabled = isSwitchEnabled
+                )
+            }
         }
     }
 }

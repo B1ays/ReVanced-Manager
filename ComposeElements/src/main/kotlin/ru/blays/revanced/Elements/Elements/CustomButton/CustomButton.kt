@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.graphics.Shape
@@ -73,6 +74,7 @@ fun BackgroundIcon(
     icon: ImageVector,
     shape: Shape = ButtonDefaults.shape,
     minSize: Dp = 50.dp,
+    iconScale: Float = 1F,
     containerColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8F),
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     contentPadding: PaddingValues = PaddingValues(6.dp),
@@ -87,7 +89,8 @@ fun BackgroundIcon(
         Icon(
             modifier = Modifier
                 .defaultMinSize(minSize, minSize)
-                .padding(contentPadding),
+                .padding(contentPadding)
+                .scale(iconScale),
             imageVector = icon,
             contentDescription = null,
             tint = contentColor
