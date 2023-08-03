@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.os.Build
 import android.os.IBinder
+import ru.blays.revanced.DeviceUtils.NonRoot.PackageManager.installerStatusFlow
 
 internal class AppInstallService: Service() {
 
@@ -16,6 +17,7 @@ internal class AppInstallService: Service() {
     ): Int {
         val extraStatus = intent.getIntExtra(PackageInstaller.EXTRA_STATUS, -999)
         val extraStatusMessage = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
+        val extraSessionID = intent.getIntExtra(PackageInstaller.EXTRA_SESSION_ID, -1)
         when (extraStatus) {
             PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                 startActivity(
@@ -28,15 +30,10 @@ internal class AppInstallService: Service() {
                             this?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
                     }
-
                 )
             }
             else -> {
-                sendBroadcast(Intent().apply {
-                    action = APP_INSTALL_ACTION
-                    putExtra(EXTRA_INSTALL_STATUS, extraStatus)
-                    putExtra(EXTRA_INSTALL_STATUS_MESSAGE, extraStatusMessage)
-                })
+                installerStatusFlow.tryEmit(extraSessionID to extraStatus)
             }
         }
         stopSelf()

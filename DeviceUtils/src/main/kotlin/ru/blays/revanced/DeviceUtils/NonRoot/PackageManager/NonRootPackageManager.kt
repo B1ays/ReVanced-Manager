@@ -7,6 +7,10 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.os.Build
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerError
 import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerInterface
 import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerResult
@@ -16,8 +20,10 @@ import ru.blays.revanced.DeviceUtils.NonRoot.Util.doubleUnionTryCatch
 import ru.blays.revanced.DeviceUtils.NonRoot.Util.tripleUnionTryCatch
 import ru.blays.revanced.shared.Extensions.intentFor
 import ru.blays.revanced.shared.Extensions.isNotNull
+import ru.blays.revanced.shared.LogManager.BLog
 import java.io.File
 import java.io.IOException
+
 
 class NonRootPackageManager(private val context: Context): PackageManagerInterface {
 
@@ -144,9 +150,9 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
         )
     }
 
-    private inline fun createInstallationSession(
-        block: PackageInstaller.Session.() -> Unit
-    ): PackageManagerResult<Nothing> {
+    private suspend inline fun createInstallationSession(
+        crossinline block: PackageInstaller.Session.() -> Unit
+    ): PackageManagerResult<Nothing> = coroutineScope {
 
         val packageInstaller = context.packageManager.packageInstaller
 
@@ -167,7 +173,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
 
         val sessionId = tripleUnionTryCatch<IOException, SecurityException, IllegalArgumentException, Int>(
             onCatch = {
-                return PackageManagerResult.Error(
+                return@coroutineScope PackageManagerResult.Error(
                     error = PackageManagerError.SESSION_FAILED_CREATE,
                     message = it.stackTraceToString()
                 )
@@ -178,7 +184,7 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
 
         val session = doubleUnionTryCatch<IOException, SecurityException, PackageInstaller.Session>(
             onCatch = {
-                return PackageManagerResult.Error(
+                return@coroutineScope PackageManagerResult.Error(
                     error = PackageManagerError.SESSION_FAILED_CREATE,
                     message = it.stackTraceToString()
                 )
@@ -193,18 +199,42 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
                 it.commit(pendingIntent)
             }
         } catch (e: IOException) {
-            return PackageManagerResult.Error(
+            return@coroutineScope PackageManagerResult.Error(
                 error = PackageManagerError.SESSION_FAILED_WRITE,
                 message = e.stackTraceToString()
             )
         } catch (e: SecurityException) {
-            return PackageManagerResult.Error(
+            return@coroutineScope PackageManagerResult.Error(
                 error = PackageManagerError.SESSION_FAILED_COMMIT,
                 message = e.stackTraceToString()
             )
         }
 
-        return PackageManagerResult.Success(null)
+        var job: Job? = null
+
+        var statusCode = -1
+
+        job = launch {
+            installerStatusFlow.collect { (id, status) ->
+                BLog.w("installerStatusFlow", "status: $status, id: $id")
+                if (sessionId == id) {
+                    BLog.w("installerStatusFlow", "session id equals: true")
+                    statusCode = status
+                    job?.cancel()
+                    return@collect
+                }
+            }
+        }
+
+        job.join()
+
+        BLog.w("installerStatusFlow", "return result")
+
+        if (statusCode == PackageInstaller.STATUS_SUCCESS) {
+            return@coroutineScope PackageManagerResult.Success(null)
+        } else {
+            return@coroutineScope PackageManagerResult.Error(PackageManagerError.INSTALL_FAILED_UNKNOWN, "")
+        }
     }
 
     private fun PackageInstaller.Session.writeApkToSession(apk: File) {
@@ -231,3 +261,5 @@ class NonRootPackageManager(private val context: Context): PackageManagerInterfa
     }
 
 }
+
+internal val installerStatusFlow: MutableStateFlow<Pair<Int, Int>> = MutableStateFlow(-1 to -1)
