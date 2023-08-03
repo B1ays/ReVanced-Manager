@@ -1,7 +1,7 @@
 package ru.blays.revanced.DeviceUtils.PublicApi
 
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerInterface
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerResult
+import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerInterface
+import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerResult
 import java.io.File
 
 interface PackageManagerApi {

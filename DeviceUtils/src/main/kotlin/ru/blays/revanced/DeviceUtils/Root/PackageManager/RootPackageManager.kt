@@ -1,10 +1,10 @@
 package ru.blays.revanced.DeviceUtils.Root.PackageManager
 
 import com.topjohnwu.superuser.Shell
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerError
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerInterface
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerResult
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.getEnumForInstallFailed
+import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerError
+import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerInterface
+import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerResult
+import ru.blays.revanced.DeviceUtils.Interfaces.getEnumForInstallFailed
 import ru.blays.revanced.DeviceUtils.Root.Util.SuException
 import ru.blays.revanced.DeviceUtils.Root.Util.awaitOutputOrThrow
 import ru.blays.revanced.DeviceUtils.Root.Util.errString

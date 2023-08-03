@@ -1,4 +1,4 @@
-package ru.blays.revanced.DeviceUtils.NonRoot.Interfaces
+package ru.blays.revanced.DeviceUtils.Interfaces
 
 internal abstract class AppInstallerInterface {
 

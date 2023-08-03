@@ -3,8 +3,8 @@ package ru.blays.revanced.DeviceUtils.PublicApi
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerInterface
-import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerResult
+import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerInterface
+import ru.blays.revanced.DeviceUtils.Interfaces.PackageManagerResult
 import ru.blays.revanced.DeviceUtils.NonRoot.PackageManager.NonRootPackageManager
 import ru.blays.revanced.DeviceUtils.Root.PackageManager.RootPackageManager
 import ru.blays.revanced.DeviceUtils.Root.Util.isRootGranted
