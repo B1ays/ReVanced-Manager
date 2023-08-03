@@ -41,18 +41,14 @@ abstract class BaseDataStore <T: Any> internal constructor (context: Context): I
     @NonRestartableComposable
     @Composable
     fun asState(): State<T> {
-        return flow.collectAsState(DEFAULT_VALUE, context = coroutineContext)
+        return flow.collectAsState(value, context = coroutineContext)
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    inline operator fun getValue(thisObj: Any?, property: KProperty<*>): T = runBlocking { flow.first() }
+    inline operator fun getValue(thisObj: Any?, property: KProperty<*>): T = value
 
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun setValue(thisObj: Any?, property: KProperty<*>, value: T) {
-        launch {
-            dataStore.edit { mutablePreferences ->
-                mutablePreferences[KEY] = value
-            }
-        }
+        this.value = value
     }
 }
