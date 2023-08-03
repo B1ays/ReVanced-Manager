@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.DI.autoInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.UI.ComponentCallback.IComponentCallback
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.blays.downloader.DataClass.StorageMode
 import ru.blays.downloader.DownloadTask
@@ -63,7 +64,7 @@ class AppUpdateScreenViewModel(
     }
 
     @Suppress("LocalVariableName")
-    fun downloadAndInstall() {
+    fun downloadAndInstall(callback: IComponentCallback<() -> Unit>) {
         val _installerType: InstallerTypeDS by autoInject()
         val _storageMode: StorageAccessTypeDS by autoInject()
         val _downloadsFolderURI: DownloadsFolderUriDS by autoInject()

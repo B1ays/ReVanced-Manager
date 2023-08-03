@@ -33,16 +33,21 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.UI.ComponentCallback.ComponentCallback
 import ru.Blays.ReVanced.Manager.UI.ViewModels.AppUpdateScreenViewModel
 import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.dialogs.LocalDialogNavigator
 import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.AppUpdateScreen.ChangelogView
 import ru.blays.revanced.Elements.Elements.Screens.AppUpdateScreen.UpdateInfoHeader
+import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
+
+private const val TAG = "AppUpdateScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 class AppUpdateScreen: AndroidScreen() {
@@ -51,6 +56,7 @@ class AppUpdateScreen: AndroidScreen() {
     override fun Content() {
 
         val navigator = LocalNavigator.currentOrThrow
+        val dialogNavigator = LocalDialogNavigator.current
 
         val viewModel: AppUpdateScreenViewModel = koinViewModel()
 
@@ -116,7 +122,19 @@ class AppUpdateScreen: AndroidScreen() {
                         availableVersion = model?.availableVersion,
                         versionCode = model?.versionCode,
                         buildDate = model?.buildDate,
-                        actionDownload = viewModel::downloadAndInstall
+                        actionDownload = {
+                            val callback = ComponentCallback.builder<() -> Unit> {
+                                onError = {
+                                    BLog.d(TAG, "install failed")
+                                    dialogNavigator.show(AppInstallResultDialog("App update", false))
+                                }
+                                onSuccess = {
+                                    BLog.d(TAG, "install success")
+                                    dialogNavigator.show(AppInstallResultDialog("App update", true))
+                                }
+                            }
+                            viewModel.downloadAndInstall(callback)
+                        }
                     )
                     if (changelog.isNotEmpty()) {
                         ChangelogView(changelog = changelog)

@@ -40,6 +40,11 @@
     <string name="Module_installer_failed">Module install failed</string>
     <string name="Module_installer_error">Error</string>
 
+    <!--  PackageManager  -->
+    <string name="App_install_success">App install success</string>
+    <string name="App_install_error">App install error</string>
+    <string name="App_installed_apk">Installed apk</string>
+
     <!--  Color picker  -->
     <string name="Pick_color">Pick color</string>
 

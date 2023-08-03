@@ -15,6 +15,7 @@ import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Data.MagiskInstallerState
 import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.UI.ComponentCallback.IComponentCallback
 import ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter.LogAdapterBLog
 import ru.Blays.ReVanced.Manager.Utils.ModuleInstallerLogAdapter.ModuleInstallerLogAdapter
 import ru.blays.downloader.DataClass.StorageMode
@@ -138,7 +139,8 @@ class VersionsListScreenViewModel(
 
     fun downloadNonRootVersion(
         fileName: String,
-        url: String
+        url: String,
+        callback: IComponentCallback<() -> Unit>
     ) {
         DownloadTask.builder {
             this.url = url
@@ -149,7 +151,8 @@ class VersionsListScreenViewModel(
                     storageMode = StorageMode.FileIO
                     onSuccess {
                         launch {
-                            file?.let { packageManager.installApk(it, installerType) }
+                            val installResult = packageManager.installApk(file!!, installerType)
+                            if (installResult.isError) callback.onError?.invoke() else callback.onSuccess?.invoke()
                             onRefresh()
                         }
                     }
@@ -179,7 +182,8 @@ class VersionsListScreenViewModel(
                             }
                             val copyToTemp = simpleDocument!!.copyTo(tmpFile)
                             if (!copyToTemp) return@launch
-                            packageManager.installApk(tmpFile, installerType)
+                            val installResult = packageManager.installApk(tmpFile, installerType)
+                            if (installResult.isError) callback.onError?.invoke() else callback.onSuccess?.invoke()
                             onRefresh()
                         }
                     }
@@ -197,7 +201,7 @@ class VersionsListScreenViewModel(
 
     fun downloadRootVersion(
         filesModel: RootVersionDownloadModel,
-        installCallback: (MutableStateFlow<ModuleInstaller.Status>) -> Unit
+        installCallback: IComponentCallback<(MutableStateFlow<ModuleInstaller.Status>) -> Unit>
     ) {
 
         if (filesModel.origUrl == null) {
@@ -288,7 +292,7 @@ class VersionsListScreenViewModel(
                                         ModuleInstaller(
                                             logAdapter = ModuleInstallerLogAdapter()
                                         ).also { installer ->
-                                            installCallback(installer.statusFlow)
+                                            installCallback.action(installer.statusFlow)
                                         }.install(
                                             module,
                                             file!!
@@ -331,7 +335,7 @@ class VersionsListScreenViewModel(
                                         ModuleInstaller(
                                             logAdapter = ModuleInstallerLogAdapter()
                                         ).also { installer ->
-                                            installCallback(installer.statusFlow)
+                                            installCallback.action(installer.statusFlow)
                                         }.install(
                                             module,
                                             tmpFile

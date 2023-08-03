@@ -82,6 +82,8 @@
     <string name="Downloads_not_found">Загрузки не найдены</string>
     <string name="New_download">Новая загрузка</string>
     <string name="Module_installer_complite">Модуль успешно установлен</string>
+    <string name="App_install_success">Приложение успешно устновлено</string>
+    <string name="App_install_error">Ошибка установки приложения</string>
     <string name="Pick_color">Выбрать цвет</string>
     <string name="App_logs">Логи приложения</string>
     <string name="Version_code">Код версии</string>
@@ -92,4 +94,5 @@
     <string name="Settings_card_storage_access_mode_selected_folder">Выбранная папка</string>
     <string name="Settings_card_storage_access_method_FileIO">FileIO (Старый)</string>
     <string name="Settings_card_storage_access_method_SAF">SAF (Современный)</string>
+    <string name="App_installed_apk">Установленное приложение</string>
 </resources>
