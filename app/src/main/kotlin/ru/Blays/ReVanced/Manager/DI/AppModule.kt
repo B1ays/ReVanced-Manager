@@ -9,8 +9,8 @@ import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.VersionsListScreenViewModel
 import ru.blays.preference.DataStores.CacheLifetimeDS
 import ru.blays.preference.DataStores.InstallerTypeDS
-import ru.blays.revanced.Services.PublicApi.PackageManagerApi
-import ru.blays.revanced.Services.PublicApi.PackageManagerApiImpl
+import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApi
+import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApiImpl
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase

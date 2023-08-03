@@ -84,7 +84,7 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.Segment
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWithSwitch
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
-import ru.blays.revanced.Services.Root.Util.isRootGranted
+import ru.blays.revanced.DeviceUtils.Root.Util.isRootGranted
 import ru.blays.revanced.shared.Data.DEFAULT_DOWNLOADS_FOLDER
 import ru.blays.revanced.shared.Data.PersistableDocumentTree
 import ru.blays.revanced.shared.Data.URI_DEFAULT_FLAGS

@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.blays.revanced.Elements.DataClasses.AppInfo
-import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 

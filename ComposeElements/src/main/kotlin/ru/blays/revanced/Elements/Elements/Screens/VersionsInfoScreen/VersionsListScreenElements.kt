@@ -63,7 +63,7 @@ import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.CustomButton.BackgroundIcon
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
-import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.shared.R

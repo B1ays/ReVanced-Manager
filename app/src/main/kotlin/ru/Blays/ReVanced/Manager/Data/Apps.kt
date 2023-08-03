@@ -8,8 +8,8 @@ import ru.blays.revanced.Elements.Elements.VectorImages.AppsIcons
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.Microg
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.MusicMonochrome
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.YoutubeMonochrome
-import ru.blays.revanced.Services.PublicApi.PackageManagerApi
-import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
+import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApi
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
 enum class Apps {

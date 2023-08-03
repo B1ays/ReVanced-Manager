@@ -113,7 +113,7 @@ dependencies {
     // Modules
     implementation(projects.domain)
     implementation(projects.data)
-    implementation(projects.services)
+    implementation(projects.deviceUtils)
     implementation(projects.composeElements)
     implementation(projects.shared)
     implementation(projects.preference)

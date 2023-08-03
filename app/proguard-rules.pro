@@ -8,8 +8,8 @@
 -dontwarn org.graalvm.nativeimage.hosted.Feature
 
 -keep class ru.Blays.ReVanced.Manager.Repository.** { *; }
--keep class ru.blays.revanced.Services.PublicApi.** { *; }
--keep class ru.blays.revanced.Services.NonRoot.** { *; }
+-keep class ru.blays.revanced.DeviceUtils.PublicApi.** { *; }
+-keep class ru.blays.revanced.DeviceUtils.NonRoot.** { *; }
 -keep class ru.blays.revanced.domain.UseCases.** { *; }
 -keep class org.koin.** { *; }
 -keep class androidx.compose.material3.pullrefresh.** { *; }

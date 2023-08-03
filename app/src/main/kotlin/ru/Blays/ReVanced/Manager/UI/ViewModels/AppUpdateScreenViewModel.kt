@@ -20,7 +20,7 @@ import ru.blays.downloader.build
 import ru.blays.preference.DataStores.DownloadsFolderUriDS
 import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.preference.DataStores.StorageAccessTypeDS
-import ru.blays.revanced.Services.PublicApi.PackageManagerApi
+import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApi
 import ru.blays.revanced.domain.DataClasses.AppUpdateModelDto
 import ru.blays.revanced.domain.UseCases.GetChangelogUseCase
 import ru.blays.revanced.domain.UseCases.GetUpdateInfoUseCase

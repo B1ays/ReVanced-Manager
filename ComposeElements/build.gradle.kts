@@ -68,7 +68,7 @@ dependencies {
     // Modules
     implementation(projects.domain)
     implementation(projects.data)
-    implementation(projects.services)
+    implementation(projects.deviceUtils)
     implementation(projects.shared)
 
     // material-color-utilities

@@ -254,6 +254,7 @@ fun SettingsRadioButtonWithTitle(
         modifier = Modifier
             .padding(vertical = 2.dp, horizontal = 12.dp)
             .fillMaxWidth()
+            .clip(CardShape.CardStandalone)
             .clickable(enabled = enabled, onClick = action),
         verticalAlignment = Alignment.CenterVertically
     )
@@ -263,7 +264,10 @@ fun SettingsRadioButtonWithTitle(
             onClick = action,
             enabled = enabled
         )
-        Text(modifier = Modifier.padding(start = 8.dp), text = title)
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = title
+        )
     }
 }
 

@@ -1,6 +1,6 @@
 package ru.Blays.ReVanced.Manager.Utils.ModuleInstallerLogAdapter
 
-import ru.blays.revanced.Services.Root.ModuleIntstaller.LogAdapter.LogAdapter
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.LogAdapter.LogAdapter
 import ru.blays.revanced.shared.LogManager.BLog
 
 class ModuleInstallerLogAdapter: LogAdapter {

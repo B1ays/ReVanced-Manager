@@ -21,7 +21,7 @@ include ':app'
 include ':ComposeElements'
 include ':Domain'
 include ':Data'
-include ':Services'
+include ':DeviceUtils'
 include ':Shared'
 
 // Helios

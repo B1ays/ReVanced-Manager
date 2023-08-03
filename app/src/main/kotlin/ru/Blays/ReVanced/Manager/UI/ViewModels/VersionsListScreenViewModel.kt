@@ -26,9 +26,9 @@ import ru.blays.preference.DataStores.DownloadsFolderUriDS
 import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.preference.DataStores.StorageAccessTypeDS
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
-import ru.blays.revanced.Services.PublicApi.PackageManagerApi
-import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
-import ru.blays.revanced.Services.Root.PackageManager.RootPackageManager
+import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApi
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
+import ru.blays.revanced.DeviceUtils.Root.PackageManager.RootPackageManager
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase

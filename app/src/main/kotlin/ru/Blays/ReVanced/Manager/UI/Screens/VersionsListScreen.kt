@@ -66,7 +66,7 @@ import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.ModuleInst
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.SubversionsListBSContent
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsInfoCard
 import ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen.VersionsListScreenHeader
-import ru.blays.revanced.Services.Root.ModuleIntstaller.ModuleInstaller
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.shared.R
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
