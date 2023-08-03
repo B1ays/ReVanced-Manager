@@ -28,6 +28,10 @@ internal suspend fun Shell.Job.await(): Shell.Result {
     }
 }
 
+fun rebootDevice() {
+    Shell.cmd("am start -a android.intent.action.REBOOT").exec()
+}
+
 internal class SuException(val stderrOut: String) : Exception(stderrOut)
 
 @Throws(SuException::class)

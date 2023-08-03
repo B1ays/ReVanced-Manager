@@ -4,12 +4,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import org.koin.java.KoinJavaComponent.get
 import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepository
 import ru.Blays.ReVanced.Manager.Repository.AppRepositiry.AppRepositoryInterface
+import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApi
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.Elements.Elements.VectorImages.AppsIcons
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.Microg
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.MusicMonochrome
 import ru.blays.revanced.Elements.Elements.VectorImages.appsicons.YoutubeMonochrome
-import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApi
-import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
 enum class Apps {
@@ -107,9 +107,6 @@ enum class Apps {
     protected val getVersionsListUС: GetVersionsListUseCase = get(GetVersionsListUseCase::class.java)
 
     protected val localVersionSourceImpl: (suspend (packageName: String) -> String?) = { packageName ->
-        packageManager
-            .getVersionName(packageName)
-            .await()
-            .getValueOrNull()
+        packageManager.getVersionName(packageName).getValueOrNull()
     }
 }

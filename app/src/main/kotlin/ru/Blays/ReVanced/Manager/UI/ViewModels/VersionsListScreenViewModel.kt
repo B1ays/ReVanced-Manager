@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
-import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,10 +23,11 @@ import ru.blays.downloader.build
 import ru.blays.preference.DataStores.DownloadsFolderUriDS
 import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.preference.DataStores.StorageAccessTypeDS
-import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.DeviceUtils.PublicApi.PackageManagerApi
 import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.DeviceUtils.Root.PackageManager.RootPackageManager
+import ru.blays.revanced.DeviceUtils.Root.Util.rebootDevice
+import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetApkListUseCase
@@ -116,8 +115,10 @@ class VersionsListScreenViewModel(
     }
 
     fun delete(packageName: String) {
-        packageManager.uninstall(packageName)
-        onRefresh()
+        launch {
+            packageManager.uninstall(packageName)
+            onRefresh()
+        }
     }
 
     fun deleteModule(packageName: String) {
@@ -128,14 +129,13 @@ class VersionsListScreenViewModel(
     }
 
     fun launch(packageName: String) {
-        packageManager.launchApp(packageName)
+        launch {
+            packageManager.launchApp(packageName)
+        }
     }
 
-    fun reboot() {
-        Shell.cmd("am start -a android.intent.action.REBOOT").exec()
-    }
+    fun reboot() = ::rebootDevice
 
-    @Suppress("DeferredResultUnused")
     fun downloadNonRootVersion(
         fileName: String,
         url: String
@@ -148,8 +148,10 @@ class VersionsListScreenViewModel(
                 0 -> {
                     storageMode = StorageMode.FileIO
                     onSuccess {
-                        file?.let { packageManager.installApk(it, installerType) }
-                        onRefresh()
+                        launch {
+                            file?.let { packageManager.installApk(it, installerType) }
+                            onRefresh()
+                        }
                     }
                     onCancel {
                         file?.delete()
@@ -214,9 +216,9 @@ class VersionsListScreenViewModel(
                     onSuccess {
                         launch {
                             with(state) { emit(value.copy(origApkDownloaded = true)) }
-                            val installResult = async {
-                                file?.let { RootPackageManager().installApp(it) }
-                            }.await()
+                            val installResult = file?.let { file ->
+                                RootPackageManager().installApp(file)
+                            }
                             if (installResult?.isError == true) {
                                 cancel()
                                 return@launch
@@ -250,11 +252,7 @@ class VersionsListScreenViewModel(
                             }
                             val copyToTemp = simpleDocument!!.copyTo(tmpFile)
                             if (!copyToTemp) return@launch
-
-                            val installResult = async {
-                                 RootPackageManager().installApp(tmpFile)
-                            }.await()
-
+                            val installResult = RootPackageManager().installApp(tmpFile)
                             if (installResult.isError) {
                                 cancel()
                                 return@launch

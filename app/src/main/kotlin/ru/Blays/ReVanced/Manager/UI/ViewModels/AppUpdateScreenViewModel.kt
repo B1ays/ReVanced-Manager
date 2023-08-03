@@ -56,13 +56,13 @@ class AppUpdateScreenViewModel(
     var isUpdateAvailable by mutableStateOf(false)
 
     private suspend fun compareVersionCodes() = coroutineScope {
-        val installedVersionCode = packageManagerApi.getVersionCode(BuildConfig.APPLICATION_ID).await().getValueOrNull()
+        val installedVersionCode = packageManagerApi.getVersionCode(BuildConfig.APPLICATION_ID).getValueOrNull()
         _updateInfo.value?.let { dataModel ->
             isUpdateAvailable = (installedVersionCode ?: Int.MAX_VALUE) < dataModel.versionCode
         }
     }
 
-    @Suppress("DeferredResultUnused", "LocalVariableName")
+    @Suppress("LocalVariableName")
     fun downloadAndInstall() {
         val _installerType: InstallerTypeDS by autoInject()
         val _storageMode: StorageAccessTypeDS by autoInject()
@@ -80,7 +80,9 @@ class AppUpdateScreenViewModel(
                     0 -> {
                         this.storageMode = StorageMode.FileIO
                         onSuccess {
-                            packageManagerApi.installApk(file!!, installerType)
+                            launch {
+                                packageManagerApi.installApk(file!!, installerType)
+                            }
                         }
                     }
                     1 -> {

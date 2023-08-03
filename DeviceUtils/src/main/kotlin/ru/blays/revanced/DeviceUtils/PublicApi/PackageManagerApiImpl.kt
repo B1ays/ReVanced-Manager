@@ -3,9 +3,8 @@ package ru.blays.revanced.DeviceUtils.PublicApi
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerInterface
+import ru.blays.revanced.DeviceUtils.NonRoot.Interfaces.PackageManagerResult
 import ru.blays.revanced.DeviceUtils.NonRoot.PackageManager.NonRootPackageManager
 import ru.blays.revanced.DeviceUtils.Root.PackageManager.RootPackageManager
 import ru.blays.revanced.DeviceUtils.Root.Util.isRootGranted
@@ -24,41 +23,35 @@ class PackageManagerApiImpl(context: Context, installerType: Int): PackageManage
         else -> NonRootPackageManager(context)
     }
 
-    override fun installApk(file: File, installerType: Int) = async {
+    override suspend fun installApk(file: File, installerType: Int): PackageManagerResult<Nothing> {
         BLog.i(TAG, "install apk: ${file.nameWithoutExtension}")
-        packageManagerInterface.installApp(file)
+        return packageManagerInterface.installApp(file)
     }
 
-    override fun installSplitApks(
+    override suspend fun installSplitApks(
         files: List<File>,
         installerType: Int
     ) {
-        launch {
-            packageManagerInterface.installSplitApp(apks = files.toTypedArray())
-        }
+        packageManagerInterface.installSplitApp(apks = files.toTypedArray())
     }
 
-    override fun uninstall(packageName: String) {
+    override suspend fun uninstall(packageName: String) {
         BLog.i(TAG, "Uninstall app: $packageName")
-        launch {
-            packageManagerInterface.uninstallApp(packageName)
-        }
+        packageManagerInterface.uninstallApp(packageName)
     }
 
-    override fun launchApp(packageName: String) {
+    override suspend fun launchApp(packageName: String) {
         BLog.i(TAG, "Launch app: $packageName")
-        launch {
-            packageManagerInterface.launchApp(packageName)
-        }
+        packageManagerInterface.launchApp(packageName)
     }
 
-    override fun getVersionName(packageName: String) = async {
+    override suspend fun getVersionName(packageName: String): PackageManagerResult<String> {
         BLog.i(TAG, "Get version name for: $packageName")
-        packageManagerInterface.getVersionName(packageName)
+        return packageManagerInterface.getVersionName(packageName)
     }
 
-    override fun getVersionCode(packageName: String) = async {
-        packageManagerInterface.getVersionCode(packageName)
+    override suspend fun getVersionCode(packageName: String): PackageManagerResult<Int> {
+        return packageManagerInterface.getVersionCode(packageName)
     }
 
 }

@@ -1,4 +1,4 @@
-package ru.blays.revanced.DeviceUtils.NonRoot.InstallService
+package ru.blays.revanced.DeviceUtils.NonRoot.Services
 
 import android.app.Service
 import android.content.Intent
@@ -6,7 +6,7 @@ import android.content.pm.PackageInstaller
 import android.os.Build
 import android.os.IBinder
 
-internal class AppInstallService : Service() {
+internal class AppInstallService: Service() {
 
     @Suppress("DEPRECATION")
     override fun onStartCommand(

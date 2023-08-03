@@ -1,4 +1,4 @@
-package ru.blays.revanced.DeviceUtils.NonRoot.InstallService
+package ru.blays.revanced.DeviceUtils.NonRoot.Services
 
 import android.app.Service
 import android.content.Intent
