@@ -44,7 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,7 +81,7 @@ fun SettingsExpandableCard(
     content: @Composable () -> Unit
 ) {
 
-    var isMenuExpanded by remember { mutableStateOf(false) }
+    var isMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
     val transition = updateTransition(targetState = isMenuExpanded, label = null)
 
