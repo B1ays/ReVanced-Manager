@@ -1,7 +1,9 @@
 package ru.Blays.ReVanced.Manager.UI.Screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.blays.helios.androidx.AndroidScreen
 import ru.blays.revanced.Elements.Elements.Screens.LogViewScreen.LogView
 import ru.blays.revanced.shared.Extensions.copyToClipBoard
@@ -14,6 +16,11 @@ class LogViewerScreen: AndroidScreen() {
 
     @Composable
     override fun Content() {
+
+        LaunchedEffect(key1 = Unit) {
+            shouldHideNavigationBar = true
+        }
+
         val formattedLog = BLog.getFormattedLog()
         val context = LocalContext.current
 

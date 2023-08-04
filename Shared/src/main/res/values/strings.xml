@@ -8,6 +8,7 @@
     <string name="AppBar_About">About</string>
     <string name="AppBar_Downloads">Downloads</string>
     <string name="AppBar_Updates">Updates</string>
+    <string name="AppBar_Developer_menu">Developer menu</string>
 
     <!--  App info  -->
     <string name="Installed_version">Installed version</string>
@@ -35,6 +36,16 @@
     <!--  Updates  -->
     <string name="Updates_not_found">Updates not found</string>
 
+    <!--  Module installer  -->
+    <string name="Module_installer_complite">Module install complete</string>
+    <string name="Module_installer_failed">Module install failed</string>
+    <string name="Module_installer_error">Error</string>
+
+    <!--  PackageManager  -->
+    <string name="App_install_success">App install success</string>
+    <string name="App_install_error">App install error</string>
+    <string name="App_installed_apk">Installed apk</string>
+
     <!--  Color picker  -->
     <string name="Pick_color">Pick color</string>
 
@@ -43,7 +54,7 @@
     <string name="Action_install">Install</string>
     <string name="Action_uninstall">Uninstall</string>
     <string name="Action_uninstall_confirm">Are you sure?</string>
-    <string name="Action_reboot_confirm">Reboot?</string>
+    <string name="Action_reboot_confirm">Reboot device?</string>
     <string name="Action_launch">Launch</string>
     <string name="Action_changelog" translatable="false">Changelog</string>
     <string name="Action_OK">Ok</string>
@@ -52,8 +63,12 @@
 
     <!--  Dropdown menu items  -->
     <string name="About_app">About app</string>
+
+    <!--  Developer menu  -->
     <string name="Crash_app" translatable="false">Crash app</string>
+    <string name="Crash_app_description">Causes the application to test crash</string>
     <string name="App_logs">App logs</string>
+    <string name="App_logs_description">Logs recorded while the application is running</string>
 
     <!--  Settings group titles  -->
     <string name="Settings_title_theme">App theme &amp; colors</string>
@@ -103,6 +118,16 @@
     <string name="SeekBar_segment_24_hours">24 hours</string>
     <string name="SeekBar_segment_48_hours">48 hours</string>
     <string name="SeekBar_segment_infinity">Infinity</string>
+
+    <!--  Storage access mode  -->
+    <string name="Settings_card_storage_access_mode_title">File access method</string>
+    <string name="Settings_card_storage_access_mode_description">Choose how to access files</string>
+    <string name="Settings_card_storage_access_mode_selected_folder">Selected folder</string>
+    <string name="Settings_card_storage_access_mode_pick_folder">Pick folder</string>
+    <string name="Settings_card_storage_access_method_FileIO">FileIO (Old)</string>
+    <string name="Settings_card_storage_access_method_SAF">SAF (Modern)</string>
+    <string name="Settings_card_storage_access_method_cant_encode_path">Can\'t encode URI path. Re-select folder</string>
+
 
     <!--  About Screen  -->
     <string name="about_group_information">Main information</string>

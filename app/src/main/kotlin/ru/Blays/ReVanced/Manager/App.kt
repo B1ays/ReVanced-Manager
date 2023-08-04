@@ -9,6 +9,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.Blays.ReVanced.Manager.BackgroundService.CrashHandlerService
 import ru.Blays.ReVanced.Manager.DI.appModule
+import ru.blays.preference.DI.preferencesModule
 import ru.blays.revanced.data.DI.dataModule
 import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
@@ -35,8 +36,11 @@ class App: Application() {
         // Start koin DI
         startKoin {
             androidContext(this@App)
-            modules(appModule)
-            modules(dataModule)
+            modules(
+                appModule,
+                dataModule,
+                preferencesModule
+            )
         }
 
         // create channel for notifications
@@ -50,6 +54,6 @@ class App: Application() {
         NotificationManagerCompat.from(this@App).createNotificationChannel(channel)
 
         // Crash handler
-        if (!BuildConfig.DEBUG) Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandlerService(this))
     }
 }

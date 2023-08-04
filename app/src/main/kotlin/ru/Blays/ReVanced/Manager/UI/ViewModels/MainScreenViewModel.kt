@@ -1,27 +1,27 @@
 package ru.Blays.ReVanced.Manager.UI.ViewModels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.Blays.ReVanced.Manager.Data.Apps
-import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
-class MainScreenViewModel(private val getVersionsListUseCase: GetVersionsListUseCase) : BaseViewModel() {
+class MainScreenViewModel : BaseViewModel() {
 
-    var isRefreshing by mutableStateOf(false)
+    private val _isRefreshing = MutableStateFlow(false)
+
+    val isRefreshing: Boolean
+        @Composable get() = _isRefreshing.collectAsState().value
 
     fun onRefresh() {
-        isRefreshing = true
+        _isRefreshing.value = true
         launch {
-            Apps.values().forEach { app ->
-                app.repository.updateInfo(recreateCache = true)
+            Apps.entries.forEach { app ->
+                app.repository.appVersions.forEach { version ->
+                    version.updateInfo()
+                }
             }
-            isRefreshing = false
+            _isRefreshing.value = false
         }
-    }
-
-    init {
-        onRefresh()
     }
 }

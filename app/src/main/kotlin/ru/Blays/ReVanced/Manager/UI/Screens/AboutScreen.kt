@@ -83,7 +83,7 @@ class AboutScreen: AndroidScreen() {
         Scaffold(
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_About)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_About)),
                     navigationIcon = {
                         IconButton(onClick = navigator::pop) {
                             Icon(
@@ -181,7 +181,7 @@ fun HeadItem(appIco: ImageVector, appName: String, versionName: String, buildTyp
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "${getStringRes(R.string.Version)}: $versionName - $buildType",
+                        text = "${stringResource(R.string.Version)}: $versionName - $buildType",
                         modifier = Modifier
                             .padding(bottom = 8.dp)
                     )
@@ -192,7 +192,7 @@ fun HeadItem(appIco: ImageVector, appName: String, versionName: String, buildTyp
         AboutCardWithIcoAndLink(
             context = context,
             ico = ImageVector.vectorResource(id = R.drawable.ic_telegram),
-            linkText = getStringRes(R.string.about_card_telegram),
+            linkText = stringResource(R.string.about_card_telegram),
             intent = intentTelegram,
             shape = CardShape.CardMid
         )
@@ -200,7 +200,7 @@ fun HeadItem(appIco: ImageVector, appName: String, versionName: String, buildTyp
         AboutCardWithIcoAndLink(
             context = context,
             ico = ImageVector.vectorResource(id = R.drawable.ic_github),
-            linkText = getStringRes(R.string.about_card_github),
+            linkText = stringResource(R.string.about_card_github),
             intent = intentGitHub,
             shape = CardShape.CardEnd
         )
@@ -233,7 +233,7 @@ fun AuthorCard() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp),
-            text = getStringRes(R.string.about_card_author)
+            text = stringResource(R.string.about_card_author)
         )
     }
 }

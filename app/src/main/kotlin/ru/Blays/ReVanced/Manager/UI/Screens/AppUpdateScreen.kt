@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Badge
@@ -20,8 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,17 +33,21 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
+import ru.Blays.ReVanced.Manager.UI.ComponentCallback.ComponentCallback
 import ru.Blays.ReVanced.Manager.UI.ViewModels.AppUpdateScreenViewModel
 import ru.blays.helios.androidx.AndroidScreen
+import ru.blays.helios.dialogs.LocalDialogNavigator
 import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.AppUpdateScreen.ChangelogView
 import ru.blays.revanced.Elements.Elements.Screens.AppUpdateScreen.UpdateInfoHeader
+import ru.blays.revanced.shared.LogManager.BLog
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
+
+private const val TAG = "AppUpdateScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 class AppUpdateScreen: AndroidScreen() {
@@ -52,19 +56,26 @@ class AppUpdateScreen: AndroidScreen() {
     override fun Content() {
 
         val navigator = LocalNavigator.currentOrThrow
+        val dialogNavigator = LocalDialogNavigator.current
 
         val viewModel: AppUpdateScreenViewModel = koinViewModel()
 
         val downloadsRepository: DownloadsRepository = koinInject()
 
-        val model by viewModel.updateInfo.collectAsState()
+        val model = viewModel.updateInfo
+
+        val changelog = viewModel.changelog
 
         val scrollBehavior = rememberToolbarScrollBehavior()
 
+        val scrollState = rememberScrollState()
+
         Scaffold(
+            modifier = Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Updates)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_Updates)),
                     scrollBehavior = scrollBehavior,
                     navigationIcon = {
                         IconButton(
@@ -106,21 +117,34 @@ class AppUpdateScreen: AndroidScreen() {
                     modifier = Modifier
                         .padding(top = padding.calculateTopPadding())
                         .fillMaxSize()
-                        .nestedScroll(connection = scrollBehavior.nestedScrollConnection)
                 ) {
                     UpdateInfoHeader(
                         availableVersion = model?.availableVersion,
                         versionCode = model?.versionCode,
                         buildDate = model?.buildDate,
-                        actionDownload = viewModel::downloadAndInstall
+                        actionDownload = {
+                            val callback = ComponentCallback.builder<() -> Unit> {
+                                onError = {
+                                    BLog.d(TAG, "install failed")
+                                    dialogNavigator.show(AppInstallResultDialog("App update", false))
+                                }
+                                onSuccess = {
+                                    BLog.d(TAG, "install success")
+                                    dialogNavigator.show(AppInstallResultDialog("App update", true))
+                                }
+                            }
+                            viewModel.downloadAndInstall(callback)
+                        }
                     )
-                    if (viewModel.changelog.isNotEmpty()) {
-                        ChangelogView(changelog = viewModel.changelog)
+                    if (changelog.isNotEmpty()) {
+                        ChangelogView(changelog = changelog)
                     }
                 }
             } else {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(

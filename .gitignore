@@ -1,4 +1,5 @@
 *.iml
+/.idea
 .gradle
 /local.properties
 /.idea/caches
@@ -25,3 +26,5 @@ local.properties
 /.idea/kotlinc.xml
 /.idea/misc.xml
 /.idea/vcs.xml
+/.idea/shelf/Uncommitted_changes_before_Update_at_19_07_2023_15_04_[Changes]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Update_at_19_07_2023_15_04__Changes_.xml

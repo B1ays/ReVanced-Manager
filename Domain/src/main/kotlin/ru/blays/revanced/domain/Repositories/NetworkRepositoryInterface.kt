@@ -15,10 +15,15 @@ interface NetworkRepositoryInterface {
         jsonUrl: String,
         recreateCache: Boolean
     ): List<ApkInfoModelDto>?
+
+    suspend fun getManagerUpdateInfo(
+        url: String,
+        recreateCache: Boolean
+    ): AppUpdateModelDto?
+
     suspend fun getText(
         changelogUrl: String,
         recreateCache: Boolean
     ): String
 
-    suspend fun getManagerUpdateInfo(url: String): AppUpdateModelDto?
 }

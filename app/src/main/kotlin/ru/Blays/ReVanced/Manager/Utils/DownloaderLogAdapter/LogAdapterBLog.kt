@@ -1,9 +1,9 @@
 package ru.Blays.ReVanced.Manager.Utils.DownloaderLogAdapter
 
-import ru.blays.revanced.data.Downloader.LogAdapter.LogAdapterAbstract
+import ru.blays.downloader.LogAdapter.LogAdapterAbstract
 import ru.blays.revanced.shared.LogManager.BLog
 
-class LogAdapterBLog: LogAdapterAbstract() {
+class LogAdapterBLog: ru.blays.downloader.LogAdapter.LogAdapterAbstract() {
     override fun d(message: String) {
         BLog.d(TAG, message)
     }

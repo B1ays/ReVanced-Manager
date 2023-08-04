@@ -11,7 +11,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/ComposeElements" />
             <option value="$PROJECT_DIR$/Data" />
+            <option value="$PROJECT_DIR$/DeviceUtils" />
             <option value="$PROJECT_DIR$/Domain" />
+            <option value="$PROJECT_DIR$/Downloader" />
             <option value="$PROJECT_DIR$/Helios" />
             <option value="$PROJECT_DIR$/Helios/helios-androidx" />
             <option value="$PROJECT_DIR$/Helios/helios-bottom-sheet-navigator" />
@@ -19,8 +21,9 @@
             <option value="$PROJECT_DIR$/Helios/helios-dialogs" />
             <option value="$PROJECT_DIR$/Helios/helios-navigator" />
             <option value="$PROJECT_DIR$/Helios/helios-transitions" />
-            <option value="$PROJECT_DIR$/Services" />
+            <option value="$PROJECT_DIR$/Preference" />
             <option value="$PROJECT_DIR$/Shared" />
+            <option value="$PROJECT_DIR$/SimpleDocument" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

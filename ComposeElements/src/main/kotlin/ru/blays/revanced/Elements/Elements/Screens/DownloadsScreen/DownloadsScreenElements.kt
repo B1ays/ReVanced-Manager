@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -42,18 +43,22 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.StateFlow
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
-import ru.blays.revanced.shared.Extensions.open
 import ru.blays.revanced.shared.R
-import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DownloadItem(
-    downloadInfo: DownloadInfo,
-    actionRemove: (DownloadInfo) -> Unit
+    fileName: String,
+    fileLength: Long,
+    progressFlow: StateFlow<Float>,
+    speedFlow: StateFlow<Long>,
+    actionOpenFile: () -> Unit,
+    actionDeleteFile: () -> Unit,
+    actionRemove: () -> Unit,
+    actionPause: () -> Unit
 ) {
 
     val height = 80.dp
@@ -62,8 +67,8 @@ fun DownloadItem(
     val overlayColor = MaterialTheme.colorScheme.primary.copy(alpha = .2F)
     val contentColor = MaterialTheme.colorScheme.onSurface
 
-    val progress by downloadInfo.progressFlow.collectAsState()
-    val speed by downloadInfo.speedFlow.collectAsState()
+    val progress by progressFlow.collectAsState()
+    val speed by speedFlow.collectAsState()
 
     val isDownloaded = progress == 1F
 
@@ -74,8 +79,6 @@ fun DownloadItem(
     val context = LocalContext.current
 
     val changeVisible = { isDeleteButtonVisible = !isDeleteButtonVisible }
-
-    val actionOpenFile = { downloadInfo.file.open(context) }
 
     Row(
         modifier = Modifier
@@ -99,6 +102,7 @@ fun DownloadItem(
                     color = backgroundColor,
                     shape = MaterialTheme.shapes.large
                 )
+                .clip(MaterialTheme.shapes.large)
         ) {
             if (!isDownloaded) {
                 Box(
@@ -121,7 +125,7 @@ fun DownloadItem(
                 Column(modifier = Modifier.weight(.5F)) {
                     Text(
                         modifier = Modifier,
-                        text = downloadInfo.fileName,
+                        text = fileName,
                         style = MaterialTheme.typography.titleMedium,
                         color = contentColor,
                         maxLines = 2,
@@ -130,7 +134,7 @@ fun DownloadItem(
                     if (isDownloaded) {
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(
-                            text = "${stringResource(id = R.string.File_size)}: ${(downloadInfo.file.length() / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
+                            text = "${stringResource(id = R.string.File_size)}: ${(fileLength / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
                             style = MaterialTheme.typography.titleSmall,
                             color = contentColor,
                             maxLines = 1,
@@ -145,7 +149,8 @@ fun DownloadItem(
                             .background(
                                 color = MaterialTheme.colorScheme.background.copy(alpha = .5F),
                                 shape = CircleShape
-                            ),
+                            )
+                            .animateContentSize(spring(stiffness = 300F, dampingRatio = .6F)),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Spacer(modifier = Modifier.width(5.dp))
@@ -185,7 +190,7 @@ fun DownloadItem(
                     .size(height),
                 onClick = {
                     isPaused = !isPaused
-                    downloadInfo.actionPauseResume()
+                    actionPause()
                 },
                 shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(6.dp),
@@ -218,8 +223,8 @@ fun DownloadItem(
                     .padding(start = 10.dp)
                     .size(height),
                 onClick = {
-                    downloadInfo.file.delete()
-                    actionRemove(downloadInfo)
+                    actionDeleteFile()
+                    actionRemove()
                 },
                 shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(6.dp),
@@ -239,8 +244,10 @@ fun DownloadItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FileItem(
-    file: File,
-    actionRemove: (File) -> Unit
+    fileName: String,
+    fileLength: Long,
+    actionOpenFile: () -> Unit,
+    actionDeleteFile: () -> Unit,
 ) {
 
     val height = 80.dp
@@ -251,11 +258,7 @@ fun FileItem(
 
     var isDeleteButtonVisible by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-
     val changeVisible = { isDeleteButtonVisible = !isDeleteButtonVisible }
-
-    val actionOpenFile = { file.open(context) }
 
     Row(
         modifier = Modifier
@@ -289,7 +292,7 @@ fun FileItem(
                 Column(modifier = Modifier.weight(.5F)) {
                     Text(
                         modifier = Modifier,
-                        text = file.nameWithoutExtension,
+                        text = fileName,
                         style = MaterialTheme.typography.titleMedium,
                         color = contentColor,
                         maxLines = 2,
@@ -297,7 +300,7 @@ fun FileItem(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
-                        text = "${stringResource(id = R.string.File_size)}: ${(file.length() / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
+                        text = "${stringResource(id = R.string.File_size)}: ${(fileLength / 1024 / 1024)} ${stringResource(id = R.string.File_size_Mb)}",
                         style = MaterialTheme.typography.titleSmall,
                         color = contentColor,
                         maxLines = 1,
@@ -323,7 +326,7 @@ fun FileItem(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .size(height),
-                onClick = { actionRemove(file) },
+                onClick = actionDeleteFile,
                 shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(6.dp),
                 containerColor = overlayColor,

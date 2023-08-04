@@ -29,7 +29,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,10 +43,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.MutableStateFlow
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 
 
 @Composable
@@ -54,16 +52,12 @@ fun AppCardRoot(
     cornerRadius: Dp = 20.dp,
     icon: ImageVector,
     appName: String,
-    availableVersion: MutableStateFlow<String?>,
-    rootVersion: MutableStateFlow<String?>,
-    nonRootVersion: MutableStateFlow<String?>,
+    availableVersion: State<String?>,
+    vararg versions: Pair<String?, State<String?>>,
     onClick: () -> Unit
 ) {
 
-    val availableVersionState by availableVersion.collectAsState()
-    val rootVersionState by rootVersion.collectAsState()
-    val nonRootVersionState by nonRootVersion.collectAsState()
-
+    val availableVersionState by availableVersion
 
     Column(
         modifier = Modifier
@@ -99,34 +93,27 @@ fun AppCardRoot(
                         enter = slideInHorizontally(animationSpec = spring(stiffness = 300F, dampingRatio = .6F))
                     ) {
                             TextWithBackground(
-                                text = "${getStringRes(R.string.Available_version_name)}: ${this@run}",
-                                textPadding = PaddingValues(5.dp)
+                                text = "${stringResource(R.string.Available_version_name)}: ${this@run}",
+                                textPadding = PaddingValues(5.dp),
+                                maxLines = 1
                             )
                         }
                     }
                 Spacer(modifier = Modifier.height(5.dp))
-                rootVersionState.run {
-                    AnimatedVisibility(
-                        visible = this@run != null,
-                        enter = slideInHorizontally(animationSpec = spring())
-                    ) {
-                        TextWithBackground(
-                            text = "${getStringRes(R.string.Root_Version)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
-                        )
+                versions.forEach { (type, state) ->
+                    state.value.run {
+                        AnimatedVisibility(
+                            visible = this@run != null,
+                            enter = slideInHorizontally(animationSpec = spring(stiffness = 300F, dampingRatio = .6F))
+                        ) {
+                            TextWithBackground(
+                                text = "$type ${stringResource(R.string.Version)}: ${this@run}",
+                                textPadding = PaddingValues(5.dp),
+                                maxLines = 1
+                            )
+                        }
                     }
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                nonRootVersionState.run {
-                    AnimatedVisibility(
-                        visible = this@run != null,
-                        enter = slideInHorizontally(animationSpec = spring())
-                    ) {
-                        TextWithBackground(
-                            text = "${getStringRes(R.string.NonRoot_Version)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
-                        )
-                    }
+                    Spacer(modifier = Modifier.height(5.dp))
                 }
                 Spacer(modifier = Modifier.height(cornerRadius))
             }
@@ -174,117 +161,10 @@ fun AppCardRoot(
 }
 
 @Composable
-fun AppCard(
-    cornerRadius: Dp = 20.dp,
-    icon: ImageVector,
-    appName: String,
-    availableVersion: MutableStateFlow<String?>,
-    version: MutableStateFlow<String?>,
-    onClick: () -> Unit
-) {
-
-    val availableVersionState by availableVersion.collectAsState()
-    val versionState by version.collectAsState()
-
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 12.dp)
-            .fillMaxWidth()
-    ) {
-        Box(modifier = Modifier
-            .height(150.dp)
-            .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colorScheme.surfaceTint.copy(.1F),
-                shape = RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius)
-            )
-        ) {
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .blur(radius = 6.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
-                    .wrapContentSize(unbounded = true),
-                imageVector = icon,
-                tint = MaterialTheme.colorScheme.primary.copy(.5F),
-                contentDescription = null,
-            )
-            Column(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
-                availableVersionState.run {
-                    AnimatedVisibility(
-                        visible = this@run != null,
-                        enter = slideInHorizontally(animationSpec = spring(stiffness = 300F, dampingRatio = .6F))
-                    ) {
-                        TextWithBackground(
-                            text = "${getStringRes(R.string.Available_version_name)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                versionState.run {
-                    AnimatedVisibility(
-                        visible = this@run != null,
-                        enter = slideInHorizontally(animationSpec = spring())
-                    ) {
-                        TextWithBackground(
-                            text = "${getStringRes(R.string.Installed_version)}: ${this@run}",
-                            textPadding = PaddingValues(5.dp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(cornerRadius))
-            }
-        }
-        Row(
-            modifier = Modifier
-                .offset(y = -cornerRadius)
-                .height(90.dp)
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = RoundedCornerShape(cornerRadius)
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(
-                modifier = Modifier
-                    .padding(start = 16.dp),
-                text = appName,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSecondary,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Button(
-                modifier = Modifier
-                    .defaultMinSize(100.dp, 48.dp)
-                    .padding(end = 25.dp),
-                onClick = onClick,
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surfaceColorAtAlpha(.2F) else MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            ) {
-                Text(text = stringResource(id = R.string.Action_open))
-                Spacer(modifier = Modifier.width(6.dp))
-                Icon(imageVector = Icons.Rounded.ArrowForward, contentDescription = null)
-            }
-        }
-    }
-}
-
-@Composable
 private fun TextWithBackground(
     modifier: Modifier = Modifier,
     text: String,
+    maxLines: Int = Int.MAX_VALUE,
     shape: Shape = CircleShape,
     backgroundColor: Color = MaterialTheme.colorScheme.secondary.copy(alpha = .8F),
     textColor: Color = Color.White,
@@ -302,7 +182,9 @@ private fun TextWithBackground(
             modifier = Modifier.padding(textPadding),
             text = text,
             style = textStyle,
-            color = textColor
+            color = textColor,
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

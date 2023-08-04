@@ -1,6 +1,6 @@
 package ru.Blays.ReVanced.Manager.BackgroundService
 
-import android.Manifest
+/*import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -59,7 +59,7 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
 
     var job: Job? = null
 
-    Apps.values().forEach { app ->
+    Apps.entries.forEach { app ->
 
         val repository = app.repository
 
@@ -140,5 +140,4 @@ suspend fun updateCheckService(context: Context) = coroutineScope {
             }
         }
     }
-}
-
+}*/

@@ -21,27 +21,27 @@ import androidx.compose.material3.pullrefresh.PullRefreshIndicator
 import androidx.compose.material3.pullrefresh.pullRefresh
 import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import ru.Blays.ReVanced.Manager.Data.Apps
 import ru.Blays.ReVanced.Manager.Repository.DownloadsRepository
-import ru.Blays.ReVanced.Manager.Repository.SettingsRepository
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.ViewModels.AppUpdateScreenViewModel
 import ru.Blays.ReVanced.Manager.UI.ViewModels.MainScreenViewModel
 import ru.blays.helios.androidx.AndroidScreen
 import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
-import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCard
 import ru.blays.revanced.Elements.Elements.Screens.MainScreen.AppCardRoot
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -55,7 +55,6 @@ class MainScreen: AndroidScreen() {
 
         val viewModel: MainScreenViewModel = koinViewModel()
         val updateScreenViewModel: AppUpdateScreenViewModel = koinViewModel()
-        val settingsRepository: SettingsRepository = koinInject()
         val downloadsRepository: DownloadsRepository = koinInject()
 
         val pullRefreshState = rememberPullRefreshState(
@@ -73,10 +72,14 @@ class MainScreen: AndroidScreen() {
             else -> false
         }
 
+        LaunchedEffect(key1 = Unit) {
+            viewModel.onRefresh()
+        }
+
         Scaffold(
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Main)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_Main)),
                     scrollBehavior = scrollBehavior,
                     actions = {
                         BadgedBox(
@@ -131,34 +134,26 @@ class MainScreen: AndroidScreen() {
                         .nestedScroll(scrollBehavior.nestedScrollConnection),
                     state = lazyListState
                 ) {
-                    items(Apps.values()) { app ->
-                        if (
-                            (app == Apps.YOUTUBE && settingsRepository.youtubeManaged) ||
-                            (app == Apps.YOUTUBE_MUSIC && settingsRepository.musicManaged) ||
-                            (app == Apps.MICROG && settingsRepository.microGManaged)
+                    items(Apps.entries) { app ->
+
+                        val availableVersion = app.repository
+                            .availableVersion
+                            .collectAsState()
+
+
+                        val versions = app.repository.appVersions
+                                .map { it.versionName to it.localVersionNameState }
+                                .toTypedArray()
+
+                        AppCardRoot(
+                            icon = app.icon,
+                            appName = app.repository.appName,
+                            availableVersion = availableVersion,
+                            versions = versions
                         ) {
-                            if (app.repository.hasRootVersion) {
-                                AppCardRoot(
-                                    icon = app.icon,
-                                    appName = app.repository.appName,
-                                    availableVersion = app.repository.availableVersion,
-                                    rootVersion = app.repository.rootVersion,
-                                    nonRootVersion = app.repository.nonRootVersion
-                                ) {
-                                    navigator.push(VersionsListScreen(app))
-                                }
-                            } else {
-                                AppCard(
-                                    icon = app.icon,
-                                    appName = app.repository.appName,
-                                    availableVersion = app.repository.availableVersion,
-                                    version = app.repository.version
-                                ) {
-                                    navigator.push(VersionsListScreen(app))
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
+                            navigator.push(VersionsListScreen(app))
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
 

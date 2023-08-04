@@ -1,9 +1,8 @@
 package ru.blays.helios.core
 
 import androidx.compose.runtime.Composable
-import java.io.Serializable
 
-interface Screen: Serializable {
+interface Screen {
 
     val key: ScreenKey
         get() = commonKeyGeneration()

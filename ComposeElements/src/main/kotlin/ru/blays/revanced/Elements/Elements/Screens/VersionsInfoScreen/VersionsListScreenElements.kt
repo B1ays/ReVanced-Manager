@@ -1,18 +1,22 @@
 package ru.blays.revanced.Elements.Elements.Screens.VersionsInfoScreen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,10 +29,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,16 +41,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -58,16 +59,14 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
-import ru.blays.revanced.Elements.DataClasses.MagiskInstallerAlertDialogState
 import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
+import ru.blays.revanced.Elements.Elements.CustomButton.BackgroundIcon
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
-import ru.blays.revanced.Elements.Elements.GradientProgressIndicator.GradientLinearProgressIndicator
-import ru.blays.revanced.data.Downloader.DataClass.DownloadInfo
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import java.time.Duration
 
 @Composable
@@ -77,8 +76,8 @@ fun VersionsListScreenHeader(
     actionOpen: (String) -> Unit
 ) {
 
-    val version by appInfo.version.collectAsState()
-    val patchesVersion by appInfo.patchesVersion.collectAsState()
+    val version = appInfo.version
+    val patchesVersion = appInfo.patchesVersion
 
     Spacer(modifier = Modifier.height(8.dp))
     Row(
@@ -91,10 +90,10 @@ fun VersionsListScreenHeader(
                 .weight(.5F)
         ) {
             version?.let {
-                Text(text = "${getStringRes(R.string.Installed_version)}: $it")
+                Text(text = "${stringResource(R.string.Installed_version)}: $it")
             }
             patchesVersion?.let {
-                Text(text = "${getStringRes(R.string.Patches_version)}: $it")
+                Text(text = "${stringResource(R.string.Patches_version)}: $it")
             }
         }
         version?.let {
@@ -181,21 +180,33 @@ fun VersionsInfoCard(
         modifier = Modifier
             .padding(DefaultPadding.CardDefaultPadding)
             .fillMaxWidth(),
-        shape = CardShape.CardStandalone,
+        shape = CardShape.CardStandaloneLarge,
         onClick = {
             isExpanded = !isExpanded
         }
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .padding(8.dp)
                 .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            item.version?.let { Text(text = "${getStringRes(R.string.Version)}: $it") }
-            Spacer(modifier = Modifier.height(4.dp))
-            item.patchesVersion?.let { Text(text = "${getStringRes(R.string.Patches_version)}: $it") }
-            Spacer(modifier = Modifier.height(4.dp))
-            item.buildDate?.let { Text(text = "${getStringRes(R.string.Build_date)}: $it") }
+            BackgroundIcon(
+                modifier = Modifier.padding(horizontal = 6.dp),
+                icon = ImageVector.vectorResource(id = R.drawable.app),
+                shape = MaterialTheme.shapes.large,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+            Column(
+                modifier = Modifier.padding(horizontal = 6.dp)
+            ) {
+                item.version?.let { Text(text = "${stringResource(R.string.Version)}: $it") }
+                Spacer(modifier = Modifier.height(4.dp))
+                item.patchesVersion?.let { Text(text = "${stringResource(R.string.Patches_version)}: $it") }
+                Spacer(modifier = Modifier.height(4.dp))
+                item.buildDate?.let { Text(text = "${stringResource(R.string.Build_date)}: $it") }
+            }
         }
 
         AnimatedVisibility(
@@ -226,7 +237,7 @@ fun VersionsInfoCard(
                         }
                     }
                 ) {
-                    Text(text = getStringRes(R.string.Action_changelog))
+                    Text(text = stringResource(R.string.Action_changelog))
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Button(
@@ -234,7 +245,7 @@ fun VersionsInfoCard(
                         actionShowApkList(item.versionsListLink.orEmpty(), rootVersions)
                     }
                 ) {
-                    Text(text = getStringRes(R.string.Action_download))
+                    Text(text = stringResource(R.string.Action_download))
                 }
                 Spacer(modifier = Modifier.width(12.dp))
             }
@@ -288,28 +299,101 @@ fun ChangelogBSContent(markdown: String) {
     Spacer(Modifier.fillMaxHeight(0.1F))
 }
 
+@Suppress("AnimatedContentLabel")
 @Composable
-fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot: () -> Unit, actionHide: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = actionHide,
-        title = {
-            Text(text = getStringRes(R.string.Action_reboot_confirm))
-        },
-        confirmButton = {
-            Button(
-                onClick = actionReboot
+fun ModuleInstallDialogContent(
+    status: ModuleInstaller.Status,
+    actionReboot: () -> Unit,
+    actionHide: () -> Unit
+) {
+    when (status) {
+        ModuleInstaller.Status.COMPLETE -> {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 14.dp, vertical = 16.dp)
+                    .fillMaxWidth()
             ) {
-                Text(text = getStringRes(R.string.Action_OK))
-            }
-        },
-        dismissButton = {
-            OutlinedButton(
-                onClick = actionHide
-            ) {
-                Text(text = getStringRes(R.string.Action_Cancel))
+                Text(
+                    text = stringResource(id = R.string.Module_installer_complite),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = stringResource(id = R.string.Action_reboot_confirm))
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(
+                        onClick = actionHide
+                    ) {
+                        Text(text = stringResource(R.string.Action_Cancel))
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Button(
+                        onClick = actionReboot
+                    ) {
+                        Text(text = stringResource(R.string.Action_OK))
+                    }
+                }
             }
         }
-    )
+        ModuleInstaller.Status.ERROR -> {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 14.dp, vertical = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.Module_installer_failed),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "${stringResource(id = R.string.Module_installer_error)}: ${status.error}")
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = actionHide
+                    ) {
+                        Text(text = stringResource(R.string.Action_OK))
+                    }
+                }
+            }
+        }
+        else -> {
+            Row(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 14.dp,
+                        vertical = 16.dp
+                    )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(strokeCap = StrokeCap.Round)
+                AnimatedContent(
+                    targetState = status,
+                    transitionSpec = {
+                        (slideInVertically { height -> -height } + fadeIn())
+                            .togetherWith(
+                                slideOutVertically { height -> height } + fadeOut()
+                            ).using(
+                                SizeTransform(true)
+                            )
+                    }
+                ) { status ->
+                    Text(text = status.message)
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -349,7 +433,7 @@ fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot
                     maxLines = 1
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "${getStringRes(R.string.Description)}: ${item.description}")
+                Text(text = "${stringResource(R.string.Description)}: ${item.description}")
             }
             IconButton(
                 onClick = {
@@ -372,93 +456,6 @@ fun MagiskInstallInfoDialog(state: MagiskInstallerAlertDialogState, actionReboot
                     contentDescription = "DownloadButton",
                     modifier = Modifier.scale(1.3F)
                 )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun DownloadProgressContent(downloadStateList: SnapshotStateList<DownloadInfo>) {
-
-    var isPaused by remember { mutableStateOf(false) }
-
-    LazyColumn(
-        modifier = Modifier
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-
-        items(downloadStateList) { state ->
-
-            val progress by state.progressFlow.collectAsState()
-
-            val speed by state.speedFlow.collectAsState()
-
-            val fileName = state.fileName
-
-            Text(text = "${getStringRes(R.string.Download)}: $fileName")
-            Spacer(modifier = Modifier.height(10.dp))
-            GradientLinearProgressIndicator(
-                progress = progress,
-                strokeCap = StrokeCap.Round,
-                brush = Brush.linearGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "${stringResource(R.string.Progress)}: ${(progress * 100F).toInt()}%"
-            )
-            Text(
-                text = "${stringResource(R.string.Speed)}: $speed ${stringResource(R.string.Speed_kbs)}"
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        stickyHeader {
-            Row {
-                CustomIconButton(
-                    onClick = {
-                        isPaused = !isPaused
-                        downloadStateList.forEach {
-                            it.actionPauseResume()
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    contentPadding = PaddingValues(6.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isPaused) ImageVector.vectorResource(id = R.drawable.round_play_arrow_24) else
-                            ImageVector.vectorResource(id = R.drawable.round_pause_24),
-                        contentDescription = null,
-                        modifier = Modifier.scale(1.3F)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                CustomIconButton(
-                    onClick = {
-                        downloadStateList.forEach {
-                            it.actionCancel()
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    contentPadding = PaddingValues(6.dp)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.round_close_24),
-                        contentDescription = null,
-                        modifier = Modifier.scale(1.3F)
-                    )
-                }
             }
         }
     }

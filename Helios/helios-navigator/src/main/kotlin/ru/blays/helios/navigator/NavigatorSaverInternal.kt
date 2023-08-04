@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.staticCompositionLocalOf
 import ru.blays.helios.core.Screen
 
@@ -19,7 +18,8 @@ internal fun rememberNavigator(
     parent: Navigator?,
 ): Navigator {
     val stateHolder = LocalNavigatorStateHolder.current
-    val navigatorSaver = LocalNavigatorSaver.current
+    // TODO("Return screen restore")
+    /*val navigatorSaver = LocalNavigatorSaver.current
     val saver = remember(
         navigatorSaver,
         stateHolder,
@@ -33,9 +33,9 @@ internal fun rememberNavigator(
             disposeBehavior,
             parent
         )
-    }
+    }*/
 
-    return rememberSaveable(saver = saver, key = key) {
+    return remember(key) {
         Navigator(screens, key, stateHolder, disposeBehavior, parent)
     }
 }

@@ -1,6 +1,7 @@
 package ru.blays.revanced.data.repositories
 
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -18,14 +19,16 @@ import java.util.concurrent.TimeUnit
 
 private const val TAG = "AppRepository"
 
-class NetworkRepositoryImplementation(private val cacheManager: CacheManagerInterface, private val cacheLifetimeLong: Long) : NetworkRepositoryInterface {
+class NetworkRepositoryImplementation(private val cacheManager: CacheManagerInterface, private val cacheLifetimeLong: Long): NetworkRepositoryInterface {
 
     private suspend fun router(url: String, recreateCache: Boolean): String? = coroutineScope {
         BLog.i(TAG, "data request. Url: $url, recreateCache: $recreateCache")
         var json: String?
         if (recreateCache) {
             json = getHtmlBody(url)
-            json?.let { cacheManager.addToCache(url, it) }
+            launch {
+                json?.let { cacheManager.addToCache(url, it) }
+            }
             return@coroutineScope json
         } else {
             json = cacheManager.getJsonFromCache(url, cacheLifecycleLong = cacheLifetimeLong)
@@ -34,7 +37,9 @@ class NetworkRepositoryImplementation(private val cacheManager: CacheManagerInte
             } else {
                 return@coroutineScope json
             }
-            json?.let { cacheManager.addToCache(url, it) }
+            launch {
+                json?.let { cacheManager.addToCache(url, it) }
+            }
             return@coroutineScope json
         }
     }
@@ -127,11 +132,11 @@ class NetworkRepositoryImplementation(private val cacheManager: CacheManagerInte
         ?.serializeJsonFromString<List<ApkInfoModel>>()
         ?.mapApkInfoModelToDomainClass()
 
-    override suspend fun getText(changelogUrl: String, recreateCache: Boolean): String =
-        router(changelogUrl, recreateCache).orEmpty()
-
-    override suspend fun getManagerUpdateInfo(url: String): AppUpdateModelDto? = router(url, true)
+    override suspend fun getManagerUpdateInfo(url: String, recreateCache: Boolean): AppUpdateModelDto? = router(url, recreateCache)
         ?.serializeJsonFromString<AppUpdateModel>()
         ?.mapAppUpdateModelToDomainClass()
+
+    override suspend fun getText(changelogUrl: String, recreateCache: Boolean): String =
+        router(changelogUrl, recreateCache).orEmpty()
 
 }

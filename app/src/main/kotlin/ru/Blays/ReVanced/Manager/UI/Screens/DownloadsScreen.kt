@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,8 +36,8 @@ import ru.blays.helios.navigator.LocalNavigator
 import ru.blays.helios.navigator.currentOrThrow
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.DownloadItem
 import ru.blays.revanced.Elements.Elements.Screens.DownloadsScreen.FileItem
+import ru.blays.revanced.shared.Extensions.open
 import ru.blays.revanced.shared.R
-import ru.blays.revanced.shared.Util.getStringRes
 import ru.hh.toolbar.custom_toolbar.CollapsingTitle
 import ru.hh.toolbar.custom_toolbar.CustomToolbar
 import ru.hh.toolbar.custom_toolbar.rememberToolbarScrollBehavior
@@ -46,15 +47,19 @@ class DownloadsScreen: AndroidScreen(){
     @Composable
     override fun Content() {
 
+        val context = LocalContext.current
+
         val navigator = LocalNavigator.currentOrThrow
 
         val repository: DownloadsRepository = koinInject()
 
         val scrollBehavior = rememberToolbarScrollBehavior()
 
-        val list = repository.downloadsList
+        val downloadingFilesList = repository.downloadsList
 
         val existingFilesList = repository.existingFilesList
+
+        val existingDocumentsList = repository.existingDocumentsList
 
         val lazyListState = rememberLazyListState()
 
@@ -67,7 +72,7 @@ class DownloadsScreen: AndroidScreen(){
         Scaffold(
             topBar = {
                 CustomToolbar(
-                    collapsingTitle = CollapsingTitle.large(titleText = getStringRes(R.string.AppBar_Downloads)),
+                    collapsingTitle = CollapsingTitle.large(titleText = stringResource(R.string.AppBar_Downloads)),
                     scrollBehavior = scrollBehavior,
                     navigationIcon = {
                         IconButton(
@@ -90,17 +95,54 @@ class DownloadsScreen: AndroidScreen(){
                     .nestedScroll(connection = scrollBehavior.nestedScrollConnection),
                 state = lazyListState
             ) {
-                items(list) {
-                    DownloadItem(downloadInfo = it, repository::removeFromList)
+                items(downloadingFilesList) { item ->
+                    DownloadItem(
+                        fileName = item.fileName,
+                        fileLength = item.file?.length()
+                            ?: item.simpleDocument?.length
+                            ?: 0L,
+                        progressFlow = item.progressFlow,
+                        speedFlow = item.speedFlow,
+                        actionOpenFile = {
+                            item.file?.open(context)
+                            item.simpleDocument?.open()
+                        },
+                        actionDeleteFile = {
+                            item.file?.delete()
+                            item.simpleDocument?.delete()
+                        },
+                        actionRemove = {
+                            repository.removeFromList(item)
+                        },
+                        actionPause = item.actionPauseResume
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
-                items(existingFilesList) {
-                    FileItem(file = it, actionRemove = repository::removeExistingFile)
+                items(existingFilesList) {file ->
+                    FileItem(
+                        fileName = file.nameWithoutExtension,
+                        fileLength = file.length(),
+                        actionOpenFile = { file.open(context) },
+                        actionDeleteFile = { repository.removeExistingFile(file) }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                items(existingDocumentsList) {document ->
+                    FileItem(
+                        fileName = document.name ?: "",
+                        fileLength = document.length ?: 0,
+                        actionOpenFile = document::open,
+                        actionDeleteFile = { repository.removeExistingFile(document) }
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
-            if (repository.downloadsList.isEmpty() && repository.existingFilesList.isEmpty()) {
+            if (
+                repository.downloadsList.isEmpty() &&
+                repository.existingFilesList.isEmpty() &&
+                repository.existingDocumentsList.isEmpty()
+            ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

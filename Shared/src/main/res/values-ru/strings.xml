@@ -6,6 +6,7 @@
     <string name="AppBar_Settings">Настройки</string>
     <string name="AppBar_About">О приложении</string>
     <string name="AppBar_Downloads">Загрузки</string>
+    <string name="AppBar_Developer_menu">Меню разработчика</string>
     <string name="Installed_version">Устновленная версия</string>
     <string name="Available_version_name">Доступная версия</string>
     <string name="Action_OK">Ок</string>
@@ -54,6 +55,10 @@
     <string name="SeekBar_segment_24_hours">24 часа</string>
     <string name="SeekBar_segment_48_hours">48 часов</string>
     <string name="SeekBar_segment_infinity">Бесконечно</string>
+    <string name="Settings_card_storage_access_mode_title">Метод доступа к файлам</string>
+    <string name="Settings_card_storage_access_mode_description">Выбрать метод доступа к файлам</string>
+    <string name="Settings_card_storage_access_mode_pick_folder">Выбрать папку</string>
+    <string name="Settings_card_storage_access_method_cant_encode_path">Невозможно расшифровать URI. Выберите другую папку</string>
     <string name="about_group_information">Основная информация</string>
     <string name="about_group_author">О разработчике</string>
     <string name="about_card_github">Исходный код на GitHub</string>
@@ -63,7 +68,7 @@
     <string name="about_Iam">Я в</string>
     <string name="about_group_credits">Благодарности</string>
     <string name="about_credits_for">За</string>
-    <string name="Action_reboot_confirm">Перезагрузить?</string>
+    <string name="Action_reboot_confirm">Перезагрузить устройство?</string>
     <string name="Speed_kbs">Кб/с</string>
     <string name="Speed_mbs">Мб/с</string>
 
@@ -77,9 +82,20 @@
     <string name="File_size_Mb">Мб</string>
     <string name="Downloads_not_found">Загрузки не найдены</string>
     <string name="New_download">Новая загрузка</string>
+    <string name="Module_installer_complite">Модуль успешно установлен</string>
+    <string name="App_install_success">Приложение успешно устновлено</string>
+    <string name="App_install_error">Ошибка установки приложения</string>
     <string name="Pick_color">Выбрать цвет</string>
     <string name="App_logs">Логи приложения</string>
     <string name="Version_code">Код версии</string>
     <string name="Updates_not_found">Обновления не найдены</string>
     <string name="AppBar_Updates">Обновление</string>
+    <string name="Module_installer_failed">Ошибка установки модуля</string>
+    <string name="Module_installer_error">Ошибка</string>
+    <string name="Settings_card_storage_access_mode_selected_folder">Выбранная папка</string>
+    <string name="Settings_card_storage_access_method_FileIO">FileIO (Старый)</string>
+    <string name="Settings_card_storage_access_method_SAF">SAF (Современный)</string>
+    <string name="App_installed_apk">Установленное приложение</string>
+    <string name="Crash_app_description">Вызывает тестовый вылет приложения</string>
+    <string name="App_logs_description">Логи записываемые во время работы приложения</string>
 </resources>

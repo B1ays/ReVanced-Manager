@@ -8,7 +8,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.core.app.ShareCompat
+import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
+import java.io.File
 
 fun Context.share(text: String?) {
     try {
@@ -48,4 +50,12 @@ fun Context.findActivity(): ComponentActivity {
         context = context.baseContext
     }
     throw IllegalStateException("Permissions should be called in the context of an Activity")
+}
+
+fun Context.getFileUri(file: File): Uri {
+    return FileProvider.getUriForFile(
+        this,
+        this.packageName+".provider",
+        file
+    )
 }
