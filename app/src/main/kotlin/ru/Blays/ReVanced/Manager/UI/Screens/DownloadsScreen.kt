@@ -105,6 +105,7 @@ class DownloadsScreen: AndroidScreen(){
                         speedFlow = item.speedFlow,
                         actionOpenFile = {
                             item.file?.open(context)
+                            item.simpleDocument?.open()
                         },
                         actionDeleteFile = {
                             item.file?.delete()
@@ -114,7 +115,6 @@ class DownloadsScreen: AndroidScreen(){
                             repository.removeFromList(item)
                         },
                         actionPause = item.actionPauseResume
-
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
