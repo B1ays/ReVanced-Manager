@@ -8,6 +8,7 @@
     <string name="AppBar_About">About</string>
     <string name="AppBar_Downloads">Downloads</string>
     <string name="AppBar_Updates">Updates</string>
+    <string name="AppBar_Developer_menu">Developer menu</string>
 
     <!--  App info  -->
     <string name="Installed_version">Installed version</string>
@@ -62,8 +63,12 @@
 
     <!--  Dropdown menu items  -->
     <string name="About_app">About app</string>
+
+    <!--  Developer menu  -->
     <string name="Crash_app" translatable="false">Crash app</string>
+    <string name="Crash_app_description">Causes the application to test crash</string>
     <string name="App_logs">App logs</string>
+    <string name="App_logs_description">Logs recorded while the application is running</string>
 
     <!--  Settings group titles  -->
     <string name="Settings_title_theme">App theme &amp; colors</string>

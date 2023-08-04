@@ -16,4 +16,5 @@ object DefaultPadding {
     val CardVerticalPadding = 3.dp
     val CardHorizontalPadding = 12.dp
     val CardDefaultPadding = PaddingValues(horizontal = 12.dp, vertical = 3.dp)
+    val CardDefaultPaddingLarge = PaddingValues(horizontal = 16.dp, vertical = 7.dp)
 }

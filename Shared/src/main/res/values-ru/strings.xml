@@ -6,6 +6,7 @@
     <string name="AppBar_Settings">Настройки</string>
     <string name="AppBar_About">О приложении</string>
     <string name="AppBar_Downloads">Загрузки</string>
+    <string name="AppBar_Developer_menu">Меню разработчика</string>
     <string name="Installed_version">Устновленная версия</string>
     <string name="Available_version_name">Доступная версия</string>
     <string name="Action_OK">Ок</string>
@@ -95,4 +96,6 @@
     <string name="Settings_card_storage_access_method_FileIO">FileIO (Старый)</string>
     <string name="Settings_card_storage_access_method_SAF">SAF (Современный)</string>
     <string name="App_installed_apk">Установленное приложение</string>
+    <string name="Crash_app_description">Вызывает тестовый вылет приложения</string>
+    <string name="App_logs_description">Логи записываемые во время работы приложения</string>
 </resources>

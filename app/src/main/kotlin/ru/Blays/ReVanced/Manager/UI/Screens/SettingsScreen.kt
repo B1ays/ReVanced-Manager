@@ -55,7 +55,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import org.koin.compose.koinInject
-import ru.Blays.ReVanced.Manager.BuildConfig
 import ru.Blays.ReVanced.Manager.Data.defaultAccentColorsList
 import ru.Blays.ReVanced.Manager.UI.Navigation.shouldHideNavigationBar
 import ru.Blays.ReVanced.Manager.UI.Theme.rainbowColors
@@ -75,6 +74,7 @@ import ru.blays.preference.DataStores.InstallerTypeDS
 import ru.blays.preference.DataStores.MonetColorsDS
 import ru.blays.preference.DataStores.StorageAccessTypeDS
 import ru.blays.preference.DataStores.ThemeDS
+import ru.blays.revanced.DeviceUtils.Root.Util.isRootGranted
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
 import ru.blays.revanced.Elements.Elements.LazyItems.itemsGroupWithHeader
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.ColorPickerDialogContent
@@ -84,7 +84,6 @@ import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.Segment
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsCardWithSwitch
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsExpandableCard
 import ru.blays.revanced.Elements.Elements.Screens.SettingsScreen.SettingsRadioButtonWithTitle
-import ru.blays.revanced.DeviceUtils.Root.Util.isRootGranted
 import ru.blays.revanced.shared.Data.DEFAULT_DOWNLOADS_FOLDER
 import ru.blays.revanced.shared.Data.PersistableDocumentTree
 import ru.blays.revanced.shared.Data.URI_DEFAULT_FLAGS
@@ -144,21 +143,24 @@ class SettingsScreen: AndroidScreen() {
                     actions = {
                         DropdownMenu(expanded = isSpinnerExpanded, onDismissRequest = changeSpinnerExpanded) {
                             DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_info),
+                                        contentDescription = null
+                                    )
+                                },
                                 text = { Text(text = stringResource(R.string.About_app)) },
                                 onClick = { navigator.push(AboutScreen()) }
                             )
                             DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.App_logs)) },
-                                onClick = { navigator.push(LogViewerScreen()) }
-                            )
-                            if (BuildConfig.DEBUG) DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = stringResource(id = R.string.Crash_app),
-                                        color = Color.Red
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_lambda),
+                                        contentDescription = null
                                     )
                                 },
-                                onClick = { throw RuntimeException("Test crash") }
+                                text = { Text(text = stringResource(id = R.string.AppBar_Developer_menu)) },
+                                onClick = { navigator.push(DeveloperScreen()) }
                             )
                         }
                         IconButton(onClick = changeSpinnerExpanded) {
