@@ -253,7 +253,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                                     )
                                                 )
                                             },
-                                            actionOpen = viewModel::launch
+                                            actionLaunch = viewModel::launch
                                         )
                                     }
                                 } else {
@@ -278,7 +278,7 @@ class VersionsListScreen(private val appType: Apps): AndroidScreen() {
                                                     )
                                                 )
                                             },
-                                            actionOpen = viewModel::launch
+                                            actionLaunch = viewModel::launch
                                         )
                                     }
                                 }

@@ -33,8 +33,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +56,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.Elements.DataClasses.CardShape
 import ru.blays.revanced.Elements.DataClasses.DefaultPadding
@@ -63,7 +64,6 @@ import ru.blays.revanced.Elements.DataClasses.RootVersionDownloadModel
 import ru.blays.revanced.Elements.Elements.CustomButton.BackgroundIcon
 import ru.blays.revanced.Elements.Elements.CustomButton.CustomIconButton
 import ru.blays.revanced.Elements.Elements.FloatingBottomMenu.surfaceColorAtAlpha
-import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
 import ru.blays.revanced.domain.DataClasses.ApkInfoModelDto
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.shared.R
@@ -73,52 +73,63 @@ import java.time.Duration
 fun VersionsListScreenHeader(
     appInfo: AppInfo,
     actionOpenDialog: () -> Unit,
-    actionOpen: (String) -> Unit
+    actionLaunch: (String) -> Unit
 ) {
 
     val version = appInfo.version
     val patchesVersion = appInfo.patchesVersion
 
-    Spacer(modifier = Modifier.height(8.dp))
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .weight(.5F)
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth()
         ) {
+            Column(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .weight(.5F)
+            ) {
+                version?.let {
+                    Text(text = "${stringResource(R.string.Installed_version)}: $it")
+                }
+                patchesVersion?.let {
+                    Text(text = "${stringResource(R.string.Patches_version)}: $it")
+                }
+            }
             version?.let {
-                Text(text = "${stringResource(R.string.Installed_version)}: $it")
-            }
-            patchesVersion?.let {
-                Text(text = "${stringResource(R.string.Patches_version)}: $it")
+                CustomIconButton(
+                    onClick = actionOpenDialog,
+                    containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                    contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24),
+                        contentDescription = "Delete app"
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                CustomIconButton(
+                    onClick = { appInfo.packageName?.let { actionLaunch(it) } },
+                    containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
+                    contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.round_launch_24),
+                        contentDescription = "Launch app"
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
             }
         }
-        version?.let {
-            CustomIconButton(
-                onClick = actionOpenDialog,
-                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
-                contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
-            ) {
-                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_delete_24), contentDescription = "Delete app")
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            CustomIconButton(
-                onClick = {appInfo.packageName?.let { actionOpen(it) }},
-                containerColor = MaterialTheme.colorScheme.surfaceColorAtAlpha(0.3F),
-                contentColor = MaterialTheme.colorScheme.primary.copy(alpha = .8F)
-            ) {
-                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.round_launch_24), contentDescription = "Launch app")
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-        }
+        HorizontalDivider(
+            modifier = Modifier.padding(top = 6.dp),
+            thickness = 2.dp
+        )
     }
-    Divider(
-        modifier = Modifier.padding(top = 6.dp),
-        thickness = 2.dp
-    )
     Spacer(modifier = Modifier.height(8.dp))
 }
 
