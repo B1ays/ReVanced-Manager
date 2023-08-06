@@ -1,25 +1,25 @@
 [versions]
-accompanist-permissions = "0.31.5-beta"
+accompanist-permissions = "0.31.6-rc"
 agp = "8.2.0-alpha15"
 androidx-activity = "1.8.0-alpha06"
 androidx-annotation = "1.6.0"
 androidx-arch-core = "2.2.0"
 androidx-collection = "1.2.0"
 androidx-compose = "1.6.0-alpha01"
-androidx-compose-material3 = "1.2.0-alpha03"
+androidx-compose-material3 = "1.2.0-alpha04"
 androidx-core = "1.12.0-beta01"
 androidx-lifecycle = "2.7.0-alpha01"
 androidx-room = "2.6.0-alpha02"
 androidx-savedstate = "1.2.1"
 coil = "2.4.0"
 colorpicker-compose = "1.0.4"
-com-google-devtools-ksp = "1.9.0-1.0.12"
+com-google-devtools-ksp = "1.9.0-1.0.13"
 com-squareup-okhttp3 = "5.0.0-alpha.11"
 compose-markdown = "0.3.4"
 datastore-preferences = "1.1.0-alpha04"
-documentfile = "1.1.0-alpha01"
-koin-androidx-compose = "3.4.5"
+koin-androidx-compose = "3.4.6"
 kotlin = "1.9.0"
+koin = "3.4.3"
 libsu = "5.2.0"
 pausing-coroutine-dispatcher = "ee40ae5"
 rebugger = "1.0.0-alpha06"
@@ -37,7 +37,7 @@ androidx-arch-core-core-runtime = { module = "androidx.arch.core:core-runtime", 
 androidx-collection = { module = "androidx.collection:collection", version.ref = "androidx-collection" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "androidx-compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
-androidx-compose-material3 = {module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidx-compose" }
 androidx-compose-runtime-runtime-saveable = { module = "androidx.compose.runtime:runtime-saveable", version.ref = "androidx-compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui-android", version.ref = "androidx-compose" }
@@ -45,7 +45,6 @@ androidx-compose-ui-ui-geometry = { module = "androidx.compose.ui:ui-geometry", 
 androidx-compose-ui-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "androidx-compose" }
 androidx-compose-ui-ui-text = { module = "androidx.compose.ui:ui-text", version.ref = "androidx-compose" }
 androidx-compose-ui-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
-androidx-compose-ui-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidx-compose" }
 androidx-compose-ui-ui-unit = { module = "androidx.compose.ui:ui-unit", version.ref = "androidx-compose" }
 androidx-compose-ui-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose" }
 androidx-concurrent-concurrent-futures = "androidx.concurrent:concurrent-futures:1.1.0"
@@ -53,7 +52,6 @@ androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-core-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-customview-customview-poolingcontainer = "androidx.customview:customview-poolingcontainer:1.0.0"
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore-preferences" }
-androidx-documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
 androidx-emoji2 = "androidx.emoji2:emoji2:1.3.0"
 androidx-interpolator = "androidx.interpolator:interpolator:1.0.0"
 androidx-lifecycle-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
@@ -85,7 +83,7 @@ com-squareup-okhttp3-okhttp = { module = "com.squareup.okhttp3:okhttp", version.
 com-squareup-okhttp3-okhttp-jvm = { module = "com.squareup.okhttp3:okhttp-jvm", version.ref = "com-squareup-okhttp3" }
 compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "compose-markdown" }
 core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsu" }
-koin-android = "io.insert-koin:koin-android:3.4.2"
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-androidx-compose" }
 kotlin-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-kotlin-stdlib-common = { module = "org.jetbrains.kotlin:kotlin-stdlib-common", version.ref = "kotlin" }
@@ -95,8 +93,8 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 kotlinx-kotlinx-coroutines-core-jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3"
 kotlinx-kotlinx-serialization-bom = "org.jetbrains.kotlinx:kotlinx-serialization-bom:1.5.1"
 kotlinx-kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1"
-kotlinx-kotlinx-serialization-core-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.5.1"
-kotlinx-kotlinx-serialization-json-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.5.1"
+kotlinx-kotlinx-serialization-core-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.6.0-RC"
+kotlinx-kotlinx-serialization-json-jvm = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.0-RC"
 material3 = { module = "androidx.compose.material3:material3" }
 nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "libsu" }
 org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:3.0.0-alpha1"
