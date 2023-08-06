@@ -135,7 +135,7 @@ class VersionsListScreenViewModel(
         }
     }
 
-    fun reboot() = ::rebootDevice
+    fun reboot() = rebootDevice()
 
     fun downloadNonRootVersion(
         fileName: String,
