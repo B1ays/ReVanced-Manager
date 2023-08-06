@@ -1,10 +1,11 @@
 package ru.Blays.ReVanced.Manager.Repository.AppRepositiry
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.DeviceUtils.Root.ModuleIntstaller.ModuleInstaller
+import ru.blays.revanced.Elements.DataClasses.AppInfo
 import ru.blays.revanced.domain.DataClasses.VersionsInfoModelDto
 import ru.blays.revanced.domain.UseCases.GetVersionsListUseCase
 
@@ -47,14 +48,13 @@ class AppRepository private constructor(): AppRepositoryInterface {
 
     override fun updateVersionsList() {
         launch {
-            getVersionsListUseCase?.let { useCase ->
-                if (remoteVersionsList.isEmpty()) {
-                    remoteVersionsList.addAll(useCase.execut(catalogUrl, true))
-                } else {
-                    remoteVersionsList = useCase.execut(catalogUrl, true).toMutableList()
-                }
+            while (getVersionsListUseCase == null) {
+                delay(500)
             }
-            availableVersion.value = remoteVersionsList.firstOrNull()?.version
+            remoteVersionsList = getVersionsListUseCase!!.execut(catalogUrl, true).toMutableList().also {
+                availableVersion.emit(it.firstOrNull()?.version)
+            }
+
         }
     }
 
